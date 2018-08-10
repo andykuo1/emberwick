@@ -4,7 +4,7 @@ class SceneNode
 {
   constructor(mesh)
   {
-    this.parent = null;
+    this._parent = null;
     this.children = [];
 
     this.transform = mat4.create();
@@ -26,17 +26,14 @@ class SceneNode
       this.children.length = 0;
     }
 
-    if (this.parent)
-    {
-      this.parent.removeChild(this);
-    }
+    this.setParent(null);
   }
 
   update(dt)
   {
-    if (this.parent)
+    if (this._parent)
     {
-      mat4.mul(this.worldTransform, this.parent.worldTransform, this.transform);
+      mat4.mul(this.worldTransform, this._parent.worldTransform, this.transform);
     }
     else
     {
@@ -54,21 +51,23 @@ class SceneNode
     return this.children.length > 0;
   }
 
-  addChild(sceneNode)
+  setParent(sceneNode)
   {
-    if (sceneNode.parent)
+    if (this._parent != null)
     {
-      sceneNode.parent.removeChild(sceneNode);
+      this._parent.children.splice(this, 1);
     }
 
-    this.children.push(sceneNode);
-    sceneNode.parent = this;
+    if (sceneNode != null)
+    {
+      sceneNode.children.push(this);
+    }
+    this._parent = sceneNode;
   }
 
-  removeChild(sceneNode)
+  getParent()
   {
-    this.children.splice(sceneNode, 1);
-    sceneNode.parent = null;
+    return this._parent;
   }
 }
 

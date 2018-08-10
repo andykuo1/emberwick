@@ -12,8 +12,8 @@ class CubeEntity
     const renderable = entityManager.addComponentToEntity(entityID, Renderable);
     {
       const node = new SceneNode();
+      node.setParent(parentNode);
       renderable._sceneNode = node;
-      parentNode.addChild(node);
     }
   }
 
