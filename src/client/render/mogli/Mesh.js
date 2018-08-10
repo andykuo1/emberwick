@@ -35,7 +35,7 @@ class Mesh
     this.indexBuffer.bind();
   }
 
-  draw(gl, offset)
+  draw(gl, offset=0)
   {
     gl.drawElements(this.elementType, this.vertexCount, gl.UNSIGNED_SHORT, offset);
   }

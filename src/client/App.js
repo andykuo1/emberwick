@@ -27,6 +27,8 @@ class App
 
   onUpdate(dt)
   {
+    this.renderer.update(dt);
+    
     if (this.gl)
     {
       this.renderer.render(this.gl);

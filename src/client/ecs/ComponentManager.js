@@ -11,18 +11,19 @@ class ComponentManager
 
   createComponentForEntity(entityID)
   {
-    const result = this.componentInstances.get(entityID);
+    let result = this.componentInstances.get(entityID);
     if (result)
     {
-      this.componentClass.terminate(component);
-      this.componentClass.initialize(component);
+      this.componentClass.terminate.apply(result);
+      this.componentClass.initialize.apply(result);
     }
     else
     {
-      const component = this.allocateComponent();
-      this.componentClass.initialize(component);
-      this.componentInstances.set(entityID, component);
+      result = this.allocateComponent();
+      this.componentClass.initialize.apply(result);
+      this.componentInstances.set(entityID, result);
     }
+    return result;
   }
 
   destroyComponentForEntity(entityID)
@@ -31,7 +32,7 @@ class ComponentManager
     if (result)
     {
       this.componentInstances.delete(entityID);
-      this.componentClass.terminate(result);
+      this.componentClass.terminate.apply(result);
 
       this.deallocateComponent(result);
       return true;

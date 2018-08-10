@@ -4,8 +4,99 @@ import PerspectiveCamera from './mogli/PerspectiveCamera.js';
 import Mesh from './mogli/Mesh.js';
 import { mat4, quat } from 'gl-matrix';
 
+import SceneNode from 'scenegraph/SceneNode.js';
 import EntityManager from 'ecs/EntityManager.js';
-import Transform from 'ecs/Transform.js';
+import Renderable from 'component/Renderable.js';
+import CubeEntity from 'entity/CubeEntity.js';
+
+class Renderer
+{
+  constructor()
+  {
+    this.shader = null;
+    this.mesh = null;
+
+    this.camera = null;
+
+    this.entityManager = new EntityManager();
+    this.entityManager.registerComponentClass(Renderable);
+
+    this.sceneGraph = new SceneNode();
+  }
+
+  initialize(gl)
+  {
+    if (gl === null)
+    {
+      alert("Unable to initialize WebGL. Your browser may not support it.");
+      return;
+    }
+
+    gl.clearColor(0,0,0,1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    const shader = new Shader(gl, vsh, fsh);
+    this.shader = shader;
+
+    this.mesh = new Mesh(gl, gl.TRIANGLES,
+      new Float32Array(cubePositions),
+      null,//new Float32Array(cubeTexcoords),
+      null,
+      new Uint16Array(cubeIndices));
+
+    this.camera = new PerspectiveCamera(gl);
+    this.camera.position[2] = -6;
+
+    const entityManager = this.entityManager;
+    entityManager.createEntity(CubeEntity, this.sceneGraph);
+  }
+
+  terminate(gl)
+  {
+    this.shader.delete();
+    this.mesh.delete();
+  }
+
+  update(dt)
+  {
+    for(const renderable of this.entityManager.getComponentsByClass(Renderable))
+    {
+      const transform = renderable.getTransform();
+      mat4.rotateY(transform, transform, 0.01);
+      mat4.rotateZ(transform, transform, 0.01);
+      renderable._sceneNode.update(dt);
+    }
+  }
+
+  render(gl)
+  {
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    const projectionMatrix = this.camera.getProjectionMatrix();
+    const viewMatrix = this.camera.getViewMatrix();
+    gl.useProgram(this.shader.handle);
+    gl.uniformMatrix4fv(
+        this.shader.uniforms.u_projection,
+        false,
+        projectionMatrix);
+
+    this.mesh.bind(this.shader);
+
+    const modelMatrix = mat4.create();
+    for(const renderable of this.entityManager.getComponentsByClass(Renderable))
+    {
+      const sceneNode = renderable._sceneNode;
+      mat4.scale(modelMatrix, sceneNode.worldTransform, sceneNode.modelScale);
+      mat4.mul(modelMatrix, viewMatrix, modelMatrix);
+      gl.uniformMatrix4fv(
+          this.shader.uniforms.u_modelview,
+          false,
+          modelMatrix);
+
+      this.mesh.draw(gl);
+    }
+  }
+}
 
 const vsh = `
 attribute vec4 a_position;
@@ -114,86 +205,5 @@ const cubeIndices = [
   16, 17, 18,     16, 18, 19,   // right
   20, 21, 22,     20, 22, 23,   // left
 ];
-
-class Renderer
-{
-  constructor()
-  {
-    this.shader = null;
-    this.mesh = null;
-
-    this.camera = null;
-
-    this.entityManager = new EntityManager();
-    this.entityManager.registerComponentClass(Transform);
-  }
-
-  initialize(gl)
-  {
-    if (gl === null)
-    {
-      alert("Unable to initialize WebGL. Your browser may not support it.");
-      return;
-    }
-
-    gl.clearColor(0,0,0,1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    const shader = new Shader(gl, vsh, fsh);
-    this.shader = shader;
-
-    this.mesh = new Mesh(gl, gl.TRIANGLES,
-      new Float32Array(cubePositions),
-      null,//new Float32Array(cubeTexcoords),
-      null,
-      new Uint16Array(cubeIndices));
-
-    this.camera = new PerspectiveCamera(gl);
-    this.camera.position[2] = -6;
-
-    const entityManager = this.entityManager;
-    const entity = entityManager.createEntity();
-    entityManager.addComponentToEntity(entity, Transform);
-  }
-
-  terminate(gl)
-  {
-    this.shader.delete();
-    this.mesh.delete();
-  }
-
-  render(gl)
-  {
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    const projectionMatrix = this.camera.getProjectionMatrix();
-    const viewMatrix = this.camera.getViewMatrix();
-    gl.useProgram(this.shader.handle);
-    gl.uniformMatrix4fv(
-        this.shader.uniforms.u_projection,
-        false,
-        projectionMatrix);
-
-
-    this.mesh.bind(this.shader);
-
-    const modelViewMatrix = mat4.create();
-    for(const component of this.entityManager.getComponentsByClass(Transform))
-    {
-      const rot = component.rotation;
-      quat.rotateY(rot, rot, 0.01);
-      quat.rotateZ(rot, rot, 0.01);
-      component.getTransformation(modelViewMatrix);
-      mat4.mul(modelViewMatrix, viewMatrix, modelViewMatrix);
-
-      gl.uniformMatrix4fv(
-          this.shader.uniforms.u_modelview,
-          false,
-          modelViewMatrix);
-
-      this.mesh.draw(gl, 0);
-    }
-  }
-}
 
 export default Renderer;

@@ -1,4 +1,3 @@
-import EntityBuilder from './EntityBuilder.js';
 import ComponentManager from './ComponentManager.js';
 
 const INITIAL_ENTITY_ID = 1;
@@ -7,16 +6,15 @@ class EntityManager
 {
   constructor()
   {
-    this.entityBuilder = new EntityBuilder(this);
     this.nextEntityID = INITIAL_ENTITY_ID;
 
-    this.entities = [];
     this.components = new Map();
+    this.entities = new Map();
   }
 
   clear() {
     this.nextEntityID = INITIAL_ENTITY_ID;
-    this.entities.length = 0;
+    this.entities.clear();
 
     for(const componentManager of this.components.values())
     {
@@ -44,22 +42,37 @@ class EntityManager
     this.components.delete(componentClass);
   }
 
-  createEntity()
+  createEntity(entityClass, ...args)
   {
     const entityID = this.getNextAvailableEntityID();
-    this.entities.push(entityID);
+    this.entities.set(entityID, entityClass);
+
+    entityClass.onCreate(this, entityID, ...args);
     return entityID;
   }
 
   destroyEntity(entityID)
   {
-    for(const componentManager of this.components.values())
+    const entity = this.entities.get(entityID);
+    if (entity)
     {
-      componentManager.destroyComponentForEntity(entityID);
+      entity.onDestroy(this, entityID);
+
+      for(const componentManager of this.components.values())
+      {
+        componentManager.destroyComponentForEntity(entityID);
+      }
+
+      this.entities.delete(entityID);
+      return true;
+    }
+    else
+    {
+      return false;
     }
   }
 
-  addComponentToEntity(entityID, componentClass, resetExisting=false)
+  addComponentToEntity(entityID, componentClass, callback=null)
   {
     const componentManager = this.components.get(componentClass);
     if (!componentManager)
@@ -67,15 +80,11 @@ class EntityManager
       throw new Error("Unable to find registered component manager for class \'" + componentClass + "\'");
     }
 
-    const component = componentManager.getComponentForEntity(entityID);
-    //Component already added and not trying to reset
-    if (component && !resetExisting)
-    {
-      throw new Error("Trying to add dupe component \'" + componentClass + "\' for entity \'" + entityID + "\'");
-    }
-
     //Will create or reset the component instance for entity with id
-    componentManager.createComponentForEntity(entityID);
+    const result = componentManager.createComponentForEntity(entityID);
+
+    if (callback) callback.apply(null, result);
+    return result;
   }
 
   removeComponentFromEntity(entityID, componentClass)
@@ -120,6 +129,11 @@ class EntityManager
       if (component) result.push(component);
     }
     return result;
+  }
+
+  getEntityClassByID(entityID)
+  {
+    return this.entities.get(entityID);
   }
 
   getNextAvailableEntityID()
