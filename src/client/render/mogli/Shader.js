@@ -43,6 +43,12 @@ class ShaderProgram
 
     this.attributes = getEnumeratedAttributes(gl, handle);
     this.uniforms = getEnumeratedUniforms(gl, handle);
+    this._layouts = {};
+    this._names = {};
+    for(const name in this.attributes)
+    {
+      this._names[this.attributes[name]] = name;
+    }
 
     this._handle = handle;
     this._vertexShader = vertexShader;
@@ -64,6 +70,11 @@ class ShaderProgram
       delete uniforms[key];
     });
 
+    const layouts = this._layouts;
+    Object.keys(layouts).forEach(function(key){
+      delete layouts[key];
+    });
+
     const vertexShader = this._vertexShader;
     gl.detachShader(handle, vertexShader);
     gl.deleteShader(vertexShader);
@@ -76,6 +87,58 @@ class ShaderProgram
 
     gl.deleteProgram(handle);
     this._handle = 0;
+  }
+
+  validate()
+  {
+    const gl = this._gl;
+    const handle = this._handle;
+
+    //Validate program for current context
+    gl.validateProgram(handle);
+    if (!gl.getProgramParameter(handle, gl.VALIDATE_STATUS))
+    {
+      return false;
+    }
+
+    return true;
+  }
+
+  setLayout(attributeName, vecSize, dataType, normalized=false)
+  {
+    const layout = this._layouts[attributeName] || (this._layouts[attributeName] = {});
+    layout.vecSize = vecSize;
+    layout.dataType = dataType;
+    const typeSize = getByteSizeForAttribType(this._gl, dataType);
+    layout.typeSize = typeSize;
+    layout.normalized = normalized;
+    layout.bytes = typeSize * vecSize;
+    return layout;
+  }
+
+  getLayout(attributeName)
+  {
+    return this._layouts[attributeName];
+  }
+
+  removeLayout(attributeName)
+  {
+    delete this._layouts[attributeName];
+  }
+
+  attachVertexBuffer(attribute, bufferObject, stride=0, offset=0, enable=true)
+  {
+    const name = this._names[attribute];
+    const layout = this._layouts[name];
+    if (!layout) throw new Error("Unable to find layout for attribute \'" + attributeName + "\'");
+    if (layout.dataType !== bufferObject.dataType) throw new Error("Mismatched data type for attribute \'" + name + "\'");
+
+    const gl = this._gl;
+    gl.vertexAttribPointer(attribute,
+      layout.vecSize, layout.dataType, layout.normalized,
+      stride, offset);
+
+    if (enable) gl.enableVertexAttribArray(attribute);
   }
 
   get handle() { return this._handle; }
@@ -129,6 +192,23 @@ function getEnumeratedUniforms(gl, program)
     result[infoName] = location;
   }
   return result;
+}
+
+function getByteSizeForAttribType(gl, type)
+{
+  switch(type)
+  {
+    case gl.BYTE:
+    case gl.UNSIGNED_BYTE:
+      return 1;
+    case gl.SHORT:
+    case gl.UNSIGNED_SHORT:
+      return 2;
+    case gl.FLOAT:
+      return 4;
+    default:
+      throw new Error("Unknown attrib type \'" + type + "\'");
+  }
 }
 
 export default ShaderProgram;

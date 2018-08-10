@@ -36,6 +36,9 @@ class Renderer
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     const shader = new Shader(gl, vsh, fsh);
+    shader.setLayout("a_position", 3, gl.FLOAT, false);
+    shader.setLayout("a_normal", 3, gl.FLOAT, false);
+    shader.setLayout("a_texcoord", 2, gl.FLOAT, false);
     this.shader = shader;
 
     this.mesh = new Mesh(gl, gl.TRIANGLES,

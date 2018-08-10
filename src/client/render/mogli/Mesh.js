@@ -5,13 +5,13 @@ class Mesh
   constructor(gl, elementType, positions, texcoords, normals, indices)
   {
     this.positionBuffer = new BufferObject(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW);
-    if (positions) this.positionBuffer.bindData(positions, 3, false);
+    if (positions) this.positionBuffer.bindData(positions);
 
     this.texcoordBuffer = new BufferObject(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW);
-    if (texcoords) this.texcoordBuffer.bindData(texcoords, 2, false);
+    if (texcoords) this.texcoordBuffer.bindData(texcoords);
 
     this.normalBuffer = new BufferObject(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW);
-    if (normals) this.normalBuffer.bindData(normals, 3, false);
+    if (normals) this.normalBuffer.bindData(normals);
 
     this.indexBuffer = new BufferObject(gl, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW);
     if (indices) this.indexBuffer.bindData(indices);
@@ -29,9 +29,9 @@ class Mesh
 
   bind(shader)
   {
-    this.positionBuffer.bindToVertexAttrib(shader.attributes.a_position, 0, 0, true);
-    //this.texcoordBuffer.bindToVertexAttrib(shader.attributes.a_texcoord, 0, 0, true);
-    //this.normalBuffer.bindToVertexAttrib(shader.attributes.a_normal, 0, 0, true);
+    shader.attachVertexBuffer(shader.attributes.a_position, this.positionBuffer, 0, 0, true);
+    //shader.attachVertexBuffer(shader.attributes.a_texcoord, this.texcoordBuffer, 0, 0, true);
+    //shader.attachVertexBuffer(shader.attributes.a_normal, this.normalBuffer, 0, 0, true);
     this.indexBuffer.bind();
   }
 

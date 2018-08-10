@@ -12,9 +12,7 @@ class BufferObject
     this.type = type;
     this.drawMode = mode;
 
-    this.dataType = null;
-    this.dataNumComponents = 1;
-    this.dataNormalize = false;
+    this.dataType = gl.BYTE;
   }
 
   delete() {
@@ -36,14 +34,12 @@ class BufferObject
     this._gl.bindBuffer(this.type, NULLTYPE);
   }
 
-  bindData(data, numComponents=1, normalize=false)
+  bindData(data)
   {
     const gl = this._gl;
     if (data instanceof Float32Array)
     {
       this.dataType = gl.FLOAT;
-      this.dataNumComponents = numComponents;
-      this.dataNormalize = normalize;
 
       gl.bindBuffer(this.type, this._handle);
       gl.bufferData(this.type, data, this.drawMode);
@@ -51,8 +47,6 @@ class BufferObject
     else if (data instanceof Uint16Array)
     {
       this.dataType = gl.UNSIGNED_SHORT;
-      this.dataNumComponents = numComponents;
-      this.dataNormalize = normalize;
 
       gl.bindBuffer(this.type, this._handle);
       gl.bufferData(this.type, data, this.drawMode);
@@ -62,16 +56,6 @@ class BufferObject
       throw new Error("Unsupported buffer data type");
     }
     return this;
-  }
-
-  bindToVertexAttrib(attrib, stride=0, offset=0, enable=true)
-  {
-    const gl = this._gl;
-    gl.vertexAttribPointer(attrib,
-      this.dataNumComponents, this.dataType, this.dataNormalize,
-      stride, offset);
-
-    if (enable) gl.enableVertexAttribArray(attrib);
   }
 }
 
