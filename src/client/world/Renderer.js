@@ -1,13 +1,14 @@
-import Shader from './mogli/Shader.js';
-import BufferObject from './mogli/BufferObject.js';
-import PerspectiveCamera from './mogli/PerspectiveCamera.js';
-import Mesh from './mogli/Mesh.js';
+import Shader from 'render/mogli/Shader.js';
+import BufferObject from 'render/mogli/BufferObject.js';
+import PerspectiveCamera from 'render/mogli/PerspectiveCamera.js';
+import Mesh from 'render/mogli/Mesh.js';
 import { mat4, quat } from 'gl-matrix';
 
 import SceneNode from 'scenegraph/SceneNode.js';
 import EntityManager from 'ecs/EntityManager.js';
-import Renderable from 'component/Renderable.js';
-import CubeEntity from 'entity/CubeEntity.js';
+
+import Renderable from 'world/component/Renderable.js';
+import CubeEntity from 'world/entity/CubeEntity.js';
 
 class Renderer
 {

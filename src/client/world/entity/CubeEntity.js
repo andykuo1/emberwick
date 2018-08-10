@@ -1,6 +1,6 @@
 import Entity from './Entity.js';
 
-import Renderable from 'component/Renderable.js';
+import Renderable from 'world/component/Renderable.js';
 import SceneNode from 'scenegraph/SceneNode.js';
 
 class CubeEntity
