@@ -64,7 +64,7 @@ class BufferObject
     return this;
   }
 
-  bindToVertexAttrib(attrib, stride=0, offset=0, enable=false)
+  bindToVertexAttrib(attrib, stride=0, offset=0, enable=true)
   {
     const gl = this._gl;
     gl.vertexAttribPointer(attrib,

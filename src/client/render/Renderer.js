@@ -2,7 +2,10 @@ import Shader from './mogli/Shader.js';
 import BufferObject from './mogli/BufferObject.js';
 import PerspectiveCamera from './mogli/PerspectiveCamera.js';
 import Mesh from './mogli/Mesh.js';
-import { mat4 } from 'gl-matrix';
+import { mat4, quat } from 'gl-matrix';
+
+import EntityManager from 'ecs/EntityManager.js';
+import Transform from 'ecs/Transform.js';
 
 const vsh = `
 attribute vec4 a_position;
@@ -117,13 +120,12 @@ class Renderer
   constructor()
   {
     this.shader = null;
-
     this.mesh = null;
 
-    this.rotation = 0;
-
     this.camera = null;
-    this.chunkManager = null;
+
+    this.entityManager = new EntityManager();
+    this.entityManager.registerComponentClass(Transform);
   }
 
   initialize(gl)
@@ -142,13 +144,16 @@ class Renderer
 
     this.mesh = new Mesh(gl, gl.TRIANGLES,
       new Float32Array(cubePositions),
-      null,
-      //new Float32Array(cubeTexcoords),
+      null,//new Float32Array(cubeTexcoords),
       null,
       new Uint16Array(cubeIndices));
 
     this.camera = new PerspectiveCamera(gl);
     this.camera.position[2] = -6;
+
+    const entityManager = this.entityManager;
+    const entity = entityManager.createEntity();
+    entityManager.addComponentToEntity(entity, Transform);
   }
 
   terminate(gl)
@@ -161,28 +166,33 @@ class Renderer
   {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    this.rotation += 0.01;
-
     const projectionMatrix = this.camera.getProjectionMatrix();
-    const modelViewMatrix = this.camera.getViewMatrix();
-    mat4.rotate(modelViewMatrix, modelViewMatrix, this.rotation * .7, [0, 1, 1]);
-
-    this.mesh.bind(this.shader);
-
-    // Tell WebGL to use our program when drawing
+    const viewMatrix = this.camera.getViewMatrix();
     gl.useProgram(this.shader.handle);
-
-    // Set the shader uniforms
     gl.uniformMatrix4fv(
         this.shader.uniforms.u_projection,
         false,
         projectionMatrix);
-    gl.uniformMatrix4fv(
-        this.shader.uniforms.u_modelview,
-        false,
-        modelViewMatrix);
 
-    this.mesh.draw(gl, 0);
+
+    this.mesh.bind(this.shader);
+
+    const modelViewMatrix = mat4.create();
+    for(const component of this.entityManager.getComponentsByClass(Transform))
+    {
+      const rot = component.rotation;
+      quat.rotateY(rot, rot, 0.01);
+      quat.rotateZ(rot, rot, 0.01);
+      component.getTransformation(modelViewMatrix);
+      mat4.mul(modelViewMatrix, viewMatrix, modelViewMatrix);
+
+      gl.uniformMatrix4fv(
+          this.shader.uniforms.u_modelview,
+          false,
+          modelViewMatrix);
+
+      this.mesh.draw(gl, 0);
+    }
   }
 }
 
