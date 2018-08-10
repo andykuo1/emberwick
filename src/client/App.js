@@ -1,4 +1,5 @@
 import World from 'world/World.js';
+import Renderer from 'world/Renderer.js';
 
 const WEBGL_CONTEXT = "webgl";
 const CANVAS_ID = "glCanvas";
@@ -9,7 +10,8 @@ class App
   {
     this.canvas = null;
     this.gl = null;
-    this.world = new World();
+    this.renderer = new Renderer();
+    this.world = new World(this.renderer);
   }
 
   onLoad()
@@ -17,12 +19,14 @@ class App
     this.canvas = document.getElementById(CANVAS_ID);
     this.gl = this.canvas.getContext(WEBGL_CONTEXT);
 
-    this.world.renderer.initialize(this.gl);
+    this.renderer.initialize(this.gl);
+    this.world.create();
   }
 
   onUnload()
   {
-    this.world.renderer.terminate(this.gl);
+    this.world.destroy();
+    this.renderer.terminate(this.gl);
   }
 
   onUpdate(dt)
@@ -31,7 +35,7 @@ class App
 
     if (this.gl)
     {
-      this.world.render(this.gl);
+      this.renderer.render(this.gl);
     }
   }
 }

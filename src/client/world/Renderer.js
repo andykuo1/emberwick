@@ -5,10 +5,6 @@ import Mesh from 'render/mogli/Mesh.js';
 import { mat4, quat } from 'gl-matrix';
 
 import SceneNode from 'scenegraph/SceneNode.js';
-import EntityManager from 'ecs/EntityManager.js';
-
-import Renderable from 'world/component/Renderable.js';
-import CubeEntity from 'world/entity/CubeEntity.js';
 
 class Renderer
 {
@@ -18,9 +14,6 @@ class Renderer
     this.mesh = null;
 
     this.camera = null;
-
-    this.entityManager = new EntityManager();
-    this.entityManager.registerComponentClass(Renderable);
 
     this.sceneGraph = new SceneNode();
   }
@@ -50,26 +43,12 @@ class Renderer
 
     this.camera = new PerspectiveCamera(gl);
     this.camera.position[2] = -6;
-
-    const entityManager = this.entityManager;
-    entityManager.createEntity(CubeEntity, this.sceneGraph);
   }
 
   terminate(gl)
   {
     this.shader.delete();
     this.mesh.delete();
-  }
-
-  update(dt)
-  {
-    for(const renderable of this.entityManager.getComponentsByClass(Renderable))
-    {
-      const transform = renderable.getTransform();
-      mat4.rotateY(transform, transform, 0.01);
-      mat4.rotateZ(transform, transform, 0.01);
-      renderable._sceneNode.update(dt);
-    }
   }
 
   render(gl)
@@ -85,19 +64,42 @@ class Renderer
         projectionMatrix);
 
     this.mesh.bind(this.shader);
+    this.renderScene(gl, this.sceneGraph, viewMatrix);
+  }
 
-    const modelMatrix = mat4.create();
-    for(const renderable of this.entityManager.getComponentsByClass(Renderable))
+  renderScene(gl, root, viewMatrix)
+  {
+    let modelMatrix = mat4.create();
+    let nextNodes = [];
+    if (root)
     {
-      const sceneNode = renderable._sceneNode;
-      mat4.scale(modelMatrix, sceneNode.worldTransform, sceneNode.modelScale);
-      mat4.mul(modelMatrix, viewMatrix, modelMatrix);
-      gl.uniformMatrix4fv(
-          this.shader.uniforms.u_modelview,
-          false,
-          modelMatrix);
+      nextNodes.push(root);
+    }
 
-      this.mesh.draw(gl);
+    while(nextNodes.length > 0)
+    {
+      const node = nextNodes.pop();
+      //if (node.mesh)
+      {
+        mat4.scale(modelMatrix, node.worldTransform, node.modelScale);
+        mat4.mul(modelMatrix, viewMatrix, modelMatrix);
+
+        gl.uniformMatrix4fv(
+            this.shader.uniforms.u_modelview,
+            false,
+            modelMatrix);
+
+        this.mesh.draw(gl);
+      }
+
+      if (node.isParent())
+      {
+        const length = node.children.length;
+        for(let i = length - 1; i >= 0; --i)
+        {
+          nextNodes.push(node.children[i]);
+        }
+      }
     }
   }
 }
