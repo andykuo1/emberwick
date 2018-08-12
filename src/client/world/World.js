@@ -7,9 +7,11 @@ import CubeEntity from 'world/entity/CubeEntity.js';
 
 class World
 {
-  constructor(renderer)
+  constructor(renderer, app)
   {
     this.renderer = renderer;
+    this.app = app;
+
     this.entityManager = new EntityManager();
     this.entityManager.registerComponentClass(Renderable);
   }

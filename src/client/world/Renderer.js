@@ -79,7 +79,7 @@ class Renderer
     while(nextNodes.length > 0)
     {
       const node = nextNodes.pop();
-      //if (node.mesh)
+      if (node.mesh)
       {
         mat4.scale(modelMatrix, node.worldTransform, node.modelScale);
         mat4.mul(modelMatrix, viewMatrix, modelMatrix);

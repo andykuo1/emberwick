@@ -13,7 +13,7 @@ class SceneNode
     this.color = vec4.create();
     this.modelScale = vec3.fromValues(1, 1, 1);
 
-    this.mesh = null;
+    this.mesh = mesh;
   }
 
   delete() {
