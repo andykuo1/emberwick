@@ -20,7 +20,8 @@ class Mesh
     this.vertexCount = indices.length;
   }
 
-  delete() {
+  delete()
+  {
     this.positionBuffer.delete();
     this.texcoordBuffer.delete();
     this.normalBuffer.delete();

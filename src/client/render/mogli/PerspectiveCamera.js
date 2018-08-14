@@ -10,8 +10,13 @@ class PerspectiveCamera
     this.zNear = 0.1;
     this.zFar = 100.0;
 
-    this.projectionMatrix = mat4.create();
-    this.viewMatrix = mat4.create();
+    this._projectionMatrix = mat4.create();
+    this._viewMatrix = mat4.create();
+
+    this.transformationMatrix = mat4.create();
+    this.rotationMatrix = mat4.create();
+    this.scaleMatrix = mat4.create();
+    this.inverseRotation = quat.create();
 
     this.position = vec3.create();
     this.rotation = quat.create();
@@ -26,7 +31,7 @@ class PerspectiveCamera
 
   getProjectionMatrix()
   {
-    return mat4.perspective(this.projectionMatrix,
+    return mat4.perspective(this._projectionMatrix,
       this.fieldOfView,
       this.getAspectRatio(),
       this.zNear, this.zFar);
@@ -34,10 +39,12 @@ class PerspectiveCamera
 
   getViewMatrix()
   {
-    return mat4.fromRotationTranslationScale(this.viewMatrix,
-      this.rotation,
-      this.position,
-      this.scale);
+    mat4.fromTranslation(this.transformationMatrix, this.position);
+    mat4.fromQuat(this.rotationMatrix, quat.invert(this.inverseRotation, this.rotation));
+    mat4.fromScaling(this.scaleMatrix, this.scale);
+    mat4.mul(this._viewMatrix, this.transformationMatrix, this.scaleMatrix);
+    mat4.mul(this._viewMatrix, this.rotationMatrix, this._viewMatrix);
+    return this._viewMatrix;
   }
 }
 

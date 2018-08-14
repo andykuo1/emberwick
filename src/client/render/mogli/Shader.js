@@ -56,7 +56,8 @@ class ShaderProgram
     this._gl = gl;
   }
 
-  delete() {
+  delete()
+  {
     const gl = this._gl;
     const handle = this._handle;
 

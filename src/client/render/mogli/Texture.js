@@ -42,8 +42,10 @@ class Texture
   bind(textureUnit)
   {
     const gl = this._gl;
+    const handle = this._handle;
     gl.activeTexture(textureUnit);
-    gl.bindTexture(gl.TEXTURE_2D, this._handle);
+    gl.bindTexture(gl.TEXTURE_2D, handle);
+    this._handle = 0;
   }
 }
 

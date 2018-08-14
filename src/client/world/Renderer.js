@@ -4,6 +4,7 @@ import PerspectiveCamera from 'render/mogli/PerspectiveCamera.js';
 import Mesh from 'render/mogli/Mesh.js';
 import { mat4, quat } from 'gl-matrix';
 
+import FreeLookCamera from 'render/FreeLookCamera.js';
 import SceneNode from 'scenegraph/SceneNode.js';
 
 class Renderer
@@ -41,7 +42,7 @@ class Renderer
       null,
       new Uint16Array(cubeIndices));
 
-    this.camera = new PerspectiveCamera(gl);
+    this.camera = new FreeLookCamera(gl);
     this.camera.position[2] = -6;
   }
 
@@ -62,6 +63,10 @@ class Renderer
         this.shader.uniforms.u_projection,
         false,
         projectionMatrix);
+    gl.uniformMatrix4fv(
+        this.shader.uniforms.u_view,
+        false,
+        viewMatrix);
 
     this.mesh.bind(this.shader);
     this.renderScene(gl, this.sceneGraph, viewMatrix);
@@ -82,10 +87,9 @@ class Renderer
       if (node.mesh)
       {
         mat4.scale(modelMatrix, node.worldTransform, node.modelScale);
-        mat4.mul(modelMatrix, viewMatrix, modelMatrix);
 
         gl.uniformMatrix4fv(
-            this.shader.uniforms.u_modelview,
+            this.shader.uniforms.u_model,
             false,
             modelMatrix);
 
@@ -108,13 +112,14 @@ const vsh = `
 attribute vec4 a_position;
 attribute vec2 a_texcoord;
 
-uniform mat4 u_modelview;
+uniform mat4 u_model;
+uniform mat4 u_view;
 uniform mat4 u_projection;
 
 varying highp vec2 v_texcoord;
 
 void main() {
-  gl_Position = u_projection * u_modelview * a_position;
+  gl_Position = u_projection * u_view * u_model * a_position;
   v_texcoord = a_texcoord;
 }
 `;

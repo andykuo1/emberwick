@@ -23,6 +23,11 @@ class Mouse
 
   delete()
   {
+    if (this.hasPointerLock())
+    {
+      document.exitPointerLock();
+    }
+
     this.unregisterEvent("move");
     this.unregisterEvent("down");
     this.unregisterEvent("up");
@@ -41,16 +46,22 @@ class Mouse
 
   onMouseMove(e)
   {
+    if (!this.hasPointerLock()) return;
+
     this.emit("move", e);
   }
 
   onMouseDown(e)
   {
+    if (!this.hasPointerLock()) return;
+
     this.emit("down", e);
   }
 
   onMouseUp(e)
   {
+    if (!this.hasPointerLock()) return;
+
     this.emit("up", e);
   }
 

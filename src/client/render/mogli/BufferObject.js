@@ -15,9 +15,13 @@ class BufferObject
     this.dataType = gl.BYTE;
   }
 
-  delete() {
+  delete()
+  {
+    const gl = this._gl;
+    const handle = this._handle;
+
     //Deleted buffers are automatically unbound
-    gl.deleteBuffer(this._handle);
+    gl.deleteBuffer(handle);
     this._handle = 0;
   }
 
