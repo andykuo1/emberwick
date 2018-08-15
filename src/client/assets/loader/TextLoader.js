@@ -13,4 +13,4 @@ class TextLoader extends AssetLoader
   }
 }
 
-export default AssetLoader;
+export default TextLoader;
