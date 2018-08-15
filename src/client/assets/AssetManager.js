@@ -1,5 +1,8 @@
 import Eventable from 'util/Eventable.js';
-import AssetLoader from './AssetLoader.js';
+
+import AssetLoader from './loader/AssetLoader.js';
+import TextLoader from './loader/TextLoader.js';
+import ImageLoader from './loader/ImageLoader.js';
 
 class AssetManager
 {
@@ -11,6 +14,10 @@ class AssetManager
     this.assetLoaders = new Map();
     this.activeLoaders = [];
     this.cachedAssets = new Map();
+
+    this.registerLoader(".vert", TextLoader);
+    this.registerLoader(".frag", TextLoader);
+    this.registerLoader(".png", ImageLoader);
 
     this.registerEvent("idle");
   }

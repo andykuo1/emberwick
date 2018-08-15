@@ -1,6 +1,6 @@
 class AssetLoader
 {
-  constructor(url, type="text")
+  constructor(url, type="")
   {
     this.response = null;
     this.responseType = type;
@@ -8,7 +8,6 @@ class AssetLoader
 
     this._requestLoad = null;
     this._requestProgress = null;
-    this._requestStart = null;
     this._requestStop = null;
   }
 
@@ -24,23 +23,30 @@ class AssetLoader
           {
             this.processResponse(request.response)
               .then((response) => {
-                if (this._requestLoad)
-                {
-                  this._requestLoad(response);
-                }
+                if (this._requestLoad) this._requestLoad(response);
 
                 this.response = response;
+
+                if (this._requestStop) this._requestStop();
+
                 resolve(response);
               });
           }
           else
           {
+            if (this._requestStop) this._requestStop();
+
             reject(new Error("Failed to load resource from server - " + request.status));
           }
         }
       };
       request.onerror = (e) => {
+        if (this._requestStop) this._requestStop();
+
         reject(new Error("Failed to load resource from server due to network error"));
+      };
+      request.oncancel = (e) => {
+        if (this._requestStop) this._requestStop();
       };
       request.onprogress = (e) => {
         if (e.lengthComputable)
@@ -49,18 +55,6 @@ class AssetLoader
           {
             this._requestProgress.call(null, e.loaded, e.total);
           }
-        }
-      };
-      request.onloadstart = (e) => {
-        if (this._requestStart)
-        {
-          this._requestStart.call(null);
-        }
-      }
-      request.onloadend = (e) => {
-        if (this._requestStop)
-        {
-          this._requestStop.call(null);
         }
       };
       request.open('GET', this.url, true);
@@ -75,9 +69,7 @@ class AssetLoader
 
   processResponse(response)
   {
-    return new Promise((resolve, reject) => {
-      resolve(response);
-    });
+    return Promise.resolve(response);
   }
 
   onLoad(callback)
@@ -89,12 +81,6 @@ class AssetLoader
   onProgress(callback)
   {
     this._requestProgress = callback;
-    return this;
-  }
-
-  onStart(callback)
-  {
-    this._requestStart = callback;
     return this;
   }
 

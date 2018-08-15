@@ -33,26 +33,33 @@ class Texture
     const gl = this._gl;
     const handle = this._handle;
 
-    const level = 0;
-    const internalFormat = gl.RGBA;
-    const width = imageData.width;
-    const height = imageData.height;
-    const border = 0;
-    const srcFormat = gl.RGBA;
-    const srcType = gl.UNSIGNED_BYTE;
-    gl.bindTexture(gl.TEXTURE_2D, handle);
-    gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
-      /*width, height, border,*/ srcFormat, srcType, imageData);
-
-    if (isPowerOf2(width) && isPowerOf2(height))
+    if (imageData instanceof Image)
     {
-      gl.generateMipmap(gl.TEXTURE_2D);
+      const level = 0;
+      const internalFormat = gl.RGBA;
+      const width = imageData.width;
+      const height = imageData.height;
+      const border = 0;
+      const srcFormat = gl.RGBA;
+      const srcType = gl.UNSIGNED_BYTE;
+      gl.bindTexture(gl.TEXTURE_2D, handle);
+      gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
+        /*width, height, border,*/ srcFormat, srcType, imageData);
+
+      if (isPowerOf2(width) && isPowerOf2(height))
+      {
+        gl.generateMipmap(gl.TEXTURE_2D);
+      }
+      else
+      {
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      }
     }
     else
     {
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      throw new Error("Unknown image data type is not supported");
     }
   }
 

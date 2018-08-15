@@ -5,8 +5,6 @@ import Mouse from 'input/Mouse.js';
 import Keyboard from 'input/Keyboard.js';
 import InputManager from 'input/InputManager.js';
 import AssetManager from 'assets/AssetManager.js';
-import AssetLoader from 'assets/AssetLoader.js';
-import ImageLoader from 'assets/ImageLoader.js';
 
 const WEBGL_CONTEXT = "webgl";
 const CANVAS_ID = "glCanvas";
@@ -18,9 +16,6 @@ class App
     this.canvas = null;
     this.gl = null;
     this.assets = new AssetManager(window.location + "dist/res/");
-    this.assets.registerLoader(".frag", AssetLoader);
-    this.assets.registerLoader(".vert", AssetLoader);
-    this.assets.registerLoader(".png", ImageLoader);
     this.renderer = new Renderer(this.assets);
     this.input = new InputManager();
     this.world = new World(this.renderer, this.input, this);
