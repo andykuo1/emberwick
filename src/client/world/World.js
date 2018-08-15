@@ -25,6 +25,8 @@ class World
     this.down = false;
     this.left = false;
     this.right = false;
+    this.forward = false;
+    this.backward = false;
     this.lookX = 0;
     this.lookY = 0;
 
@@ -39,21 +41,29 @@ class World
 
     const context = this.inputContext;
     context.registerState(
-      "key", "down", InputCodes.KEY_W,
-      "key", "up", InputCodes.KEY_W,
+      "key", "down", InputCodes.KEY_SPACE,
+      "key", "up", InputCodes.KEY_SPACE,
       new StateInput("moveUp"));
+    context.registerState(
+      "key", "down", InputCodes.KEY_E,
+      "key", "up", InputCodes.KEY_E,
+      new StateInput("moveDown"));
     context.registerState(
       "key", "down", InputCodes.KEY_A,
       "key", "up", InputCodes.KEY_A,
-      new StateInput("moveLeft"));
-    context.registerState(
-      "key", "down", InputCodes.KEY_S,
-      "key", "up", InputCodes.KEY_S,
-      new StateInput("moveDown"));
+      new StateInput("strafeLeft"));
     context.registerState(
       "key", "down", InputCodes.KEY_D,
       "key", "up", InputCodes.KEY_D,
-      new StateInput("moveRight"));
+      new StateInput("strafeRight"));
+    context.registerState(
+      "key", "down", InputCodes.KEY_W,
+      "key", "up", InputCodes.KEY_W,
+      new StateInput("moveForward"));
+    context.registerState(
+      "key", "down", InputCodes.KEY_S,
+      "key", "up", InputCodes.KEY_S,
+      new StateInput("moveBackward"));
     context.registerRange(
       "mouse", "move", InputCodes.MOUSE_X,
       new RangeInput("lookX", -1, 1));
@@ -76,9 +86,11 @@ class World
   onInputUpdate(input)
   {
     this.up = input.getState("moveUp");
-    this.left = input.getState("moveLeft");
+    this.left = input.getState("strafeLeft");
     this.down = input.getState("moveDown");
-    this.right = input.getState("moveRight");
+    this.right = input.getState("strafeRight");
+    this.forward = input.getState("moveForward");
+    this.backward = input.getState("moveBackward");
 
     if (input.hasRange("lookX"))
     {
@@ -93,9 +105,10 @@ class World
   update(dt)
   {
     const dx = this.left != this.right ? this.left ? 1 : -1 : 0;
-    const dy = this.up != this.down ? this.up ? 1 : -1 : 0;
+    const dy = this.forward != this.backward ? this.forward ? 1 : -1 : 0;
+    const dz = this.up != this.down ? this.up ? -1 : 1 : 0;
 
-    this.renderer.camera.updateMove(dx, dy);
+    this.renderer.camera.updateMove(dx, dy, dz);
     this.renderer.camera.updateLook(this.lookX, this.lookY);
     this.renderer.camera.onUpdate(dt);
 

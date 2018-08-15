@@ -27,8 +27,10 @@ class App
   onLoad(callback)
   {
     this.assets.once("idle", callback);
-    this.assets.loadAsset("shader.frag");
     this.assets.loadAsset("shader.vert");
+    this.assets.loadAsset("shader.frag");
+    this.assets.loadAsset("phong.vert");
+    this.assets.loadAsset("phong.frag");
     this.assets.loadAsset("color.png");
     this.assets.loadAsset("cube.obj");
   }

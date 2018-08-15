@@ -34,8 +34,8 @@ class Renderer
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.enable(gl.DEPTH_TEST);
 
-    const vsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("shader.vert"));
-    const fsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("shader.frag"));
+    const vsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("phong.vert"));
+    const fsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("phong.frag"));
     const imageData = this.assets.getAsset(this.assets.getAssetLocationByUrl("color.png"));
     const meshData = this.assets.getAsset(this.assets.getAssetLocationByUrl("cube.obj"));
 
@@ -45,18 +45,18 @@ class Renderer
     shader.setLayout("a_normal", 3, gl.FLOAT, false);
     this.shader = shader;
 
+    /*
     this.mesh = new Mesh(gl, gl.TRIANGLES,
       meshData.positions,
       meshData.texcoords,
       meshData.normals,
       meshData.indices);
-      /*
-    this.mesh = new Mesh(gl, gl.TRIANGLES,
-      new Float32Array(cubePositions),
-      new Float32Array(cubeTexcoords),
-      new Float32Array(cubePositions),
-      new Uint16Array(cubeIndices));
     */
+    this.mesh = new Mesh(gl, gl.TRIANGLES,
+      new Float32Array(defaultPositions),
+      new Float32Array(defaultTexcoords),
+      new Float32Array(defaultNormals),
+      new Uint16Array(defaultIndices));
     this.texture = new Texture(gl);
     this.texture.bindData(imageData);
 
@@ -96,6 +96,7 @@ class Renderer
   renderScene(gl, root, viewMatrix)
   {
     let modelMatrix = mat4.create();
+    let normalMatrix = mat4.create();
     let nextNodes = [];
     if (root)
     {
@@ -110,9 +111,19 @@ class Renderer
         mat4.scale(modelMatrix, node.worldTransform, node.modelScale);
 
         gl.uniformMatrix4fv(
-            this.shader.uniforms.u_model,
-            false,
-            modelMatrix);
+          this.shader.uniforms.u_model,
+          false,
+          modelMatrix);
+
+        mat4.mul(normalMatrix, viewMatrix, modelMatrix);
+        mat4.invert(normalMatrix, normalMatrix);
+        mat4.transpose(normalMatrix, normalMatrix);
+
+        gl.uniformMatrix4fv(
+          this.shader.uniforms.u_normal,
+          false,
+          normalMatrix
+        );
 
         this.mesh.draw(gl);
       }
@@ -135,7 +146,8 @@ const square = [
   -1, -1,
    1, -1
 ];
-const cubePositions = [
+
+const defaultPositions = [
   // Front face
   -1.0, -1.0,  1.0,
    1.0, -1.0,  1.0,
@@ -172,8 +184,7 @@ const cubePositions = [
   -1.0,  1.0,  1.0,
   -1.0,  1.0, -1.0,
 ];
-
-const cubeTexcoords = [
+const defaultTexcoords = [
   // Front
   0.0,  0.0,
   1.0,  0.0,
@@ -205,7 +216,44 @@ const cubeTexcoords = [
   1.0,  1.0,
   0.0,  1.0,
 ];
-const cubeIndices = [
+const defaultNormals = [
+  // Front
+   0.0,  0.0,  1.0,
+   0.0,  0.0,  1.0,
+   0.0,  0.0,  1.0,
+   0.0,  0.0,  1.0,
+
+  // Back
+   0.0,  0.0, -1.0,
+   0.0,  0.0, -1.0,
+   0.0,  0.0, -1.0,
+   0.0,  0.0, -1.0,
+
+  // Top
+   0.0,  1.0,  0.0,
+   0.0,  1.0,  0.0,
+   0.0,  1.0,  0.0,
+   0.0,  1.0,  0.0,
+
+  // Bottom
+   0.0, -1.0,  0.0,
+   0.0, -1.0,  0.0,
+   0.0, -1.0,  0.0,
+   0.0, -1.0,  0.0,
+
+  // Right
+   1.0,  0.0,  0.0,
+   1.0,  0.0,  0.0,
+   1.0,  0.0,  0.0,
+   1.0,  0.0,  0.0,
+
+  // Left
+  -1.0,  0.0,  0.0,
+  -1.0,  0.0,  0.0,
+  -1.0,  0.0,  0.0,
+  -1.0,  0.0,  0.0
+];
+const defaultIndices = [
   0,  1,  2,      0,  2,  3,    // front
   4,  5,  6,      4,  6,  7,    // back
   8,  9,  10,     8,  10, 11,   // top

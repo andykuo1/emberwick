@@ -35,11 +35,13 @@ class FreeLookCamera extends PerspectiveCamera
     this.strafeVector[2] = this._viewMatrix[8/*m20*/];
   }
 
-  updateMove(dx, dy)
+  updateMove(dx, dy, dz)
   {
     this.position[0] += (this.forwardVector[0] * dy + this.strafeVector[0] * dx) * this.moveSpeed;
     this.position[1] += (this.forwardVector[1] * dy + this.strafeVector[1] * dx) * this.moveSpeed;
     this.position[2] += (this.forwardVector[2] * dy + this.strafeVector[2] * dx) * this.moveSpeed;
+
+    this.position[1] += dz * this.moveSpeed;
   }
 
   updateLook(dx, dy)
