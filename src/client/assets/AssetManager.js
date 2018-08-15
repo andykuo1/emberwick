@@ -3,6 +3,7 @@ import Eventable from 'util/Eventable.js';
 import AssetLoader from './loader/AssetLoader.js';
 import TextLoader from './loader/TextLoader.js';
 import ImageLoader from './loader/ImageLoader.js';
+import OBJLoader from './loader/OBJLoader.js';
 
 class AssetManager
 {
@@ -18,6 +19,7 @@ class AssetManager
     this.registerLoader(".vert", TextLoader);
     this.registerLoader(".frag", TextLoader);
     this.registerLoader(".png", ImageLoader);
+    this.registerLoader(".obj", OBJLoader);
 
     this.registerEvent("idle");
   }

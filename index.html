@@ -11,11 +11,32 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        position: relative;
 
         background: black;
       }
       #glCanvas {
-        outline: 2px solid white;
+        outline: 2px dashed rgba(255, 255, 255, 0.3);
+      }
+      #logger {
+        font-family: monospace;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 1000;
+        height: 100%;
+        max-width: 50%;
+
+        overflow-wrap: break-word;
+        overflow-y: auto;
+      }
+      #logger div {
+        color: rgba(255, 255, 255, 0.3);
+        transition: color 30s ease;
+      }
+      #logger div:hover {
+        color: rgba(255, 255, 255, 0.7);
+        transition: color 0.1s ease;
       }
     </style>
   </head>
@@ -23,11 +44,45 @@
     <canvas id="glCanvas" width="640" height="480">
       Your browser does not support canvas.
     </canvas>
+    <div id="logger">
+    </div>
 
     <noscript>
       You need to enable Javascript to run this app.
     </noscript>
-    
+
+    <script>
+    (function() {
+      const oldConsoleLog = console.log;
+      const logger = document.getElementById('logger');
+      console.log = function(message) {
+        if (typeof message == 'object' && JSON && JSON.stringify)
+        {
+          const div = document.createElement('div');
+          div.innerHTML = JSON.stringify(message);
+          logger.appendChild(div);
+          if (logger.childNodes.length > 100)
+          {
+            logger.removeChild(logger.childNodes[0]);
+          }
+        }
+        else
+        {
+          const div = document.createElement('div');
+          div.innerHTML = message;
+          logger.appendChild(div);
+          if (logger.childNodes.length > 100)
+          {
+            logger.removeChild(logger.childNodes[0]);
+          }
+        }
+
+        //Redirect back to system console
+        oldConsoleLog(message);
+      };
+    })();
+    </script>
+
     <script src="./dist/bundle.js"></script>
   </body>
 </html>

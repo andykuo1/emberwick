@@ -37,6 +37,7 @@ class Renderer
     const vsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("shader.vert"));
     const fsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("shader.frag"));
     const imageData = this.assets.getAsset(this.assets.getAssetLocationByUrl("color.png"));
+    const meshData = this.assets.getAsset(this.assets.getAssetLocationByUrl("cube.obj"));
 
     const shader = new Shader(gl, vsh, fsh);
     shader.setLayout("a_position", 3, gl.FLOAT, false);
@@ -45,10 +46,17 @@ class Renderer
     this.shader = shader;
 
     this.mesh = new Mesh(gl, gl.TRIANGLES,
+      meshData.positions,
+      meshData.texcoords,
+      meshData.positions,
+      meshData.indices);
+      /*
+    this.mesh = new Mesh(gl, gl.TRIANGLES,
       new Float32Array(cubePositions),
       new Float32Array(cubeTexcoords),
       new Float32Array(cubePositions),
       new Uint16Array(cubeIndices));
+    */
     this.texture = new Texture(gl);
     this.texture.bindData(imageData);
 

@@ -30,6 +30,7 @@ class App
     this.assets.loadAsset("shader.frag");
     this.assets.loadAsset("shader.vert");
     this.assets.loadAsset("color.png");
+    this.assets.loadAsset("cube.obj");
   }
 
   onUnload()

@@ -4,6 +4,11 @@ window.addEventListener('load', (event) => {
 });
 //If stopping application...
 window.addEventListener('beforeunload', (event) => {
+  if (running)
+  {
+    stopApplication();
+  }
+
   unloadApplication();
 });
 
@@ -19,6 +24,8 @@ let running = false;
 //Loading application...
 function loadApplication()
 {
+  console.log("Loading application...");
+
   //When loading complete, call start...
   app.onLoad(startApplication);
 }
@@ -26,6 +33,7 @@ function loadApplication()
 //Starting application...
 function startApplication()
 {
+  console.log("Starting application...");
   running = true;
   app.onStart();
 
@@ -47,11 +55,17 @@ function updateApplication(time)
   }
 }
 
+//Stopping application...
+function stopApplication()
+{
+  console.log("Stopping application...");
+  app.onStop();
+  running = false;
+}
+
 //Unloading application...
 function unloadApplication()
 {
-  app.onStop();
-  running = false;
-  
+  console.log("Unloading application...");
   app.onUnload();
 }
