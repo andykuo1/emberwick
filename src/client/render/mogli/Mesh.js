@@ -31,8 +31,8 @@ class Mesh
   bind(shader)
   {
     shader.attachVertexBuffer(shader.attributes.a_position, this.positionBuffer, 0, 0, true);
-    //shader.attachVertexBuffer(shader.attributes.a_texcoord, this.texcoordBuffer, 0, 0, true);
-    //shader.attachVertexBuffer(shader.attributes.a_normal, this.normalBuffer, 0, 0, true);
+    shader.attachVertexBuffer(shader.attributes.a_texcoord, this.texcoordBuffer, 0, 0, true);
+    shader.attachVertexBuffer(shader.attributes.a_normal, this.normalBuffer, 0, 0, true);
     this.indexBuffer.bind();
   }
 

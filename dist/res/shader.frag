@@ -1,7 +1,9 @@
+varying highp vec3 v_normal;
 varying highp vec2 v_texcoord;
 
 uniform sampler2D u_sampler;
 
-void main() {
-  gl_FragColor = vec4(1.0,1.0,1.0,1.0);
+void main()
+{
+  gl_FragColor = texture2D(u_sampler, v_texcoord);
 }

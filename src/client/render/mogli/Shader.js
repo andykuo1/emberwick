@@ -31,6 +31,8 @@ class ShaderProgram
 
     if (!gl.getProgramParameter(handle, gl.LINK_STATUS))
     {
+      const infoLog = gl.getProgramInfoLog(handle);
+
       //Cleanup
       gl.detachShader(handle, vertexShader);
       gl.detachShader(handle, fragmentShader);
@@ -38,7 +40,7 @@ class ShaderProgram
       gl.deleteShader(vertexShader);
       gl.deleteShader(fragmentShader);
 
-      throw new Error("Unable to initailize shader program: " + gl.getProgramInfoLog(handle));
+      throw new Error("Unable to initailize shader program: " + infoLog);
     }
 
     this.attributes = getEnumeratedAttributes(gl, handle);
@@ -129,9 +131,11 @@ class ShaderProgram
 
   attachVertexBuffer(attribute, bufferObject, stride=0, offset=0, enable=true)
   {
+    if (typeof attribute != "number") throw new Error("Missing or unused attribute in shader");
+
     const name = this._names[attribute];
     const layout = this._layouts[name];
-    if (!layout) throw new Error("Unable to find layout for attribute \'" + attributeName + "\'");
+    if (!layout) throw new Error("Unable to find layout for attribute \'" + name + "\'");
     if (layout.dataType !== bufferObject.dataType) throw new Error("Mismatched data type for attribute \'" + name + "\'");
 
     const gl = this._gl;
@@ -158,10 +162,9 @@ function createShader(gl, type, source)
 
   if (!gl.getShaderParameter(handle, gl.COMPILE_STATUS))
   {
+    const infoLog = gl.getShaderInfoLog(handle);
     gl.deleteShader(handle);
-
-    throw new Error('An error occured compiling shader: ' +
-      gl.getShaderInfoLog(handle));
+    throw new Error('An error occured compiling shader: ' + infoLog);
   }
 
   return handle;

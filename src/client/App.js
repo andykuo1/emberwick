@@ -16,6 +16,10 @@ class App
     this.canvas = null;
     this.gl = null;
     this.assets = new AssetManager(window.location + "dist/res/");
+    this.assets.registerFileType(".frag", "text");
+    this.assets.registerFileType(".vert", "text");
+    this.assets.registerFileType(".png", "arraybuffer");
+    this.assets.registerFileType(".jpg", "arraybuffer");
     this.renderer = new Renderer(this.assets);
     this.input = new InputManager();
     this.world = new World(this.renderer, this.input, this);
@@ -29,6 +33,7 @@ class App
     this.assets.once("idle", callback);
     this.assets.loadAsset("shader.frag");
     this.assets.loadAsset("shader.vert");
+    this.assets.loadAsset("300.jpg");
   }
 
   onUnload()

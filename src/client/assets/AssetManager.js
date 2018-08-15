@@ -11,7 +11,14 @@ class AssetManager
     this.activeLoaders = [];
     this.cachedAssets = new Map();
 
+    this.fileTypes = new Map();
+
     this.registerEvent("idle");
+  }
+
+  registerFileType(extension, type)
+  {
+    this.fileTypes.set(extension, type);
   }
 
   clear()
@@ -32,7 +39,10 @@ class AssetManager
     const cacheData = {url: url, data:""};
     this.cachedAssets.set(handle, cacheData);
 
-    const loader = new AssetLoader(this.baseUrl + url, "text")
+    const extension = url.substring(url.lastIndexOf('.'));
+    const fileType = this.fileTypes.get(extension) || "text";
+
+    const loader = new AssetLoader(this.baseUrl + url, fileType)
       .onStop(() => {
         this.activeLoaders.splice(this.activeLoaders.indexOf(loader), 1)
         if (this.activeLoaders.length <= 0)
@@ -45,7 +55,7 @@ class AssetManager
     loader.fetch().then(
       response => {
         cacheData.data = response;
-        console.log("Asset loaded: " + url);
+        console.log("Asset \'" + url + "\' loaded as " + fileType + ".");
 
         if (callback)
         {

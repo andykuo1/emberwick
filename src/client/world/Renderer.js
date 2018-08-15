@@ -2,6 +2,7 @@ import Shader from 'render/mogli/Shader.js';
 import BufferObject from 'render/mogli/BufferObject.js';
 import PerspectiveCamera from 'render/mogli/PerspectiveCamera.js';
 import Mesh from 'render/mogli/Mesh.js';
+import Texture from 'render/mogli/Texture.js';
 import { mat4, quat } from 'gl-matrix';
 
 import FreeLookCamera from 'render/FreeLookCamera.js';
@@ -34,18 +35,20 @@ class Renderer
 
     const vsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("shader.vert"));
     const fsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("shader.frag"));
+    const imageData = this.assets.getAsset(this.assets.getAssetLocationByUrl("300.jpg"));
 
     const shader = new Shader(gl, vsh, fsh);
     shader.setLayout("a_position", 3, gl.FLOAT, false);
-    shader.setLayout("a_normal", 3, gl.FLOAT, false);
     shader.setLayout("a_texcoord", 2, gl.FLOAT, false);
+    shader.setLayout("a_normal", 3, gl.FLOAT, false);
     this.shader = shader;
 
     this.mesh = new Mesh(gl, gl.TRIANGLES,
       new Float32Array(cubePositions),
-      null,//new Float32Array(cubeTexcoords),
-      null,
+      new Float32Array(cubeTexcoords),
+      new Float32Array(cubePositions),
       new Uint16Array(cubeIndices));
+    this.texture = new Texture(gl);
 
     this.camera = new FreeLookCamera(gl);
     this.camera.position[2] = -6;
@@ -53,8 +56,9 @@ class Renderer
 
   terminate(gl)
   {
-    this.shader.delete();
+    this.texture.delete();
     this.mesh.delete();
+    this.shader.delete();
   }
 
   render(gl)
@@ -72,8 +76,10 @@ class Renderer
         this.shader.uniforms.u_view,
         false,
         viewMatrix);
-
+    gl.uniform1i(this.shader.uniforms.u_sampler, 0);
+    
     this.mesh.bind(this.shader);
+    this.texture.bind(gl.TEXTURE0);
     this.renderScene(gl, this.sceneGraph, viewMatrix);
   }
 
