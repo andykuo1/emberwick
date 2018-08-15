@@ -6,15 +6,13 @@ uniform mat4 u_model;
 uniform mat4 u_view;
 uniform mat4 u_projection;
 
-varying vec2 v_texcoord;
+varying highp vec2 v_texcoord;
 
 void main()
 {
   gl_Position = u_projection * u_view * u_model * vec4(a_position, 1.0);
   v_texcoord = a_texcoord;
 
-  if (a_normal.x > 0.0)
-  {
-    return;
-  }
+  //Just so the compiler does not remove a_normal...
+  if (a_normal.x > 0.0) return;
 }

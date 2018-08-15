@@ -7,8 +7,8 @@ uniform mat4 u_view;
 uniform mat4 u_projection;
 uniform mat4 u_normal;
 
-varying vec2 v_texcoord;
-varying vec3 v_light;
+varying highp vec2 v_texcoord;
+varying highp vec3 v_light;
 
 void main()
 {
@@ -21,6 +21,6 @@ void main()
   vec3 directionVector = normalize(vec3(0.85, 0.8, 0.75));
 
   vec4 transformedNormal = u_normal * vec4(a_normal, 1.0);
-  float dir = max(dot(transformedNormal.xyz, directionVector), 0.0);
-  v_light = ambientLight + (directionLight * dir);
+  float directionFactor = max(dot(transformedNormal.xyz, directionVector), 0.0);
+  v_light = ambientLight + (directionLight * directionFactor);
 }
