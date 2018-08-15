@@ -19,6 +19,7 @@ class AssetManager
     this.registerLoader(".vert", TextLoader);
     this.registerLoader(".frag", TextLoader);
     this.registerLoader(".png", ImageLoader);
+    this.registerLoader(".jpg", ImageLoader);
     this.registerLoader(".obj", OBJLoader);
 
     this.registerEvent("idle");
@@ -77,6 +78,9 @@ class AssetManager
 
   getAsset(handle)
   {
+    if (handle < 0)
+      throw new Error("Cannot find asset with id \'" + handle + "\'");
+
     if (this.cachedAssets.has(handle))
     {
       return this.cachedAssets.get(handle).data;

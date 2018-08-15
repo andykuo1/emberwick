@@ -38,14 +38,23 @@
         color: rgba(255, 255, 255, 0.7);
         transition: color 0.1s ease;
       }
+      #fps {
+        font-family: monospace;
+        position: absolute;
+        right: 0;
+        top: 0;
+        z-index: 1000;
+
+        color: white;
+      }
     </style>
   </head>
   <body>
     <canvas id="glCanvas" width="640" height="480">
       Your browser does not support canvas.
     </canvas>
-    <div id="logger">
-    </div>
+    <div id="logger"></div>
+    <div id="fps">FPS: 0/0</div>
 
     <noscript>
       You need to enable Javascript to run this app.

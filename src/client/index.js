@@ -46,9 +46,11 @@ function updateApplication(time)
 {
   if (running)
   {
-    const dt = (time - prevtime) / FRAMES_PER_SECOND;
+    const dt = time - prevtime;
 
-    app.onUpdate(dt);
+    app.onUpdate(dt / FRAMES_PER_SECOND);
+
+    fpsCounter(dt);
 
     prevtime = time;
     window.requestAnimationFrame(updateApplication);
@@ -68,4 +70,28 @@ function unloadApplication()
 {
   console.log("Unloading application...");
   app.onUnload();
+}
+
+//FPS counter
+let elapsed = 0;
+let frames = 0;
+function fpsCounter(dt)
+{
+  ++frames;
+  if ((elapsed += dt) >= 1000)
+  {
+    const label = "FPS: " + frames + "/" + FRAMES_PER_SECOND;
+    let element = document.getElementById("fps");
+    if (element)
+    {
+      element.innerHTML = label;
+    }
+    else
+    {
+      console.log(label);
+    }
+    
+    frames = 0;
+    elapsed -= 1000;
+  }
 }

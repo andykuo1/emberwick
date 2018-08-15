@@ -54,6 +54,8 @@ function parse(string)
   const texcoordPattern = /vt( +[\d|\.|\+|\-|e]+)( [\d|\.|\+|\-|e]+)/g;
   //f vertex/uv/normal vertex/uv/normal vertex/uv/normal ...
   const facePattern = /f( +([\d]+)\/([\d]+)\/([\d]+))( ([\d]+)\/([\d]+)\/([\d]+))( ([\d]+)\/([\d]+)\/([\d]+))( ([\d]+)\/([\d]+)\/([\d]+))?/g;
+  //f float float float
+  const faceVertexPattern = /f( +[\d|\.|\+|\-|e]+)( [\d|\.|\+|\-|e]+)( [\d|\.|\+|\-|e]+)/g;
 
   let result = null;
   let x, y, z, w;
@@ -92,67 +94,82 @@ function parse(string)
     texcoordList.push(y);
   }
 
+  //["f 1/1/1 2/2/2 3/3/3", "1/1/1", "1", "1", "1", "2/2/2", "2", "2", "2", "3/3/3", "3", "3", "3", "4/4/4", "4", "4", "4"]
   while((result = facePattern.exec(string)) != null)
   {
-    //["f 1/1/1 2/2/2 3/3/3", "1/1/1", "1", "1", "1", "2/2/2", "2", "2", "2", "3/3/3", "3", "3", "3", undefined, undefined, undefined, undefined]
-    if (result[13] === undefined)
+    //Vertex indices
+    x = parseInt(result[2]);
+    y = parseInt(result[6]);
+    z = parseInt(result[10]);
+    vertexIndices.push(x);
+    vertexIndices.push(y);
+    vertexIndices.push(z);
+
+    //UV indices
+    x = parseInt(result[3]);
+    y = parseInt(result[7]);
+    z = parseInt(result[11]);
+    texcoordIndices.push(x);
+    texcoordIndices.push(y);
+    texcoordIndices.push(z);
+
+    //Normal indices
+    x = parseInt(result[4]);
+    y = parseInt(result[8]);
+    z = parseInt(result[12]);
+    normalIndices.push(x);
+    normalIndices.push(y);
+    normalIndices.push(z);
+
+    //Quad face
+    if (typeof result[13] !== 'undefined')
     {
       //Vertex indices
-      x = parseInt(result[2]);
-      y = parseInt(result[6]);
-      z = parseInt(result[10]);
-      vertexIndices.push(x);
-      vertexIndices.push(y);
-      vertexIndices.push(z);
-
-      //UV indices
-      x = parseInt(result[3]);
-      y = parseInt(result[7]);
-      z = parseInt(result[11]);
-      texcoordIndices.push(x);
-      texcoordIndices.push(y);
-      texcoordIndices.push(z);
-
-      //Normal indices
-      x = parseInt(result[4]);
-      y = parseInt(result[8]);
-      z = parseInt(result[12]);
-      normalIndices.push(x);
-      normalIndices.push(y);
-      normalIndices.push(z);
-    }
-    //["f 1/1/1 2/2/2 3/3/3", "1/1/1", "1", "1", "1", "2/2/2", "2", "2", "2", "3/3/3", "3", "3", "3", "4/4/4", "4", "4", "4"]
-    else
-    {
-      //Vertex indices
-      x = parseInt(result[2]);
-      y = parseInt(result[6]);
-      z = parseInt(result[10]);
       w = parseInt(result[14]);
-      vertexIndices.push(x);
-      vertexIndices.push(y);
-      vertexIndices.push(z);
       vertexIndices.push(w);
 
       //UV indices
-      x = parseInt(result[3]);
-      y = parseInt(result[7]);
-      z = parseInt(result[11]);
       w = parseInt(result[15]);
-      texcoordIndices.push(x);
-      texcoordIndices.push(y);
-      texcoordIndices.push(z);
       texcoordIndices.push(w);
 
       //Normal indices
-      x = parseInt(result[4]);
-      y = parseInt(result[8]);
-      z = parseInt(result[12]);
       w = parseInt(result[16]);
-      normalIndices.push(x);
-      normalIndices.push(y);
-      normalIndices.push(z);
       normalIndices.push(w);
+    }
+  }
+
+  //["f 1 2 3 4", "1", "2", "3", "4"]
+  while((result = faceVertexPattern.exec(string)) != null)
+  {
+    //Vertex indices
+    x = parseInt(result[2]);
+    y = parseInt(result[6]);
+    z = parseInt(result[10]);
+    vertexIndices.push(x);
+    vertexIndices.push(y);
+    vertexIndices.push(z);
+
+    //UV indices
+    texcoordIndices.push(0);
+    texcoordIndices.push(0);
+    texcoordIndices.push(0);
+
+    //Normal indices
+    normalIndices.push(0);
+    normalIndices.push(0);
+    normalIndices.push(0);
+
+    //Quad face
+    if (typeof result[13] !== 'undefined')
+    {
+      //Vertex indices
+      w = parseInt(result[14]);
+      vertexIndices.push(w);
+
+      //UV indices
+      texcoordIndices.push(0);
+      //Normal indices
+      normalIndices.push(0);
     }
   }
 
@@ -182,9 +199,9 @@ function parse(string)
   for(let i = 0; i < size; ++i)
   {
     index = normalIndices[i] - 1;
-    normals[i * 3 + 0] = 0;//normalList[index * 3 + 0];
-    normals[i * 3 + 1] = 0;//normalList[index * 3 + 1];
-    normals[i * 3 + 2] = 0;//normalList[index * 3 + 2];
+    normals[i * 3 + 0] = normalList[index * 3 + 0];
+    normals[i * 3 + 1] = normalList[index * 3 + 1];
+    normals[i * 3 + 2] = normalList[index * 3 + 2];
   }
 
   size = vertexIndices.length;

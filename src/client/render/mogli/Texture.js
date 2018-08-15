@@ -32,7 +32,7 @@ class Texture
   {
     const gl = this._gl;
     const handle = this._handle;
-
+    
     if (imageData instanceof Image)
     {
       const level = 0;

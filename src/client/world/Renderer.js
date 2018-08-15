@@ -16,6 +16,7 @@ class Renderer
 
     this.shader = null;
     this.mesh = null;
+    this.cube = null;
 
     this.camera = null;
 
@@ -37,7 +38,7 @@ class Renderer
     const vsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("phong.vert"));
     const fsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("phong.frag"));
     const imageData = this.assets.getAsset(this.assets.getAssetLocationByUrl("color.png"));
-    const meshData = this.assets.getAsset(this.assets.getAssetLocationByUrl("cube.obj"));
+    const meshData = this.assets.getAsset(this.assets.getAssetLocationByUrl("capsule.obj"));
 
     const shader = new Shader(gl, vsh, fsh);
     shader.setLayout("a_position", 3, gl.FLOAT, false);
@@ -45,18 +46,18 @@ class Renderer
     shader.setLayout("a_normal", 3, gl.FLOAT, false);
     this.shader = shader;
 
-    /*
     this.mesh = new Mesh(gl, gl.TRIANGLES,
       meshData.positions,
       meshData.texcoords,
       meshData.normals,
       meshData.indices);
-    */
-    this.mesh = new Mesh(gl, gl.TRIANGLES,
+
+    this.cube = new Mesh(gl, gl.TRIANGLES,
       new Float32Array(defaultPositions),
       new Float32Array(defaultTexcoords),
       new Float32Array(defaultNormals),
       new Uint16Array(defaultIndices));
+
     this.texture = new Texture(gl);
     this.texture.bindData(imageData);
 
@@ -68,6 +69,7 @@ class Renderer
   {
     this.texture.delete();
     this.mesh.delete();
+    this.cube.delete();
     this.shader.delete();
   }
 

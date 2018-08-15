@@ -32,7 +32,9 @@ class App
     this.assets.loadAsset("phong.vert");
     this.assets.loadAsset("phong.frag");
     this.assets.loadAsset("color.png");
+    this.assets.loadAsset("capsule.jpg");
     this.assets.loadAsset("cube.obj");
+    this.assets.loadAsset("capsule.obj");
   }
 
   onUnload()
