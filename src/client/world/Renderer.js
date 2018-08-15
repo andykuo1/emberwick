@@ -48,7 +48,7 @@ class Renderer
     this.mesh = new Mesh(gl, gl.TRIANGLES,
       meshData.positions,
       meshData.texcoords,
-      meshData.positions,
+      meshData.normals,
       meshData.indices);
       /*
     this.mesh = new Mesh(gl, gl.TRIANGLES,

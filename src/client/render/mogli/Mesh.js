@@ -4,36 +4,39 @@ class Mesh
 {
   constructor(gl, elementType, positions, texcoords, normals, indices)
   {
-    this.positionBuffer = new BufferObject(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW);
-    if (positions) this.positionBuffer.bindData(positions);
+    this.positions = new BufferObject(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW);
+    this.positions.bindData(positions);
 
-    this.texcoordBuffer = new BufferObject(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW);
-    if (texcoords) this.texcoordBuffer.bindData(texcoords);
+    this.texcoords = new BufferObject(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW);
+    this.texcoords.bindData(texcoords);
 
-    this.normalBuffer = new BufferObject(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW);
-    if (normals) this.normalBuffer.bindData(normals);
+    this.normals = new BufferObject(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW);
+    this.normals.bindData(normals);
 
-    this.indexBuffer = new BufferObject(gl, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW);
-    if (indices) this.indexBuffer.bindData(indices);
+    this.indices = new BufferObject(gl, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW);
+    this.indices.bindData(indices);
 
     this.elementType = elementType;
     this.vertexCount = indices.length;
+    this._gl = gl;
   }
 
   delete()
   {
-    this.positionBuffer.delete();
-    this.texcoordBuffer.delete();
-    this.normalBuffer.delete();
-    this.indexBuffer.delete();
+    this.positions.delete();
+    this.texcoords.delete();
+    this.normals.delete();
+    this.indices.delete();
   }
 
   bind(shader)
   {
-    shader.attachVertexBuffer(shader.attributes.a_position, this.positionBuffer, 0, 0, true);
-    shader.attachVertexBuffer(shader.attributes.a_texcoord, this.texcoordBuffer, 0, 0, true);
-    //shader.attachVertexBuffer(shader.attributes.a_normal, this.normalBuffer, 0, 0, true);
-    this.indexBuffer.bind();
+    const gl = this._gl;
+    shader.attachVertexBuffer(shader.attributes.a_position, this.positions);
+    shader.attachVertexBuffer(shader.attributes.a_texcoord, this.texcoords);
+    shader.attachVertexBuffer(shader.attributes.a_normal, this.normals);
+
+    this.indices.bind();
   }
 
   draw(gl, offset=0)

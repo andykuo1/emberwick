@@ -139,6 +139,8 @@ class ShaderProgram
     if (layout.dataType !== bufferObject.dataType) throw new Error("Mismatched data type for attribute \'" + name + "\'");
 
     const gl = this._gl;
+
+    gl.bindBuffer(bufferObject.type, bufferObject.handle);
     gl.vertexAttribPointer(attribute,
       layout.vecSize, layout.dataType, layout.normalized,
       stride, offset);
@@ -180,6 +182,8 @@ function getEnumeratedAttributes(gl, program)
     const infoName = info.name;
     const location = gl.getAttribLocation(program, infoName);
     result[infoName] = location;
+
+    console.log("...found attribute \'" + infoName + "\'...");
   }
   return result;
 }
@@ -194,6 +198,8 @@ function getEnumeratedUniforms(gl, program)
     const infoName = info.name;
     const location = gl.getUniformLocation(program, infoName);
     result[infoName] = location;
+
+    console.log("...found unifrom \'" + infoName + "\'...");
   }
   return result;
 }
