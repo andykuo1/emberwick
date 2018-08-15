@@ -117,7 +117,7 @@ const Eventable = {
   {
     const f = (...args) => {
       listener.apply(null, args);
-      this.removeEventListener(f);
+      this.removeEventListener(eventName, f);
     };
     this.addEventListener(eventName, f);
   },

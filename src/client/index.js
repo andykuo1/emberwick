@@ -1,9 +1,6 @@
 //If starting application...
 window.addEventListener('load', (event) => {
   loadApplication();
-
-  //Start updating application
-  window.requestAnimationFrame(updateApplication);
 });
 //If stopping application...
 window.addEventListener('beforeunload', (event) => {
@@ -22,8 +19,18 @@ let running = false;
 //Loading application...
 function loadApplication()
 {
-  app.onLoad();
+  //When loading complete, call start...
+  app.onLoad(startApplication);
+}
+
+//Starting application...
+function startApplication()
+{
   running = true;
+  app.onStart();
+
+  //Start updating application
+  window.requestAnimationFrame(updateApplication);
 }
 
 //Updating application...
@@ -43,6 +50,8 @@ function updateApplication(time)
 //Unloading application...
 function unloadApplication()
 {
+  app.onStop();
   running = false;
+  
   app.onUnload();
 }

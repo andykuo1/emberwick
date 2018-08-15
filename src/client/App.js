@@ -4,6 +4,7 @@ import Renderer from 'world/Renderer.js';
 import Mouse from 'input/Mouse.js';
 import Keyboard from 'input/Keyboard.js';
 import InputManager from 'input/InputManager.js';
+import AssetManager from 'assets/AssetManager.js';
 
 const WEBGL_CONTEXT = "webgl";
 const CANVAS_ID = "glCanvas";
@@ -14,7 +15,8 @@ class App
   {
     this.canvas = null;
     this.gl = null;
-    this.renderer = new Renderer();
+    this.assets = new AssetManager(window.location + "dist/res/");
+    this.renderer = new Renderer(this.assets);
     this.input = new InputManager();
     this.world = new World(this.renderer, this.input, this);
 
@@ -22,7 +24,19 @@ class App
     this.keyboard = null;
   }
 
-  onLoad()
+  onLoad(callback)
+  {
+    this.assets.once("idle", callback);
+    this.assets.loadAsset("shader.frag");
+    this.assets.loadAsset("shader.vert");
+  }
+
+  onUnload()
+  {
+    this.assets.clear();
+  }
+
+  onStart()
   {
     this.canvas = document.getElementById(CANVAS_ID);
     this.gl = this.canvas.getContext(WEBGL_CONTEXT);
@@ -36,7 +50,7 @@ class App
     this.world.create();
   }
 
-  onUnload()
+  onStop()
   {
     this.world.destroy();
     this.keyboard.delete();

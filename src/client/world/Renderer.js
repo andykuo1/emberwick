@@ -9,8 +9,10 @@ import SceneNode from 'scenegraph/SceneNode.js';
 
 class Renderer
 {
-  constructor()
+  constructor(assets)
   {
+    this.assets = assets;
+
     this.shader = null;
     this.mesh = null;
 
@@ -29,6 +31,9 @@ class Renderer
 
     gl.clearColor(0,0,0,1);
     gl.clear(gl.COLOR_BUFFER_BIT);
+
+    const vsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("shader.vert"));
+    const fsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("shader.frag"));
 
     const shader = new Shader(gl, vsh, fsh);
     shader.setLayout("a_position", 3, gl.FLOAT, false);
@@ -108,30 +113,6 @@ class Renderer
   }
 }
 
-const vsh = `
-attribute vec4 a_position;
-attribute vec2 a_texcoord;
-
-uniform mat4 u_model;
-uniform mat4 u_view;
-uniform mat4 u_projection;
-
-varying highp vec2 v_texcoord;
-
-void main() {
-  gl_Position = u_projection * u_view * u_model * a_position;
-  v_texcoord = a_texcoord;
-}
-`;
-const fsh = `
-varying highp vec2 v_texcoord;
-
-uniform sampler2D u_sampler;
-
-void main() {
-  gl_FragColor = vec4(1.0,1.0,1.0,1.0);
-}
-`;
 const square = [
   -1,  1,
    1,  1,
