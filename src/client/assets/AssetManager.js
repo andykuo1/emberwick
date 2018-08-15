@@ -8,17 +8,16 @@ class AssetManager
     this.nextAssetID = 1;
     this.baseUrl = url;
 
+    this.assetLoaders = new Map();
     this.activeLoaders = [];
     this.cachedAssets = new Map();
-
-    this.fileTypes = new Map();
 
     this.registerEvent("idle");
   }
 
-  registerFileType(extension, type)
+  registerLoader(fileExt, loaderClass)
   {
-    this.fileTypes.set(extension, type);
+    this.assetLoaders.set(fileExt, loaderClass);
   }
 
   clear()
@@ -39,30 +38,30 @@ class AssetManager
     const cacheData = {url: url, data:""};
     this.cachedAssets.set(handle, cacheData);
 
-    const extension = url.substring(url.lastIndexOf('.'));
-    const fileType = this.fileTypes.get(extension) || "text";
+    const fileExt = url.substring(url.lastIndexOf('.'));
+    const loaderClass = this.assetLoaders.get(fileExt);
+    if (!loaderClass) throw new Error("Missing asset loader for file extension \'" + fileExt + "\'");
 
-    const loader = new AssetLoader(this.baseUrl + url, fileType)
-      .onStop(() => {
-        this.activeLoaders.splice(this.activeLoaders.indexOf(loader), 1)
-        if (this.activeLoaders.length <= 0)
-        {
-          this.emit("idle");
-        }
-      });
-    this.activeLoaders.push(loader);
-
-    loader.fetch().then(
-      response => {
+    const loader = new loaderClass(this.baseUrl + url)
+      .onLoad((response) => {
         cacheData.data = response;
-        console.log("Asset \'" + url + "\' loaded as " + fileType + ".");
+        console.log("Asset \'" + url + "\' loaded by " + loaderClass.name);
 
         if (callback)
         {
           callback.call(null, this, handle, response);
         }
-      },
-      error => { throw error; });
+      });
+
+    this.activeLoaders.push(loader);
+    loader.fetch().then((response) => {
+      this.activeLoaders.splice(this.activeLoaders.indexOf(loader), 1);
+
+      if (this.activeLoaders.length <= 0)
+      {
+        this.emit("idle");
+      }
+    });
 
     return handle;
   }

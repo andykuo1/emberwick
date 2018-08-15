@@ -1,11 +1,12 @@
 class AssetLoader
 {
-  constructor(url, type="")
+  constructor(url, type="text")
   {
     this.response = null;
     this.responseType = type;
     this.url = url;
 
+    this._requestLoad = null;
     this._requestProgress = null;
     this._requestStart = null;
     this._requestStop = null;
@@ -21,9 +22,16 @@ class AssetLoader
         {
           if (request.status === 200)
           {
-            const response = request.response;
-            this.response = response;
-            resolve(response);
+            this.processResponse(request.response)
+              .then((response) => {
+                if (this._requestLoad)
+                {
+                  this._requestLoad(response);
+                }
+
+                this.response = response;
+                resolve(response);
+              });
           }
           else
           {
@@ -63,6 +71,19 @@ class AssetLoader
   abort()
   {
     this.request.abort();
+  }
+
+  processResponse(response)
+  {
+    return new Promise((resolve, reject) => {
+      resolve(response);
+    });
+  }
+
+  onLoad(callback)
+  {
+    this._requestLoad = callback;
+    return this;
   }
 
   onProgress(callback)

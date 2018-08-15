@@ -32,10 +32,11 @@ class Renderer
 
     gl.clearColor(0,0,0,1);
     gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.enable(gl.DEPTH_TEST);
 
     const vsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("shader.vert"));
     const fsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("shader.frag"));
-    const imageData = this.assets.getAsset(this.assets.getAssetLocationByUrl("300.jpg"));
+    const imageData = this.assets.getAsset(this.assets.getAssetLocationByUrl("color.png"));
 
     const shader = new Shader(gl, vsh, fsh);
     shader.setLayout("a_position", 3, gl.FLOAT, false);
@@ -49,6 +50,7 @@ class Renderer
       new Float32Array(cubePositions),
       new Uint16Array(cubeIndices));
     this.texture = new Texture(gl);
+    this.texture.bindData(imageData);
 
     this.camera = new FreeLookCamera(gl);
     this.camera.position[2] = -6;
@@ -77,7 +79,7 @@ class Renderer
         false,
         viewMatrix);
     gl.uniform1i(this.shader.uniforms.u_sampler, 0);
-    
+
     this.mesh.bind(this.shader);
     this.texture.bind(gl.TEXTURE0);
     this.renderScene(gl, this.sceneGraph, viewMatrix);

@@ -5,6 +5,8 @@ import Mouse from 'input/Mouse.js';
 import Keyboard from 'input/Keyboard.js';
 import InputManager from 'input/InputManager.js';
 import AssetManager from 'assets/AssetManager.js';
+import AssetLoader from 'assets/AssetLoader.js';
+import ImageLoader from 'assets/ImageLoader.js';
 
 const WEBGL_CONTEXT = "webgl";
 const CANVAS_ID = "glCanvas";
@@ -16,10 +18,9 @@ class App
     this.canvas = null;
     this.gl = null;
     this.assets = new AssetManager(window.location + "dist/res/");
-    this.assets.registerFileType(".frag", "text");
-    this.assets.registerFileType(".vert", "text");
-    this.assets.registerFileType(".png", "arraybuffer");
-    this.assets.registerFileType(".jpg", "arraybuffer");
+    this.assets.registerLoader(".frag", AssetLoader);
+    this.assets.registerLoader(".vert", AssetLoader);
+    this.assets.registerLoader(".png", ImageLoader);
     this.renderer = new Renderer(this.assets);
     this.input = new InputManager();
     this.world = new World(this.renderer, this.input, this);
@@ -33,7 +34,7 @@ class App
     this.assets.once("idle", callback);
     this.assets.loadAsset("shader.frag");
     this.assets.loadAsset("shader.vert");
-    this.assets.loadAsset("300.jpg");
+    this.assets.loadAsset("color.png");
   }
 
   onUnload()
