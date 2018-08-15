@@ -6,7 +6,7 @@ uniform mat4 u_model;
 uniform mat4 u_view;
 uniform mat4 u_projection;
 
-varying highp vec2 v_texcoord;
+varying vec2 v_texcoord;
 
 void main()
 {

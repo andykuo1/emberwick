@@ -54,7 +54,7 @@ class AssetManager
     const loader = new loaderClass(this.baseUrl + url)
       .onLoad((response) => {
         cacheData.data = response;
-        console.log("Asset \'" + url + "\' loaded by " + loaderClass.name);
+        console.log("[" + loaderClass.name + "] Loaded asset \'" + url + "\'.");
 
         if (callback)
         {
