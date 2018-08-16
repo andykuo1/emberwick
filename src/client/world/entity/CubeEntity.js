@@ -5,13 +5,13 @@ import SceneNode from 'scenegraph/SceneNode.js';
 
 class CubeEntity
 {
-  onCreate(entityManager, entityID, parentNode)
+  onCreate(entityManager, entityID, world, parentNode)
   {
-    if (!parentNode) throw new Error("Missing arguments for entity \'" + this.getClassID() + "\'");
+    if (!world || !parentNode) throw new Error("Missing arguments for entity \'" + this.getClassID() + "\'");
 
     const renderable = entityManager.addComponentToEntity(entityID, Renderable);
     {
-      const node = new SceneNode(true);
+      const node = new SceneNode("capsule.mesh");
       node.setParent(parentNode);
       renderable._sceneNode = node;
     }

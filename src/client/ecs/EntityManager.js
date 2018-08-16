@@ -1,19 +1,17 @@
 import ComponentManager from './ComponentManager.js';
 
-const INITIAL_ENTITY_ID = 1;
-
 class EntityManager
 {
   constructor()
   {
-    this.nextEntityID = INITIAL_ENTITY_ID;
+    this.nextEntityID = 1;
 
     this.components = new Map();
     this.entities = new Map();
   }
 
-  clear() {
-    this.nextEntityID = INITIAL_ENTITY_ID;
+  clear()
+  {
     this.entities.clear();
 
     for(const componentManager of this.components.values())

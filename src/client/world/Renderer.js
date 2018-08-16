@@ -35,41 +35,39 @@ class Renderer
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.enable(gl.DEPTH_TEST);
 
-    const vsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("phong.vert"));
-    const fsh = this.assets.getAsset(this.assets.getAssetLocationByUrl("phong.frag"));
-    const imageData = this.assets.getAsset(this.assets.getAssetLocationByUrl("color.png"));
-    const meshData = this.assets.getAsset(this.assets.getAssetLocationByUrl("capsule.obj"));
+    const assets = this.assets;
 
-    const shader = new Shader(gl, vsh, fsh);
+    //Load shaders
+    const shader = new Shader(gl,
+      assets.getAsset("phong.vert"),
+      assets.getAsset("phong.frag"));
     shader.setLayout("a_position", 3, gl.FLOAT, false);
     shader.setLayout("a_texcoord", 2, gl.FLOAT, false);
     shader.setLayout("a_normal", 3, gl.FLOAT, false);
     this.shader = shader;
 
-    this.mesh = new Mesh(gl, gl.TRIANGLES,
-      meshData.positions,
-      meshData.texcoords,
-      meshData.normals,
-      meshData.indices);
+    //Load textures
+    this.texture = new Texture(gl);
+    this.texture.bindData(assets.getAsset("color.png"));
 
-    this.cube = new Mesh(gl, gl.TRIANGLES,
+    //Setup camera
+    this.camera = new FreeLookCamera(gl);
+    this.camera.position[2] = -6;
+
+    //Load mesh through assets
+    assets.loadAsset("capsule.mesh", gl, assets, "capsule.obj");
+
+    //Load mesh through cache
+    assets.cacheAsset("cube.mesh", new Mesh(gl, gl.TRIANGLES,
       new Float32Array(defaultPositions),
       new Float32Array(defaultTexcoords),
       new Float32Array(defaultNormals),
-      new Uint16Array(defaultIndices));
-
-    this.texture = new Texture(gl);
-    this.texture.bindData(imageData);
-
-    this.camera = new FreeLookCamera(gl);
-    this.camera.position[2] = -6;
+      new Uint16Array(defaultIndices)));
   }
 
   terminate(gl)
   {
     this.texture.delete();
-    this.mesh.delete();
-    this.cube.delete();
     this.shader.delete();
   }
 
@@ -90,7 +88,6 @@ class Renderer
         viewMatrix);
     gl.uniform1i(this.shader.uniforms.u_sampler, 0);
 
-    this.mesh.bind(this.shader);
     this.texture.bind(gl.TEXTURE0);
     this.renderScene(gl, this.sceneGraph, viewMatrix);
   }
@@ -108,7 +105,8 @@ class Renderer
     while(nextNodes.length > 0)
     {
       const node = nextNodes.pop();
-      if (node.mesh)
+      const meshID = node.mesh;
+      if (meshID)
       {
         mat4.scale(modelMatrix, node.worldTransform, node.modelScale);
 
@@ -127,7 +125,9 @@ class Renderer
           normalMatrix
         );
 
-        this.mesh.draw(gl);
+        const mesh = this.assets.getAsset(meshID);
+        mesh.bind(this.shader);
+        mesh.draw(gl);
       }
 
       if (node.isParent())

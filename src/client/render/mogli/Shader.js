@@ -2,9 +2,11 @@ class ShaderProgram
 {
   constructor(gl, vertexSource, fragmentSource)
   {
+    console.log("Creating shader program...");
     let vertexShader = null;
     let fragmentShader = null;
 
+    console.log("...creating vertex shader...");
     try
     {
       vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexSource);
@@ -14,6 +16,7 @@ class ShaderProgram
       throw e;
     }
 
+    console.log("...creating fragment shader...");
     try
     {
       fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
@@ -24,9 +27,12 @@ class ShaderProgram
       throw e;
     }
 
+    console.log("...attaching shaders...");
     const handle = gl.createProgram();
     gl.attachShader(handle, vertexShader);
     gl.attachShader(handle, fragmentShader);
+
+    console.log("...linking shaders...");
     gl.linkProgram(handle);
 
     if (!gl.getProgramParameter(handle, gl.LINK_STATUS))
@@ -43,7 +49,10 @@ class ShaderProgram
       throw new Error("Unable to initailize shader program: " + infoLog);
     }
 
+    console.log("...finding attributes...");
     this.attributes = getEnumeratedAttributes(gl, handle);
+
+    console.log("...finding uniforms...");
     this.uniforms = getEnumeratedUniforms(gl, handle);
     this._layouts = {};
     this._names = {};
@@ -183,7 +192,7 @@ function getEnumeratedAttributes(gl, program)
     const location = gl.getAttribLocation(program, infoName);
     result[infoName] = location;
 
-    console.log("...found attribute \'" + infoName + "\'...");
+    console.log("......found attribute \'" + infoName + "\'...");
   }
   return result;
 }
@@ -199,7 +208,7 @@ function getEnumeratedUniforms(gl, program)
     const location = gl.getUniformLocation(program, infoName);
     result[infoName] = location;
 
-    console.log("...found unifrom \'" + infoName + "\'...");
+    console.log("......found unifrom \'" + infoName + "\'...");
   }
   return result;
 }

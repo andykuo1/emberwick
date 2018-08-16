@@ -37,7 +37,7 @@ class World
   create()
   {
     const entityManager = this.entityManager;
-    entityManager.createEntity(CubeEntity, this.renderer.sceneGraph);
+    entityManager.createEntity(CubeEntity, this, this.renderer.sceneGraph);
 
     const context = this.inputContext;
     context.registerState(

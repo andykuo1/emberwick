@@ -1,9 +1,13 @@
 import BufferObject from './BufferObject.js';
 
+let REFCOUNT = 0;
+
 class Mesh
 {
   constructor(gl, elementType, positions, texcoords, normals, indices)
   {
+    ++REFCOUNT;
+
     this.positions = new BufferObject(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW);
     this.positions.bindData(positions);
 
@@ -27,6 +31,12 @@ class Mesh
     this.texcoords.delete();
     this.normals.delete();
     this.indices.delete();
+
+    --REFCOUNT;
+    if (REFCOUNT <= 0)
+    {
+      console.log("[" + "Mesh" + "] All resources are released! Hooray!");
+    }
   }
 
   bind(shader)
