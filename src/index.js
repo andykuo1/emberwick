@@ -26,6 +26,8 @@ const app = new App();
 //Loading application...
 function loadApplication()
 {
+  app.setCanvas(document.getElementById('glCanvas'));
+  
   console.log("Loading application...");
 
   //When loading complete, call start...
