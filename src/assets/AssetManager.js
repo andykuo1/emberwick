@@ -59,6 +59,11 @@ class AssetManager
 
   loadAsset(url, ...args)
   {
+    if (this.hasAsset(url))
+    {
+      return Promise.resolve(this.cachedAssets.get(url));
+    }
+
     if (this.isAssetLoading(url))
     {
       throw new Error("Cannot load the same asset \'" + url + "\' at the same time");

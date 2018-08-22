@@ -102,8 +102,12 @@ class Renderer
       nextNodes.push(root);
     }
 
+    const MAX_DEPTH = 100;
+    let depth = 0;
     while(nextNodes.length > 0)
     {
+      ++depth; if (depth > MAX_DEPTH) break;
+
       const node = nextNodes.pop();
       const meshID = node.mesh;
       if (meshID)

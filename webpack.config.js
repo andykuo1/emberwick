@@ -3,7 +3,7 @@ const webpack = require("webpack");
 
 module.exports = {
   //Entry point to start bundling...
-  entry: './src/client/index.js',
+  entry: './src/index.js',
   //Change this to 'production' for optimizations
   mode: "development",
   module: {
@@ -22,7 +22,7 @@ module.exports = {
     extensions: ['.js'],
     //Resolve by absolute path
     modules: [
-      path.resolve('./src/client'),
+      path.resolve('./src'),
       'node_modules'
     ]
   },
@@ -33,11 +33,12 @@ module.exports = {
     //For devServer to find directory from project root
     publicPath: '/dist/'
   },
+  target: 'web',
   devServer: {
     contentBase: path.join(__dirname, '/'),//public/
-    port: 3000,
+    port: 8000,
     //For devServer to find directory from web user
-    publicPath: 'http://localhost:3000/dist/',
+    publicPath: 'http://localhost:8000/dist/',
     hotOnly: true,
     open: true
   },

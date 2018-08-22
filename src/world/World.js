@@ -9,6 +9,7 @@ import EntityManager from 'ecs/EntityManager.js';
 import Renderable from 'world/component/Renderable.js';
 
 import CubeEntity from 'world/entity/CubeEntity.js';
+import CapsuleEntity from 'world/entity/CapsuleEntity.js';
 
 class World
 {
@@ -37,7 +38,9 @@ class World
   create()
   {
     const entityManager = this.entityManager;
-    entityManager.createEntity(CubeEntity, this, this.renderer.sceneGraph);
+    const cubeID = entityManager.createEntity(CubeEntity, this, this.renderer.sceneGraph);
+    const cubeRenderable = entityManager.getComponentFromEntity(cubeID, Renderable);
+    const capsuleID = entityManager.createEntity(CapsuleEntity, this, cubeRenderable._sceneNode);
 
     const context = this.inputContext;
     context.registerState(

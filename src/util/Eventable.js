@@ -1,16 +1,18 @@
 const ALLOW_AUTOMATIC_REGISTER = false;
 
 const Eventable = {
+  __eventListeners: null,
   mixin(targetClass)
   {
     const targetPrototype = targetClass.prototype;
     Object.assign(targetPrototype, Eventable);
     delete targetPrototype.mixin;
-    targetPrototype.__eventListeners = new Map();
   },
 
   registerEvent(eventName)
   {
+    if (!this.__eventListeners) this.__eventListeners = new Map();
+
     if (!this.__eventListeners.has(eventName))
     {
       this.__eventListeners.set(eventName, []);
@@ -23,6 +25,8 @@ const Eventable = {
 
   unregisterEvent(eventName)
   {
+    if (!this.__eventListeners) return;
+
     if (this.__eventListeners.has(eventName))
     {
       this.__eventListeners.delete(eventName);
@@ -35,6 +39,8 @@ const Eventable = {
 
   addEventListener(eventName, listener)
   {
+    if (!this.__eventListeners) this.__eventListeners = new Map();
+
     let listeners;
     if (this.__eventListeners.has(eventName))
     {
@@ -55,6 +61,8 @@ const Eventable = {
 
   removeEventListener(eventName, listener)
   {
+    if (!this.__eventListeners) return;
+
     if (this.__eventListeners.has(eventName))
     {
       const listeners = this.__eventListeners.get(eventName);
@@ -82,6 +90,8 @@ const Eventable = {
 
   clearEventListeners(eventName)
   {
+    if (!this.__eventListeners) return;
+
     if (this.__eventListeners.has(eventName))
     {
       const listeners = this.__eventListeners.get(eventName);
@@ -100,11 +110,13 @@ const Eventable = {
 
   countEventListeners(eventName)
   {
+    if (!this.__eventListeners) return 0;
     return this.__eventListeners.has(eventName) ? this.__eventListeners.get(eventName).length : 0;
   },
 
   getEventListeners(eventName)
   {
+    if (!this.__eventListeners) return null;
     return this.__eventListeners.get(eventName);
   },
 
@@ -116,34 +128,56 @@ const Eventable = {
   once(eventName, listener)
   {
     const f = (...args) => {
-      listener.apply(null, args);
-      this.removeEventListener(eventName, f);
+      try
+      {
+        listener.apply(null, args);
+      }
+      finally
+      {
+        this.removeEventListener(eventName, f);
+      }
     };
+
     this.addEventListener(eventName, f);
   },
 
   emit(eventName, ...args)
   {
-    let listeners;
-    if (ALLOW_AUTOMATIC_REGISTER && !this.__eventListeners.has(eventName))
+    try
     {
-      listeners = [];
-      this.__eventListeners.set(eventName, listeners);
-    }
-    else
-    {
-      listeners = this.__eventListeners.get(eventName);
+      if (!this.__eventListeners) return;
 
-      let result = null;
-      let i = listeners.length;
-      while(i--)
+      let listeners;
+      if (ALLOW_AUTOMATIC_REGISTER && !this.__eventListeners.has(eventName))
       {
-        result = listeners[i].apply(null, args);
-        if (result === true) break;
+        listeners = [];
+        this.__eventListeners.set(eventName, listeners);
+      }
+      else
+      {
+        listeners = this.__eventListeners.get(eventName);
+
+        let result = null;
+        let i = listeners.length;
+        while(i--)
+        {
+          try
+          {
+            result = listeners[i].apply(null, args);
+          }
+          catch(e)
+          {
+            console.error(e);
+          }
+
+          if (result === true) break;
+        }
       }
     }
-
-    this.onEventProcessed(eventName, ...args);
+    finally
+    {
+      this.onEventProcessed(eventName, ...args);
+    }
   },
 
   onEventProcessed(eventName, ...args)
