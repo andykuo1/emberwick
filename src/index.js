@@ -17,9 +17,11 @@ import App from 'App.js';
 
 //Application constants
 const FRAMES_PER_SECOND = 60;
+var prevtime = 0;
+var running = false;
+var dt;
+
 const app = new App();
-let prevtime = 0;
-let running = false;
 
 //Loading application...
 function loadApplication()
@@ -46,11 +48,10 @@ function updateApplication(time)
 {
   if (running)
   {
-    const dt = time - prevtime;
+    dt = time - prevtime;
 
     app.onUpdate(dt / FRAMES_PER_SECOND);
-
-    fpsCounter(dt);
+    FPS.update(dt);
 
     prevtime = time;
     window.requestAnimationFrame(updateApplication);
@@ -70,28 +71,4 @@ function unloadApplication()
 {
   console.log("Unloading application...");
   app.onUnload();
-}
-
-//FPS counter
-let elapsed = 0;
-let frames = 0;
-function fpsCounter(dt)
-{
-  ++frames;
-  if ((elapsed += dt) >= 1000)
-  {
-    const label = "FPS: " + frames + "/" + FRAMES_PER_SECOND;
-    let element = document.getElementById("fps");
-    if (element)
-    {
-      element.innerHTML = label;
-    }
-    else
-    {
-      console.log(label);
-    }
-    
-    frames = 0;
-    elapsed -= 1000;
-  }
 }

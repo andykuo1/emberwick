@@ -1,0 +1,23 @@
+html, body {
+  width: 100%; height: 100%;
+  margin: 0; padding: 0;
+}
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  background: black;
+}
+#glCanvas {
+  outline: 2px dashed rgba(255, 255, 255, 0.3);
+}
+#logger div {
+  color: rgba(255, 255, 255, 0.3);
+  transition: color 30s ease;
+}
+#logger div:hover {
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.1s ease;
+}

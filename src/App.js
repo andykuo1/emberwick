@@ -15,7 +15,7 @@ class App
   {
     this.canvas = null;
     this.gl = null;
-    this.assets = new AssetManager(window.location + "dist/res/");
+    this.assets = new AssetManager(window.location + "res/");
     this.renderer = new Renderer(this.assets);
     this.input = new InputManager();
     this.world = new World(this.renderer, this.input, this);
@@ -37,11 +37,6 @@ class App
     this.assets.loadAsset("capsule.obj");
   }
 
-  onUnload()
-  {
-    this.assets.clear();
-  }
-
   onStart()
   {
     this.canvas = document.getElementById(CANVAS_ID);
@@ -56,14 +51,6 @@ class App
     this.world.create();
   }
 
-  onStop()
-  {
-    this.world.destroy();
-    this.keyboard.delete();
-    this.mouse.delete();
-    this.renderer.terminate(this.gl);
-  }
-
   onUpdate(dt)
   {
     this.input.doInputUpdate();
@@ -73,6 +60,19 @@ class App
     {
       this.renderer.render(this.gl);
     }
+  }
+
+  onStop()
+  {
+    this.world.destroy();
+    this.keyboard.delete();
+    this.mouse.delete();
+    this.renderer.terminate(this.gl);
+  }
+
+  onUnload()
+  {
+    this.assets.clear();
   }
 }
 

@@ -1,97 +1,44 @@
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>EmberWick</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-    <style>
-      html, body {
-        width: 100%; height: 100%;
-        margin: 0; padding: 0;
-      }
-      body {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
+    <title id="window-title">Emberwick</title>
 
-        background: black;
-      }
-      #glCanvas {
-        outline: 2px dashed rgba(255, 255, 255, 0.3);
-      }
-      #logger {
-        font-family: monospace;
-        position: absolute;
-        left: 0;
-        top: 0;
-        z-index: 1000;
-        height: 100%;
-        max-width: 50%;
-
-        overflow-wrap: break-word;
-        overflow-y: auto;
-      }
-      #logger div {
-        color: rgba(255, 255, 255, 0.3);
-        transition: color 30s ease;
-      }
-      #logger div:hover {
-        color: rgba(255, 255, 255, 0.7);
-        transition: color 0.1s ease;
-      }
-      #fps {
-        font-family: monospace;
-        position: absolute;
-        right: 0;
-        top: 0;
-        z-index: 1000;
-
-        color: white;
-      }
-    </style>
+		<link rel="stylesheet" href="./res/css/style.css">
   </head>
   <body>
+    <!-- OpenGL Canvas Root -->
     <canvas id="glCanvas" width="640" height="480">
       Your browser does not support canvas.
     </canvas>
-    <div id="logger"></div>
-    <div id="fps">FPS: 0/0</div>
 
     <noscript>
-      You need to enable Javascript to run this app.
+      You need to enable JavaScript to run this app.
     </noscript>
 
-    <script>
-    (function() {
-      const oldConsoleLog = console.log;
-      const logger = document.getElementById('logger');
-      console.log = function(message) {
-        if (typeof message == 'object' && JSON && JSON.stringify)
-        {
-          const div = document.createElement('div');
-          div.innerHTML = JSON.stringify(message);
-          logger.appendChild(div);
-          if (logger.childNodes.length > 100)
-          {
-            logger.removeChild(logger.childNodes[0]);
-          }
-        }
-        else
-        {
-          const div = document.createElement('div');
-          div.innerHTML = message;
-          logger.appendChild(div);
-          if (logger.childNodes.length > 100)
-          {
-            logger.removeChild(logger.childNodes[0]);
-          }
-        }
+    <!-- ConsoleDisplay -->
+    <script src="./res/js/ConsoleDisplay.js" type="application/javascript"></script>
+    <!-- FPSCounter -->
+    <script src="./res/js/FPSCounter.js" type="application/javascript"></script>
 
-        //Redirect back to system console
-        oldConsoleLog(message);
-      };
-    })();
+    <!-- ServiceWorker -->
+    <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('./serviceWorker.js', { scope: './' })
+        .then(registration => console.log("[ServiceWorker] Registration successful: ", registration.scope),
+          error => console.log("[ServiceWorker] Registration failed: ", error));
+      });
+    }
     </script>
 
-    <script src="./dist/bundle.js"></script>
+    <!-- Library files -->
+    <script src="./res/js/I18N.js" type="application/javascript"></script>
+
+    <!-- Entry point -->
+    <script src="./dist/vendors.bundle.js" type="application/javascript"></script>
+    <script src="./dist/app.bundle.js" type="application/javascript"></script>
   </body>
 </html>
