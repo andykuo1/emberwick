@@ -7,10 +7,10 @@ import StateInput from 'input/context/StateInput.js';
 import RangeInput from 'input/context/RangeInput.js';
 
 import EntityManager from 'ecs/EntityManager.js';
-import Renderable from 'world/component/Renderable.js';
+import Renderable from './component/Renderable.js';
 
-import CubeEntity from 'world/entity/CubeEntity.js';
-import CapsuleEntity from 'world/entity/CapsuleEntity.js';
+import CubeEntity from './entity/CubeEntity.js';
+import CapsuleEntity from './entity/CapsuleEntity.js';
 
 class GameWorld extends Scene
 {

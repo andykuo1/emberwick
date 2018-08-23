@@ -1,9 +1,9 @@
 import Entity from './Entity.js';
 
-import Renderable from 'world/component/Renderable.js';
+import Renderable from '../component/Renderable.js';
 import SceneNode from 'scenegraph/SceneNode.js';
 
-class CapsuleEntity
+class CubeEntity
 {
   onCreate(entityManager, entityID, world, parentNode)
   {
@@ -11,7 +11,7 @@ class CapsuleEntity
 
     const renderable = entityManager.addComponentToEntity(entityID, Renderable);
     {
-      const node = new SceneNode("capsule.mesh");
+      const node = new SceneNode("cube.mesh");
       node.setParent(parentNode);
       renderable._sceneNode = node;
     }
@@ -27,8 +27,8 @@ class CapsuleEntity
 
   getClassID()
   {
-    return Entity.getClassID() + ".capsule";
+    return Entity.getClassID() + ".cube";
   }
 }
 
-export default new CapsuleEntity();
+export default new CubeEntity();
