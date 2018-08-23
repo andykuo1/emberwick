@@ -24,7 +24,8 @@ const FPS = {
       this._element.innerHTML = label;
 
       this.frames = 0;
-      this.elapsed -= 1000;
+
+      this.elapsed = (this.elapsed - 1000) % 1000;
     }
   }
 };

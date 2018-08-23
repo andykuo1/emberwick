@@ -16,7 +16,8 @@ class SceneNode
     this.mesh = mesh;
   }
 
-  delete() {
+  delete()
+  {
     if (this.isParent())
     {
       for(const child of this.children)

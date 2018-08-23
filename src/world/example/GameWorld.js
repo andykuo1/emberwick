@@ -45,9 +45,15 @@ class GameWorld extends Scene
 
     const inputs = this.app.input;
     const entityManager = this.entityManager;
-    const cubeID = entityManager.createEntity(CubeEntity, this, this.sceneGraph);
-    const cubeRenderable = entityManager.getComponentFromEntity(cubeID, Renderable);
-    const capsuleID = entityManager.createEntity(CapsuleEntity, this, cubeRenderable._sceneNode);
+    const cubeID = entityManager.createEntity();
+    const cubeRenderable = entityManager.addComponentToEntity(cubeID, Renderable);
+    cubeRenderable._sceneNode.setParent(this.sceneGraph);
+    cubeRenderable._sceneNode.mesh = "cube.mesh";
+
+    const capsuleID = entityManager.createEntity();
+    const capsuleRenderable = entityManager.addComponentToEntity(capsuleID, Renderable);
+    capsuleRenderable._sceneNode.setParent(cubeRenderable._sceneNode);
+    capsuleRenderable._sceneNode.mesh = "capsule.mesh";
 
     const context = this.inputContext;
     context.registerState(

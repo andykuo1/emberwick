@@ -7,12 +7,14 @@ class EntityManager
     this.nextEntityID = 1;
 
     this.components = new Map();
-    this.entities = new Map();
+    this.entities = new Set();
+    this.tags = new Map();
   }
 
   clear()
   {
     this.entities.clear();
+    this.tags.clear();
 
     for(const componentManager of this.components.values())
     {
@@ -40,28 +42,45 @@ class EntityManager
     this.components.delete(componentClass);
   }
 
-  createEntity(entityClass, ...args)
+  createEntity(...tags)
   {
     const entityID = this.getNextAvailableEntityID();
-    this.entities.set(entityID, entityClass);
 
-    entityClass.onCreate(this, entityID, ...args);
+    //Add to the general entity list
+    this.entities.add(entityID);
+
+    //Add to all entity list tags
+    let taglist;
+    for(const tag of tags)
+    {
+      this.addTagToEntity(entityID, tag);
+    }
+
     return entityID;
   }
 
   destroyEntity(entityID)
   {
-    const entity = this.entities.get(entityID);
-    if (entity)
+    if (this.entities.has(entityID))
     {
-      entity.onDestroy(this, entityID);
+      //Remove from general entity list
+      this.entities.delete(entityID);
 
+      //Remove from all tag lists
+      for(const taglist of this.tags.values())
+      {
+        if (taglist.has(entityID))
+        {
+          taglist.delete(entityID);
+        }
+      }
+
+      //Remove all components
       for(const componentManager of this.components.values())
       {
         componentManager.destroyComponentForEntity(entityID);
       }
 
-      this.entities.delete(entityID);
       return true;
     }
     else
@@ -129,9 +148,30 @@ class EntityManager
     return result;
   }
 
-  getEntityClassByID(entityID)
+  addTagToEntity(entityID, tag)
   {
-    return this.entities.get(entityID);
+    let taglist = this.tags.get(tag);
+    if (!taglist) this.tags.set(tag, taglist = new Set());
+    taglist.add(entityID);
+  }
+
+  removeTagFromEntity(entityID, tag)
+  {
+    let taglist = this.tags.get(tag);
+    if (taglist && taglist.has(entityID))
+    {
+      taglist.delete(entityID);
+    }
+  }
+
+  getEntitiesByTag(tag)
+  {
+    return this.tags.get(tag);
+  }
+
+  getEntities()
+  {
+    return this.entities;
   }
 
   getNextAvailableEntityID()
