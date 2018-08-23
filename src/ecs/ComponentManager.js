@@ -9,7 +9,7 @@ class ComponentManager
     this.cached = [];
   }
 
-  createComponentForEntity(entityID)
+  createComponent(entityID)
   {
     let result = this.componentInstances.get(entityID);
     if (result)
@@ -26,7 +26,7 @@ class ComponentManager
     return result;
   }
 
-  destroyComponentForEntity(entityID)
+  destroyComponent(entityID)
   {
     const result = this.componentInstances.get(entityID);
     if (result)
@@ -41,7 +41,7 @@ class ComponentManager
     return false;
   }
 
-  getComponentForEntity(entityID)
+  getComponent(entityID)
   {
     return this.componentInstances.get(entityID);
   }

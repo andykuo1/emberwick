@@ -4,8 +4,8 @@ import InputManager from 'input/InputManager.js';
 import AssetManager from 'assets/AssetManager.js';
 import SceneManager from 'scene/SceneManager.js';
 
-import GameScene from 'world/example/SceneExample.js';
-import GameRenderer from 'world/example/RenderExample.js';
+import GameScene from 'world/example2/GameScene.js';
+import GameRenderer from 'world/example2/GameRenderer.js';
 
 class App
 {

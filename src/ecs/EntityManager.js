@@ -78,7 +78,7 @@ class EntityManager
       //Remove all components
       for(const componentManager of this.components.values())
       {
-        componentManager.destroyComponentForEntity(entityID);
+        componentManager.destroyComponent(entityID);
       }
 
       return true;
@@ -98,7 +98,7 @@ class EntityManager
     }
 
     //Will create or reset the component instance for entity with id
-    const result = componentManager.createComponentForEntity(entityID);
+    const result = componentManager.createComponent(entityID);
 
     if (callback) callback.apply(null, result);
     return result;
@@ -112,10 +112,10 @@ class EntityManager
       throw new Error("Unable to find registered component manager for class \'" + componentClass + "\'");
     }
 
-    return componentManager.destroyComponentForEntity(entityID);
+    return componentManager.destroyComponent(entityID);
   }
 
-  getComponentFromEntity(entityID, componentClass)
+  getComponentFromEntity(componentClass, entityID)
   {
     const componentManager = this.components.get(componentClass);
     if (!componentManager)
@@ -123,7 +123,26 @@ class EntityManager
       throw new Error("Unable to find registered component manager for class \'" + componentClass + "\'");
     }
 
-    return componentManager.getComponentForEntity(entityID);
+    return componentManager.getComponent(entityID);
+  }
+
+  getComponentsFromTag(componentClass, tag)
+  {
+    const result = [];
+    if (this.tags.has(tag))
+    {
+      let component;
+      const taglist = this.tags.get(tag);
+      for(const entityID of taglist)
+      {
+        component = this.getComponentFromEntity(componentClass, entityID);
+        if (component)
+        {
+          result.push(component);
+        }
+      }
+    }
+    return result;
   }
 
   getComponentsByClass(componentClass)
@@ -142,7 +161,7 @@ class EntityManager
     const result = [];
     for(const componentManager of this.components.values())
     {
-      const component = componentManager.getComponentForEntity(entityID);
+      const component = componentManager.getComponent(entityID);
       if (component) result.push(component);
     }
     return result;
