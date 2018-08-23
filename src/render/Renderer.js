@@ -4,10 +4,10 @@ class Renderer
   {
 
   }
-  
-  onLoad(gl, callback) {}
 
-  onUnload(gl) {}
+  load(gl, callback) {}
+
+  unload(gl) {}
 
   render(gl, scene)
   {

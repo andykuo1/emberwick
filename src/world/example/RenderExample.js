@@ -12,7 +12,7 @@ class RenderExample extends Renderer
   constructor(assets)
   {
     super();
-    
+
     this.assets = assets;
 
     this.shader = null;
@@ -23,7 +23,7 @@ class RenderExample extends Renderer
   }
 
   //Override
-  onLoad(gl, callback)
+  load(gl, callback)
   {
     this.loadAssets(this.assets, () => {
       this.initialize(gl);
@@ -33,7 +33,7 @@ class RenderExample extends Renderer
   }
 
   //Override
-  onUnload(gl)
+  unload(gl)
   {
     this.terminate(gl);
   }

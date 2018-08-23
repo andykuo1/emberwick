@@ -39,7 +39,7 @@ class App
     this.input.setMouse(this.mouse);
     this.input.setKeyboard(this.keyboard);
 
-    this.renderer.onLoad(this.gl, callback);
+    this.renderer.load(this.gl, callback);
   }
 
   onStart()
@@ -74,7 +74,7 @@ class App
     this.sceneManager.unload(this.gl);
     this.keyboard.delete();
     this.mouse.delete();
-    this.renderer.onUnload(this.gl);
+    this.renderer.unload(this.gl);
     this.assets.clear();
   }
 }
