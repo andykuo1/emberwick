@@ -1,11 +1,10 @@
 import { mat4, quat } from 'gl-matrix';
 import Shader from 'render/mogli/Shader.js';
 import BufferObject from 'render/mogli/BufferObject.js';
-import PerspectiveCamera from 'render/mogli/PerspectiveCamera.js';
 import Mesh from 'render/mogli/Mesh.js';
 import Texture from 'render/mogli/Texture.js';
 
-import FreeLookCamera from 'render/FreeLookCamera.js';
+import FreeLookCamera from 'render/camera/FreeLookCamera.js';
 
 class Renderer
 {
