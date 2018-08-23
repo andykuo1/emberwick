@@ -3,13 +3,16 @@ import Shader from 'render/mogli/Shader.js';
 import BufferObject from 'render/mogli/BufferObject.js';
 import Mesh from 'render/mogli/Mesh.js';
 import Texture from 'render/mogli/Texture.js';
+import Renderer from 'render/Renderer.js';
 
 import FreeLookCamera from 'render/camera/FreeLookCamera.js';
 
-class Renderer
+class RenderExample extends Renderer
 {
   constructor(assets)
   {
+    super();
+    
     this.assets = assets;
 
     this.shader = null;
@@ -17,6 +20,35 @@ class Renderer
     this.cube = null;
 
     this.camera = null;
+  }
+
+  //Override
+  onLoad(gl, callback)
+  {
+    this.loadAssets(this.assets, () => {
+      this.initialize(gl);
+
+      callback();
+    });
+  }
+
+  //Override
+  onUnload(gl)
+  {
+    this.terminate(gl);
+  }
+
+  loadAssets(assets, callback)
+  {
+    assets.once('idle', callback);
+    assets.loadAsset("shader.vert");
+    assets.loadAsset("shader.frag");
+    assets.loadAsset("phong.vert");
+    assets.loadAsset("phong.frag");
+    assets.loadAsset("color.png");
+    assets.loadAsset("capsule.jpg");
+    assets.loadAsset("cube.obj");
+    assets.loadAsset("capsule.obj");
   }
 
   initialize(gl)
@@ -67,7 +99,8 @@ class Renderer
     this.shader.delete();
   }
 
-  render(gl)
+  //Override
+  render(gl, scene)
   {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -85,6 +118,7 @@ class Renderer
     gl.uniform1i(this.shader.uniforms.u_sampler, 0);
 
     this.texture.bind(gl.TEXTURE0);
+    this.renderScene(gl, scene.getSceneGraph());
   }
 
   renderScene(gl, root)
@@ -264,4 +298,4 @@ const defaultIndices = [
   20, 21, 22,     20, 22, 23,   // left
 ];
 
-export default Renderer;
+export default RenderExample;
