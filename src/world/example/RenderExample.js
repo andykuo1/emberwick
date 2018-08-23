@@ -25,22 +25,28 @@ class RenderExample extends Renderer
   //Override
   load(gl, callback)
   {
-    this.loadAssets(this.assets, () => {
-      this.initialize(gl);
+    if (gl === null)
+    {
+      alert("Unable to initialize WebGL. Your browser may not support it.");
+      return;
+    }
 
+    this.assets.once('idle', () => {
+      this.onRenderInit(gl);
       callback();
     });
+    this.onPrepareAssets(this.assets);
   }
 
   //Override
   unload(gl)
   {
-    this.terminate(gl);
+    this.texture.delete();
+    this.shader.delete();
   }
 
-  loadAssets(assets, callback)
+  onPrepareAssets(assets)
   {
-    assets.once('idle', callback);
     assets.loadAsset("shader.vert");
     assets.loadAsset("shader.frag");
     assets.loadAsset("phong.vert");
@@ -51,14 +57,8 @@ class RenderExample extends Renderer
     assets.loadAsset("capsule.obj");
   }
 
-  initialize(gl)
+  onRenderInit(gl)
   {
-    if (gl === null)
-    {
-      alert("Unable to initialize WebGL. Your browser may not support it.");
-      return;
-    }
-
     gl.clearColor(0,0,0,1);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.enable(gl.DEPTH_TEST);
@@ -91,12 +91,6 @@ class RenderExample extends Renderer
       new Float32Array(defaultTexcoords),
       new Float32Array(defaultNormals),
       new Uint16Array(defaultIndices)));
-  }
-
-  terminate(gl)
-  {
-    this.texture.delete();
-    this.shader.delete();
   }
 
   //Override
