@@ -89,11 +89,11 @@ class Renderer
     gl.uniform1i(this.shader.uniforms.u_sampler, 0);
 
     this.texture.bind(gl.TEXTURE0);
-    this.renderScene(gl, this.sceneGraph, viewMatrix);
   }
 
-  renderScene(gl, root, viewMatrix)
+  renderScene(gl, root)
   {
+    const viewMatrix = this.camera.getViewMatrix();
     let modelMatrix = mat4.create();
     let normalMatrix = mat4.create();
     let nextNodes = [];

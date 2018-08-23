@@ -1,18 +1,21 @@
+import SceneNode from 'scenegraph/SceneNode.js';
+
 class Scene
 {
   constructor(app)
   {
-
+    this.app = app;
+    this.sceneGraph = new SceneNode();
   }
 
   onSceneLoad(gl)
   {
-    console.log("LOADING...");
+    console.log("[Scene] Loading scene...");
   }
 
   onSceneStart()
   {
-    console.log("STARTING...");
+    console.log("[Scene] Starting scene...");
   }
 
   onSceneUpdate(dt)
@@ -25,12 +28,17 @@ class Scene
 
   onSceneStop()
   {
-    console.log("STOPPING...");
+    console.log("[Scene] Stopping scene...");
   }
 
   onSceneUnload(gl)
   {
-    console.log("UNLOADING...");
+    console.log("[Scene] Unloading scene...");
+  }
+
+  getSceneGraph()
+  {
+    return this.sceneGraph;
   }
 }
 export default Scene;

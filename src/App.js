@@ -7,7 +7,7 @@ import InputManager from 'input/InputManager.js';
 import AssetManager from 'assets/AssetManager.js';
 import SceneManager from 'scene/SceneManager.js';
 
-import Scene from 'scene/Scene.js';
+import GameWorld from 'world/GameWorld.js';
 
 class App
 {
@@ -21,12 +21,11 @@ class App
 
     this.renderer = new Renderer(this.assets);
     this.input = new InputManager();
-    this.world = new World(this.renderer, this.input, this);
 
     this.mouse = null;
     this.keyboard = null;
 
-    this.sceneManager.setNextScene(new Scene(this));
+    this.sceneManager.setNextScene(new GameWorld(this));
   }
 
   setCanvas(canvas)
@@ -63,28 +62,29 @@ class App
   onStart()
   {
     this.sceneManager.update(0);
-
-    this.world.create();
   }
 
   onUpdate(dt)
   {
     this.input.doInputUpdate();
     this.sceneManager.update(dt);
-    
-    this.world.update(dt);
 
     if (this.gl)
     {
-      this.renderer.render(this.gl);
       this.sceneManager.render(this.gl);
+
+      this.renderer.render(this.gl);
+
+      const scene = this.sceneManager.getScene();
+      if (scene)
+      {
+        this.renderer.renderScene(this.gl, scene.getSceneGraph());
+      }
     }
   }
 
   onStop()
   {
-    this.world.destroy();
-
     this.sceneManager.destroy();
     this.keyboard.delete();
     this.mouse.delete();
