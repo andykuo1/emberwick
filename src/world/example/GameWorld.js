@@ -9,9 +9,6 @@ import RangeInput from 'input/context/RangeInput.js';
 import EntityManager from 'ecs/EntityManager.js';
 import Renderable from './component/Renderable.js';
 
-import CubeEntity from './entity/CubeEntity.js';
-import CapsuleEntity from './entity/CapsuleEntity.js';
-
 class GameWorld extends Scene
 {
   constructor(app)
