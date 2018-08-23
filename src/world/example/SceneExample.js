@@ -9,7 +9,7 @@ import RangeInput from 'input/context/RangeInput.js';
 import EntityManager from 'ecs/EntityManager.js';
 import Renderable from './component/Renderable.js';
 
-class GameWorld extends Scene
+class SceneExample extends Scene
 {
   constructor(app)
   {
@@ -154,4 +154,4 @@ class GameWorld extends Scene
   }
 }
 
-export default GameWorld;
+export default SceneExample;

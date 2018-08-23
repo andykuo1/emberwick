@@ -4,8 +4,8 @@ import InputManager from 'input/InputManager.js';
 import AssetManager from 'assets/AssetManager.js';
 import SceneManager from 'scene/SceneManager.js';
 
-import GameWorld from 'world/example/GameWorld.js';
-import Renderer from 'world/example/RenderExample.js';
+import GameScene from 'world/example/SceneExample.js';
+import GameRenderer from 'world/example/RenderExample.js';
 
 class App
 {
@@ -17,13 +17,13 @@ class App
     this.assets = new AssetManager(window.location + "res/");
     this.sceneManager = new SceneManager();
 
-    this.renderer = new Renderer(this.assets);
+    this.renderer = new GameRenderer(this.assets);
     this.input = new InputManager();
 
     this.mouse = null;
     this.keyboard = null;
 
-    this.sceneManager.setNextScene(new GameWorld(this));
+    this.sceneManager.setNextScene(new GameScene(this));
   }
 
   setCanvas(canvas)
