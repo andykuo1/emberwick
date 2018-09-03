@@ -2,7 +2,7 @@ import Eventable from 'util/Eventable.js';
 
 class GameState
 {
-  constructor(name="Default")
+  constructor(name="DefaultState")
   {
     this.name = name;
 
@@ -60,6 +60,8 @@ class GameState
   update(dt)
   {
     if (!this._isLoaded) throw new Error("Trying to update state that is not yet loaded");
+
+    this.onGameUpdate(dt);
 
     //Update game state if not suspended
     if (!this._suspended)
@@ -133,8 +135,15 @@ class GameState
   {
     if (this._cacheNextState !== null) throw new Error("Trying to set multiple next states");
 
-    this._cacheNextState = gameState;
-    return gameState;
+    if (this.isValidNextGameState(gameState))
+    {
+      this._cacheNextState = gameState;
+      return gameState;
+    }
+    else
+    {
+      throw new Error("Invalid next game state");
+    }
   }
 
   getNextGameState()
@@ -223,6 +232,11 @@ class GameState
     this.emit("unload", this);
   }
 
+  onGameUpdate(dt)
+  {
+
+  }
+
   onLoad()
   {
     return Promise.resolve(this);
@@ -256,6 +270,11 @@ class GameState
   onUnload()
   {
 
+  }
+
+  isValidNextGameState(gameState)
+  {
+    return gameState instanceof GameState;
   }
 }
 Eventable.mixin(GameState);

@@ -8,9 +8,15 @@ class RenderEngine
 
   load(canvas, gl)
   {
+    if (gl === null)
+    {
+      alert("Unable to initialize WebGL. Your browser may not support it.");
+      return;
+    }
+
     this.canvas = canvas;
     this.gl = gl;
-    
+
     return Promise.resolve();
   }
 

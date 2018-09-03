@@ -2,9 +2,9 @@ import GameState from './GameState.js';
 
 class EmptyGameState extends GameState
 {
-  constructor()
+  constructor(name="EmptyState")
   {
-    super("Empty");
+    super(name);
   }
 
   //Override

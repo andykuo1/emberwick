@@ -1,28 +1,15 @@
 import { mat4 } from 'gl-matrix';
-import GameState from 'app/GameState.js';
+import PlayableGameState from './PlayableGameState.js';
 
-import SceneNode from 'scenegraph/SceneNode.js';
-import InputContext from 'input/context/InputContext.js';
-
-import * as InputCodes from 'input/InputCodes.js';
-import StateInput from 'input/context/StateInput.js';
-import RangeInput from 'input/context/RangeInput.js';
-
-import GameRenderer from 'world/GameRenderer.js';
 import Renderable from './components/Renderable.js';
 
-class GameExample2 extends GameState
+class GameExample2 extends PlayableGameState
 {
   constructor()
   {
     super("GameExample2");
 
-    this.sceneGraph = null;
-    this.inputContext = null;
     this.renderer = null;
-    this.gl = null;
-
-    this.inputManager = null;
     this.entityManager = null;
 
     this.playerID = -1;
@@ -35,36 +22,18 @@ class GameExample2 extends GameState
     this.backward = false;
     this.lookX = 0;
     this.lookY = 0;
-
-    this.onInputUpdate = this.onInputUpdate.bind(this);
-  }
-
-  //Override
-  onLoad()
-  {
-    const app = this.getPrevGameState();
-    const assets = app.assets;
-    this.gl = app.gl;
-
-    this.renderer = new GameRenderer(assets);
-
-    return new Promise((resolve, reject) => {
-      this.renderer.load(this.gl, () => resolve(this));
-    });
   }
 
   //Override
   onStart()
   {
+    super.onStart();
+
     const app = this.getPrevGameState();
     const entityManager = this.entityManager = app.entityManager;
-    const inputManager = this.inputManager = app.inputManager;
+    const renderer = this.renderer = app.renderer;
 
-    const sceneGraph = this.sceneGraph = new SceneNode();
-    const context = this.inputContext = new InputContext();
-    this.onInputSetup(inputManager, context);
-    inputManager.addContext(context);
-    inputManager.addCallback(this.onInputUpdate);
+    const sceneGraph = this.sceneGraph;
 
     entityManager.registerComponentClass(Renderable);
     const cubeID = entityManager.createEntity();
@@ -85,40 +54,7 @@ class GameExample2 extends GameState
     quadRenderable._sceneNode.mesh = "quad.mesh";
   }
 
-  onInputSetup(inputManager, context)
-  {
-    context.registerState(
-      "key", "down", InputCodes.KEY_SPACE,
-      "key", "up", InputCodes.KEY_SPACE,
-      new StateInput("moveUp"));
-    context.registerState(
-      "key", "down", InputCodes.KEY_E,
-      "key", "up", InputCodes.KEY_E,
-      new StateInput("moveDown"));
-    context.registerState(
-      "key", "down", InputCodes.KEY_A,
-      "key", "up", InputCodes.KEY_A,
-      new StateInput("strafeLeft"));
-    context.registerState(
-      "key", "down", InputCodes.KEY_D,
-      "key", "up", InputCodes.KEY_D,
-      new StateInput("strafeRight"));
-    context.registerState(
-      "key", "down", InputCodes.KEY_W,
-      "key", "up", InputCodes.KEY_W,
-      new StateInput("moveForward"));
-    context.registerState(
-      "key", "down", InputCodes.KEY_S,
-      "key", "up", InputCodes.KEY_S,
-      new StateInput("moveBackward"));
-    context.registerRange(
-      "mouse", "move", InputCodes.MOUSE_X,
-      new RangeInput("lookX", -1, 1));
-    context.registerRange(
-      "mouse", "move", InputCodes.MOUSE_Y,
-      new RangeInput("lookY", -1, 1));
-  }
-
+  //Override
   onInputUpdate(inputs)
   {
     this.up = inputs.getState("moveUp");
@@ -141,12 +77,6 @@ class GameExample2 extends GameState
   //Override
   onUpdate(dt)
   {
-    this.inputManager.doInputUpdate();
-    if (this.gl)
-    {
-      this.renderer.render(this.gl, this);
-    }
-
     const entityManager = this.entityManager;
     const renderer = this.renderer;
     const dx = this.left != this.right ? this.left ? -1 : 1 : 0;
@@ -174,26 +104,6 @@ class GameExample2 extends GameState
     {
       renderable._sceneNode.update(dt);
     }
-  }
-
-  //Override
-  onSuspend() {}
-
-  //Override
-  onResume() {}
-
-  //Override
-  onStop() {}
-
-  //Override
-  onUnload()
-  {
-    this.renderer.unload(this.gl);
-  }
-
-  getSceneGraph()
-  {
-    return this.sceneGraph;
   }
 }
 

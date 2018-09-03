@@ -9,7 +9,7 @@ import AssetManifest from 'assets/pigeon/AssetManifest.js';
 
 import FreeLookCamera from 'render/camera/FreeLookCamera.js';
 
-class RenderExample extends Renderer
+class GameRenderer extends Renderer
 {
   constructor(assets)
   {
@@ -299,4 +299,4 @@ const defaultIndices = [
   20, 21, 22,     20, 22, 23,   // left
 ];
 
-export default RenderExample;
+export default GameRenderer;
