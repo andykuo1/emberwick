@@ -5,8 +5,8 @@ import AssetManager from 'assets/pigeon/AssetManager.js';
 import SceneManager from 'scene/SceneManager.js';
 import EntityManager from 'ecs/EntityManager.js';
 
-import GameScene from 'world/example/GameScene.js';
-import GameRenderer from 'world/example/GameRenderer.js';
+import GameScene from 'world/example2/GameScene.js';
+import GameRenderer from 'world/example2/GameRenderer.js';
 
 import TextLoader from 'assets/pigeon/loaders/TextLoader.js';
 import ImageLoader from 'assets/pigeon/loaders/ImageLoader.js';

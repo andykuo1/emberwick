@@ -45,6 +45,11 @@ class SceneExample extends Scene
     const capsuleRenderable = entityManager.addComponentToEntity(capsuleID, Renderable);
     capsuleRenderable._sceneNode.setParent(cubeRenderable._sceneNode);
     capsuleRenderable._sceneNode.mesh = "capsule.mesh";
+
+    const quadID = entityManager.createEntity("rotating");
+    const quadRenderable = entityManager.addComponentToEntity(quadID, Renderable);
+    quadRenderable._sceneNode.setParent(this.sceneGraph);
+    quadRenderable._sceneNode.mesh = "quad.mesh";
   }
 
   onInputSetup(input, context)

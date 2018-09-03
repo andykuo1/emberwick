@@ -60,6 +60,7 @@ class RenderExample extends Renderer
     manifest.addAsset("image", "capsule.jpg");
     manifest.addAsset("obj", "cube.obj");
     manifest.addAsset("obj", "capsule.obj");
+    manifest.addAsset("obj", "quad.obj");
   }
 
   onRenderInit(gl)
@@ -89,6 +90,7 @@ class RenderExample extends Renderer
 
     //Load mesh through assets
     assets.loadAsset("mesh", "capsule.mesh", { gl: gl, geometry: "capsule.obj" });
+    assets.loadAsset("mesh", "quad.mesh", { gl: gl, geometry: "quad.obj" });
 
     //Load mesh through cache
     assets.cacheAsset("mesh", "cube.mesh", new Mesh(gl, gl.TRIANGLES,
