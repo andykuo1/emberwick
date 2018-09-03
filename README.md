@@ -1,11 +1,11 @@
 # Emberwick
 
-> The 3D browser-based game engine.
+> A 2D/3D browser-based game engine using WebGL
 
 ---
 
 ## Purpose
-To make a 3D browser-based game engine using WebGL and JavaScript.
+To make a 2D/3D browser-based game engine using WebGL and JavaScript.
 
 ## Table of Contents
 * [Getting Started](#getting-started)
