@@ -3,19 +3,20 @@ import Mesh from 'render/mogli/Mesh.js';
 
 class MeshLoader extends CacheLoader
 {
-  constructor(assetManager)
+  constructor(assetManager, gl)
   {
     super(assetManager);
+
+    this.gl = gl;
   }
 
   //Override
   onLoadResource(resource, opts, url)
   {
     return new Promise((resolve, reject) => {
-      if (!opts.gl) throw new Error("Missing required argument to load asset \'" + url + "\'");
       if (!opts.geometry) throw new Error("Missing required argument to load asset \'" + url + "\'");
 
-      const gl = opts.gl;
+      const gl = this.gl;
       const geometry = opts.geometry;
 
       this.assetManager.getAsset("obj", geometry)

@@ -89,8 +89,8 @@ class RenderExample extends Renderer
     this.camera.position[2] = -60;
 
     //Load mesh through assets
-    assets.loadAsset("mesh", "capsule.mesh", { gl: gl, geometry: "capsule.obj" });
-    assets.loadAsset("mesh", "quad.mesh", { gl: gl, geometry: "quad.obj" });
+    assets.loadAsset("mesh", "capsule.mesh", { geometry: "capsule.obj" });
+    assets.loadAsset("mesh", "quad.mesh", { geometry: "quad.obj" });
 
     //Load mesh through cache
     assets.cacheAsset("mesh", "cube.mesh", new Mesh(gl, gl.TRIANGLES,

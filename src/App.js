@@ -26,7 +26,6 @@ class App
     this.assets.registerAssetLoader("frag", new TextLoader(this.assets, assetDir));
     this.assets.registerAssetLoader("image", new ImageLoader(this.assets, assetDir));
     this.assets.registerAssetLoader("obj", new OBJLoader(this.assets, assetDir));
-    this.assets.registerAssetLoader("mesh", new MeshLoader(this.assets));
 
     this.sceneManager = new SceneManager();
 
@@ -48,6 +47,8 @@ class App
 
   onLoad(callback)
   {
+    this.assets.registerAssetLoader("mesh", new MeshLoader(this.assets, this.gl));
+
     this.mouse = new Mouse(this.canvas);
     this.keyboard = new Keyboard();
     this.input.setMouse(this.mouse);
