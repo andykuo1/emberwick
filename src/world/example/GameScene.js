@@ -2,11 +2,9 @@ import { mat4 } from 'gl-matrix';
 import Scene from 'scene/Scene.js';
 
 import * as InputCodes from 'input/InputCodes.js';
-import InputContext from 'input/context/InputContext.js';
 import StateInput from 'input/context/StateInput.js';
 import RangeInput from 'input/context/RangeInput.js';
 
-import EntityManager from 'ecs/EntityManager.js';
 import Renderable from './component/Renderable.js';
 
 class SceneExample extends Scene
@@ -15,11 +13,8 @@ class SceneExample extends Scene
   {
     super(app);
 
-    this.entityManager = new EntityManager();
-    this.entityManager.registerComponentClass(Renderable);
-
-    this.inputContext = new InputContext();
-    this.onInputUpdate = this.onInputUpdate.bind(this);
+    const entityManager = this.app.entityManager;
+    entityManager.registerComponentClass(Renderable);
 
     this.up = false;
     this.down = false;
@@ -31,17 +26,11 @@ class SceneExample extends Scene
     this.lookY = 0;
   }
 
-  onSceneLoad(gl)
-  {
-    super.onSceneLoad(gl);
-  }
-
   onSceneStart()
   {
     super.onSceneStart();
 
-    const inputs = this.app.input;
-    const entityManager = this.entityManager;
+    const entityManager = this.app.entityManager;
     const cubeID = entityManager.createEntity();
     const cubeRenderable = entityManager.addComponentToEntity(cubeID, Renderable);
     cubeRenderable._sceneNode.setParent(this.sceneGraph);
@@ -51,8 +40,12 @@ class SceneExample extends Scene
     const capsuleRenderable = entityManager.addComponentToEntity(capsuleID, Renderable);
     capsuleRenderable._sceneNode.setParent(cubeRenderable._sceneNode);
     capsuleRenderable._sceneNode.mesh = "capsule.mesh";
+  }
 
-    const context = this.inputContext;
+  onInputSetup(input, context)
+  {
+    super.onInputSetup(input, context);
+
     context.registerState(
       "key", "down", InputCodes.KEY_SPACE,
       "key", "up", InputCodes.KEY_SPACE,
@@ -83,9 +76,6 @@ class SceneExample extends Scene
     context.registerRange(
       "mouse", "move", InputCodes.MOUSE_Y,
       new RangeInput("lookY", -1, 1));
-
-    inputs.addContext(this.inputContext);
-    inputs.addCallback(this.onInputUpdate);
   }
 
   onInputUpdate(inputs)
@@ -109,7 +99,7 @@ class SceneExample extends Scene
 
   onSceneUpdate(dt)
   {
-    const entityManager = this.entityManager;
+    const entityManager = this.app.entityManager;
     const renderer = this.app.renderer;
     const dx = this.left != this.right ? this.left ? 1 : -1 : 0;
     const dy = this.forward != this.backward ? this.forward ? 1 : -1 : 0;
@@ -129,28 +119,6 @@ class SceneExample extends Scene
       mat4.rotateZ(transform, transform, 0.01);
       renderable._sceneNode.update(dt);
     }
-  }
-
-  onSceneRender(gl)
-  {
-  }
-
-  onSceneStop()
-  {
-    super.onSceneStop();
-
-    const entityManager = this.entityManager;
-    const inputs = this.app.input;
-
-    inputs.removeCallback(this.onInputUpdate);
-    inputs.removeContext(this.inputContext);
-
-    entityManager.clear();
-  }
-
-  onSceneUnload(gl)
-  {
-    super.onSceneUnload(gl);
   }
 }
 

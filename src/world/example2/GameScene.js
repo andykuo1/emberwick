@@ -15,11 +15,7 @@ class SceneExample extends Scene
   {
     super(app);
 
-    this.entityManager = new EntityManager();
     this.entityManager.registerComponentClass(Renderable);
-
-    this.inputContext = new InputContext();
-    this.onInputUpdate = this.onInputUpdate.bind(this);
 
     this.playerID = -1;
 
@@ -31,11 +27,6 @@ class SceneExample extends Scene
     this.backward = false;
     this.lookX = 0;
     this.lookY = 0;
-  }
-
-  onSceneLoad(gl)
-  {
-    super.onSceneLoad(gl);
   }
 
   onSceneStart()
@@ -55,8 +46,12 @@ class SceneExample extends Scene
     const capsuleRenderable = entityManager.addComponentToEntity(capsuleID, Renderable);
     capsuleRenderable._sceneNode.setParent(cubeRenderable._sceneNode);
     capsuleRenderable._sceneNode.mesh = "capsule.mesh";
+  }
 
-    const context = this.inputContext;
+  onInputSetup(input, context)
+  {
+    super.onInputSetup(input, context);
+
     context.registerState(
       "key", "down", InputCodes.KEY_SPACE,
       "key", "up", InputCodes.KEY_SPACE,
@@ -87,9 +82,6 @@ class SceneExample extends Scene
     context.registerRange(
       "mouse", "move", InputCodes.MOUSE_Y,
       new RangeInput("lookY", -1, 1));
-
-    inputs.addContext(this.inputContext);
-    inputs.addCallback(this.onInputUpdate);
   }
 
   onInputUpdate(inputs)
@@ -144,24 +136,6 @@ class SceneExample extends Scene
 
   onSceneRender(gl)
   {
-  }
-
-  onSceneStop()
-  {
-    super.onSceneStop();
-
-    const entityManager = this.entityManager;
-    const inputs = this.app.input;
-
-    inputs.removeCallback(this.onInputUpdate);
-    inputs.removeContext(this.inputContext);
-
-    entityManager.clear();
-  }
-
-  onSceneUnload(gl)
-  {
-    super.onSceneUnload(gl);
   }
 }
 
