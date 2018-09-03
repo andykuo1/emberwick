@@ -11,8 +11,8 @@ module.exports = {
   output: {
     //Output to ./dist/bundle.js
     path: path.resolve(__dirname, 'dist'),
-    filename: 'dist/[name].bundle.js',
-    publicPath: '/'
+    filename: '[name].bundle.js',
+    publicPath: 'dist/'
   },
   module: {
     rules: [
@@ -39,7 +39,8 @@ module.exports = {
     contentBase: path.join(__dirname, '/'),//public/
     port: 8000,
     hotOnly: true,
-    open: true
+    open: true,
+    overlay: true
   },
   optimization: {
     splitChunks: {

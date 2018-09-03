@@ -14,13 +14,13 @@ class ComponentManager
     let result = this.componentInstances.get(entityID);
     if (result)
     {
-      this.componentClass.terminate.apply(result);
-      this.componentClass.initialize.apply(result);
+      this.componentClass.terminate.call(result, entityID);
+      this.componentClass.initialize.call(result, entityID);
     }
     else
     {
       result = this.allocateComponent();
-      this.componentClass.initialize.apply(result);
+      this.componentClass.initialize.call(result, entityID);
       this.componentInstances.set(entityID, result);
     }
     return result;
@@ -32,7 +32,7 @@ class ComponentManager
     if (result)
     {
       this.componentInstances.delete(entityID);
-      this.componentClass.terminate.apply(result);
+      this.componentClass.terminate.call(result, entityID);
 
       this.deallocateComponent(result);
       return true;
