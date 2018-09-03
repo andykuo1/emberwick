@@ -1,7 +1,6 @@
 import { mat4 } from 'gl-matrix';
-import PlayableGameState from './PlayableGameState.js';
-
-import Renderable from './components/Renderable.js';
+import PlayableGameState from 'world/PlayableGameState.js';
+import Renderable from 'world/components/Renderable.js';
 
 class GameExample2 extends PlayableGameState
 {
