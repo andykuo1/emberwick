@@ -8,14 +8,14 @@ import * as InputCodes from 'input/InputCodes.js';
 import StateInput from 'input/context/StateInput.js';
 import RangeInput from 'input/context/RangeInput.js';
 
-import GameRenderer from 'world/example2/GameRenderer.js';
-import Renderable from './component/Renderable.js';
+import GameRenderer from 'world/GameRenderer.js';
+import Renderable from './components/Renderable.js';
 
-class GameExample2 extends GameState
+class GameExample extends GameState
 {
   constructor()
   {
-    super("GameExample2");
+    super("GameExample");
 
     this.sceneGraph = null;
     this.inputContext = null;
@@ -24,8 +24,6 @@ class GameExample2 extends GameState
 
     this.inputManager = null;
     this.entityManager = null;
-
-    this.playerID = -1;
 
     this.up = false;
     this.down = false;
@@ -67,22 +65,16 @@ class GameExample2 extends GameState
     inputManager.addCallback(this.onInputUpdate);
 
     entityManager.registerComponentClass(Renderable);
+
     const cubeID = entityManager.createEntity();
     const cubeRenderable = entityManager.addComponentToEntity(cubeID, Renderable);
     cubeRenderable._sceneNode.setParent(this.sceneGraph);
     cubeRenderable._sceneNode.mesh = "cube.mesh";
 
-    this.playerID = cubeID;
-
-    const capsuleID = entityManager.createEntity("rotating");
+    const capsuleID = entityManager.createEntity();
     const capsuleRenderable = entityManager.addComponentToEntity(capsuleID, Renderable);
     capsuleRenderable._sceneNode.setParent(cubeRenderable._sceneNode);
     capsuleRenderable._sceneNode.mesh = "capsule.mesh";
-
-    const quadID = entityManager.createEntity("rotating");
-    const quadRenderable = entityManager.addComponentToEntity(quadID, Renderable);
-    quadRenderable._sceneNode.setParent(this.sceneGraph);
-    quadRenderable._sceneNode.mesh = "quad.mesh";
   }
 
   onInputSetup(inputManager, context)
@@ -149,29 +141,22 @@ class GameExample2 extends GameState
 
     const entityManager = this.entityManager;
     const renderer = this.renderer;
-    const dx = this.left != this.right ? this.left ? -1 : 1 : 0;
+    const dx = this.left != this.right ? this.left ? 1 : -1 : 0;
     const dy = this.forward != this.backward ? this.forward ? 1 : -1 : 0;
     const dz = this.up != this.down ? this.up ? -1 : 1 : 0;
 
-    //renderer.camera.updateMove(dx, dy, dz);
-    //renderer.camera.updateLook(this.lookX, this.lookY);
-    //this.lookX = 0;
-    //this.lookY = 0;
+    renderer.camera.updateMove(dx, dy, dz);
+    renderer.camera.updateLook(this.lookX, this.lookY);
     renderer.camera.onUpdate(dt);
 
-    const playerRenderable = this.entityManager.getComponentFromEntity(Renderable, this.playerID);
-    const playerTransform = playerRenderable.getTransform();
-    mat4.translate(playerTransform, playerTransform, [dx, dy, dz]);
+    this.lookX = 0;
+    this.lookY = 0;
 
-    for(const renderable of entityManager.getComponentsFromTag(Renderable, "rotating"))
+    for(const renderable of entityManager.getComponentsByClass(Renderable))
     {
       const transform = renderable.getTransform();
       mat4.rotateY(transform, transform, 0.01);
       mat4.rotateZ(transform, transform, 0.01);
-    }
-
-    for(const renderable of entityManager.getComponentsByClass(Renderable))
-    {
       renderable._sceneNode.update(dt);
     }
   }
@@ -197,4 +182,4 @@ class GameExample2 extends GameState
   }
 }
 
-export default GameExample2;
+export default GameExample;

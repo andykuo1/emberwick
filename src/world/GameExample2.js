@@ -1,20 +1,29 @@
 import { mat4 } from 'gl-matrix';
-import Scene from 'scene/Scene.js';
+import GameState from 'app/GameState.js';
+
+import SceneNode from 'scenegraph/SceneNode.js';
+import InputContext from 'input/context/InputContext.js';
 
 import * as InputCodes from 'input/InputCodes.js';
 import StateInput from 'input/context/StateInput.js';
 import RangeInput from 'input/context/RangeInput.js';
 
-import EntityManager from 'ecs/EntityManager.js';
-import Renderable from './component/Renderable.js';
+import GameRenderer from 'world/GameRenderer.js';
+import Renderable from './components/Renderable.js';
 
-class SceneExample extends Scene
+class GameExample2 extends GameState
 {
-  constructor(app)
+  constructor()
   {
-    super(app);
+    super("GameExample2");
 
-    this.entityManager.registerComponentClass(Renderable);
+    this.sceneGraph = null;
+    this.inputContext = null;
+    this.renderer = null;
+    this.gl = null;
+
+    this.inputManager = null;
+    this.entityManager = null;
 
     this.playerID = -1;
 
@@ -26,14 +35,38 @@ class SceneExample extends Scene
     this.backward = false;
     this.lookX = 0;
     this.lookY = 0;
+
+    this.onInputUpdate = this.onInputUpdate.bind(this);
   }
 
-  onSceneStart()
+  //Override
+  onLoad()
   {
-    super.onSceneStart();
+    const app = this.getPrevGameState();
+    const assets = app.assets;
+    this.gl = app.gl;
 
-    const inputs = this.app.input;
-    const entityManager = this.entityManager;
+    this.renderer = new GameRenderer(assets);
+
+    return new Promise((resolve, reject) => {
+      this.renderer.load(this.gl, () => resolve(this));
+    });
+  }
+
+  //Override
+  onStart()
+  {
+    const app = this.getPrevGameState();
+    const entityManager = this.entityManager = app.entityManager;
+    const inputManager = this.inputManager = app.inputManager;
+
+    const sceneGraph = this.sceneGraph = new SceneNode();
+    const context = this.inputContext = new InputContext();
+    this.onInputSetup(inputManager, context);
+    inputManager.addContext(context);
+    inputManager.addCallback(this.onInputUpdate);
+
+    entityManager.registerComponentClass(Renderable);
     const cubeID = entityManager.createEntity();
     const cubeRenderable = entityManager.addComponentToEntity(cubeID, Renderable);
     cubeRenderable._sceneNode.setParent(this.sceneGraph);
@@ -52,10 +85,8 @@ class SceneExample extends Scene
     quadRenderable._sceneNode.mesh = "quad.mesh";
   }
 
-  onInputSetup(input, context)
+  onInputSetup(inputManager, context)
   {
-    super.onInputSetup(input, context);
-
     context.registerState(
       "key", "down", InputCodes.KEY_SPACE,
       "key", "up", InputCodes.KEY_SPACE,
@@ -107,10 +138,17 @@ class SceneExample extends Scene
     }
   }
 
-  onSceneUpdate(dt)
+  //Override
+  onUpdate(dt)
   {
+    this.inputManager.doInputUpdate();
+    if (this.gl)
+    {
+      this.renderer.render(this.gl, this);
+    }
+
     const entityManager = this.entityManager;
-    const renderer = this.app.renderer;
+    const renderer = this.renderer;
     const dx = this.left != this.right ? this.left ? -1 : 1 : 0;
     const dy = this.forward != this.backward ? this.forward ? 1 : -1 : 0;
     const dz = this.up != this.down ? this.up ? -1 : 1 : 0;
@@ -138,9 +176,25 @@ class SceneExample extends Scene
     }
   }
 
-  onSceneRender(gl)
+  //Override
+  onSuspend() {}
+
+  //Override
+  onResume() {}
+
+  //Override
+  onStop() {}
+
+  //Override
+  onUnload()
   {
+    this.renderer.unload(this.gl);
+  }
+
+  getSceneGraph()
+  {
+    return this.sceneGraph;
   }
 }
 
-export default SceneExample;
+export default GameExample2;

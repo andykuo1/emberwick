@@ -1,6 +1,6 @@
 import * as App from 'app/App.js';
-import AppState from 'world/example/AppState.js';
-import GameExample from 'world/example2/GameExample2.js';
+import AppState from 'world/AppState.js';
+import GameExample from 'world/GameExample2.js';
 import RenderEngine from 'app/RenderEngine.js';
 
 //If starting application...
