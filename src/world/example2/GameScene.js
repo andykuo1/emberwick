@@ -2,7 +2,6 @@ import { mat4 } from 'gl-matrix';
 import Scene from 'scene/Scene.js';
 
 import * as InputCodes from 'input/InputCodes.js';
-import InputContext from 'input/context/InputContext.js';
 import StateInput from 'input/context/StateInput.js';
 import RangeInput from 'input/context/RangeInput.js';
 

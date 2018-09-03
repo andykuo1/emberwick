@@ -5,6 +5,8 @@ import Mesh from 'render/mogli/Mesh.js';
 import Texture from 'render/mogli/Texture.js';
 import Renderer from 'render/Renderer.js';
 
+import AssetManifest from 'assets/pigeon/AssetManifest.js';
+
 import FreeLookCamera from 'render/camera/FreeLookCamera.js';
 
 class RenderExample extends Renderer
@@ -31,11 +33,13 @@ class RenderExample extends Renderer
       return;
     }
 
-    this.assets.once('idle', () => {
+
+    const manifest = new AssetManifest();
+    this.onPrepareAssets(manifest);
+    this.assets.loadManifest(manifest).then(() => {
       this.onRenderInit(gl);
       callback();
     });
-    this.onPrepareAssets(this.assets);
   }
 
   //Override
@@ -45,16 +49,18 @@ class RenderExample extends Renderer
     this.shader.delete();
   }
 
-  onPrepareAssets(assets)
+  onPrepareAssets(manifest)
   {
-    assets.loadAsset("shader.vert");
-    assets.loadAsset("shader.frag");
-    assets.loadAsset("phong.vert");
-    assets.loadAsset("phong.frag");
-    assets.loadAsset("color.png");
-    assets.loadAsset("capsule.jpg");
-    assets.loadAsset("cube.obj");
-    assets.loadAsset("capsule.obj");
+    manifest.addAsset("vert", "shader.vert");
+    manifest.addAsset("frag", "shader.frag");
+
+    manifest.addAsset("vert", "phong.vert");
+    manifest.addAsset("frag", "phong.frag");
+
+    manifest.addAsset("image", "color.png");
+    manifest.addAsset("image", "capsule.jpg");
+    manifest.addAsset("obj", "cube.obj");
+    manifest.addAsset("obj", "capsule.obj");
   }
 
   onRenderInit(gl)
@@ -67,8 +73,8 @@ class RenderExample extends Renderer
 
     //Load shaders
     const shader = new Shader(gl,
-      assets.getAsset("phong.vert"),
-      assets.getAsset("phong.frag"));
+      assets.getAssetImmediately("vert", "phong.vert"),
+      assets.getAssetImmediately("frag", "phong.frag"));
     shader.setLayout("a_position", 3, gl.FLOAT, false);
     shader.setLayout("a_texcoord", 2, gl.FLOAT, false);
     shader.setLayout("a_normal", 3, gl.FLOAT, false);
@@ -76,17 +82,17 @@ class RenderExample extends Renderer
 
     //Load textures
     this.texture = new Texture(gl);
-    this.texture.bindData(assets.getAsset("color.png"));
+    this.texture.bindData(assets.getAssetImmediately("image", "color.png"));
 
     //Setup camera
     this.camera = new FreeLookCamera(gl);
     this.camera.position[2] = -6;
 
     //Load mesh through assets
-    assets.loadAsset("capsule.mesh", gl, assets, "capsule.obj");
+    assets.loadAsset("mesh", "capsule.mesh", {gl: gl, geometry: "capsule.obj"});
 
     //Load mesh through cache
-    assets.cacheAsset("cube.mesh", new Mesh(gl, gl.TRIANGLES,
+    assets.cacheAsset("mesh", "cube.mesh", new Mesh(gl, gl.TRIANGLES,
       new Float32Array(defaultPositions),
       new Float32Array(defaultTexcoords),
       new Float32Array(defaultNormals),
@@ -153,7 +159,7 @@ class RenderExample extends Renderer
           normalMatrix
         );
 
-        const mesh = this.assets.getAsset(meshID);
+        const mesh = this.assets.getAssetImmediately("mesh", meshID);
         mesh.bind(this.shader);
         mesh.draw(gl);
       }

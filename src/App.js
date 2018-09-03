@@ -1,12 +1,17 @@
 import Mouse from 'input/Mouse.js';
 import Keyboard from 'input/Keyboard.js';
 import InputManager from 'input/InputManager.js';
-import AssetManager from 'assets/AssetManager.js';
+import AssetManager from 'assets/pigeon/AssetManager.js';
 import SceneManager from 'scene/SceneManager.js';
 import EntityManager from 'ecs/EntityManager.js';
 
-import GameScene from 'world/example2/GameScene.js';
-import GameRenderer from 'world/example2/GameRenderer.js';
+import GameScene from 'world/example/GameScene.js';
+import GameRenderer from 'world/example/GameRenderer.js';
+
+import TextLoader from 'assets/pigeon/loaders/TextLoader.js';
+import ImageLoader from 'assets/pigeon/loaders/ImageLoader.js';
+import MeshLoader from 'assets/pigeon/loaders/MeshLoader.js';
+import OBJLoader from 'assets/pigeon/loaders/OBJLoader.js';
 
 class App
 {
@@ -15,7 +20,14 @@ class App
     this.canvas = null;
     this.gl = null;
 
-    this.assets = new AssetManager(window.location + "res/");
+    this.assets = new AssetManager();
+    const assetDir = window.location + "res/";
+    this.assets.registerAssetLoader("vert", new TextLoader(this.assets, assetDir));
+    this.assets.registerAssetLoader("frag", new TextLoader(this.assets, assetDir));
+    this.assets.registerAssetLoader("image", new ImageLoader(this.assets, assetDir));
+    this.assets.registerAssetLoader("obj", new OBJLoader(this.assets, assetDir));
+    this.assets.registerAssetLoader("mesh", new MeshLoader(this.assets));
+
     this.sceneManager = new SceneManager();
 
     this.entityManager = new EntityManager();

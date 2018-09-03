@@ -1,18 +1,19 @@
-import AssetLoader from './AssetLoader.js';
+import AssetLoader from '../AssetLoader.js';
 
 class OBJLoader extends AssetLoader
 {
-  constructor(url)
+  constructor(assetManager, baseUrl)
   {
-    super(url, "text");
+    super(assetManager, baseUrl, "text");
   }
 
-  processResponse(response)
+  //Override
+  onLoadResource(resource, opts, url)
   {
     return new Promise((resolve, reject) => {
       try
       {
-        const result = parse(response);
+        const result = parse(resource);
         resolve(result);
       }
       catch(e)
@@ -22,6 +23,8 @@ class OBJLoader extends AssetLoader
     });
   }
 }
+
+export default OBJLoader;
 
 class Geometry
 {
@@ -213,5 +216,3 @@ function parse(string)
 
   return new Geometry(vertices, texcoords, normals, indices);
 }
-
-export default OBJLoader;
