@@ -1,12 +1,65 @@
-const ALLOW_AUTOMATIC_REGISTER = false;
+const MAX_EVENT_UPDATES = 100;
+const EVENT_NAME = 0;
+const EVENT_ARGS = 1;
 
 const Eventable = {
   __eventListeners: null,
+  __events: null,
+  __immediate: true,
+  __autoregister: false,
+
   mixin(targetClass)
   {
     const targetPrototype = targetClass.prototype;
     Object.assign(targetPrototype, Eventable);
     delete targetPrototype.mixin;
+  },
+
+  allowImmediateEventUpdate(allow)
+  {
+    this.__immediate = allow;
+    return this;
+  },
+
+  allowAutomaticEventRegister(allow)
+  {
+    this.__autoregister = allow;
+    return this;
+  },
+
+  pollEvents()
+  {
+    //Ignore any polls since no events have been fired...
+    if (!this.__eventQueue) return;
+
+    let updates = MAX_EVENT_UPDATES;
+    while(this.__eventQueue.length > 0 && --updates >= 0)
+    {
+      const event = this.__eventQueue.pop();
+      const eventName = event[EVENT_NAME];
+      const eventArgs = event[EVENT_ARGS];
+      this.processEvent(eventName, eventArgs);
+    }
+  },
+
+  processEvent(eventName, args)
+  {
+    const listeners = this.__eventListeners.get(eventName);
+    let result = null;
+    let i = listeners.length;
+    while(i--)
+    {
+      try
+      {
+        result = listeners[i].apply(null, args);
+      }
+      catch(e)
+      {
+        console.error(e);
+      }
+
+      if (result === true) break;
+    }
   },
 
   registerEvent(eventName)
@@ -46,7 +99,7 @@ const Eventable = {
     {
       listeners = this.__eventListeners.get(eventName);
     }
-    else if (ALLOW_AUTOMATIC_REGISTER)
+    else if (this.__autoregister)
     {
       listeners = [];
       this.__eventListeners.set(eventName, listeners);
@@ -97,7 +150,7 @@ const Eventable = {
       const listeners = this.__eventListeners.get(eventName);
       listeners.length = 0;
     }
-    else if (ALLOW_AUTOMATIC_REGISTER)
+    else if (this.__autoregister)
     {
       listeners = [];
       this.__eventListeners.set(eventName, listeners);
@@ -145,12 +198,13 @@ const Eventable = {
   {
     try
     {
+      //Ignore any fired events when not yet prepared...
       if (!this.__eventListeners) return;
 
       let listeners;
       if (!this.__eventListeners.has(eventName))
       {
-        if (ALLOW_AUTOMATIC_REGISTER)
+        if (this.__autoregister)
         {
           listeners = [];
           this.__eventListeners.set(eventName, listeners);
@@ -163,22 +217,16 @@ const Eventable = {
       else
       {
         listeners = this.__eventListeners.get(eventName);
+      }
 
-        let result = null;
-        let i = listeners.length;
-        while(i--)
-        {
-          try
-          {
-            result = listeners[i].apply(null, args);
-          }
-          catch(e)
-          {
-            console.error(e);
-          }
-
-          if (result === true) break;
-        }
+      if (this.__immediate)
+      {
+        this.processEvent(eventName, args);
+      }
+      else
+      {
+        if (!this.__eventQueue) this.__eventQueue = [];
+        this.__eventQueue.push([eventName, args]);
       }
     }
     finally
