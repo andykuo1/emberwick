@@ -69,9 +69,11 @@ class GameStartState extends GameState
   onStart() {}
 
   //Override
-  onGameUpdate()
+  onGameUpdate(dt)
   {
     this.inputManager.doInputUpdate();
+
+    this.entityManager.update(dt);
 
     const gameState = this.getNextGameState();
     if (gameState)

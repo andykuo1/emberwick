@@ -2,6 +2,8 @@ import { mat4 } from 'gl-matrix';
 import PlayableGameState from 'world/PlayableGameState.js';
 import Renderable from 'world/components/Renderable.js';
 
+import EntitySquare from './EntitySquare.js';
+
 class GameExample2 extends PlayableGameState
 {
   constructor()
@@ -47,10 +49,7 @@ class GameExample2 extends PlayableGameState
     capsuleRenderable._sceneNode.setParent(cubeRenderable._sceneNode);
     capsuleRenderable._sceneNode.mesh = "capsule.mesh";
 
-    const quadID = entityManager.createEntity("rotating");
-    const quadRenderable = entityManager.addComponentToEntity(quadID, Renderable);
-    quadRenderable._sceneNode.setParent(this.sceneGraph);
-    quadRenderable._sceneNode.mesh = "quad.mesh";
+    entityManager.getSystem("entity").addEntity(new EntitySquare(this));
   }
 
   //Override

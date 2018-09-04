@@ -1,18 +1,27 @@
+import SystemManager from './SystemManager.js';
 import ComponentManager from './ComponentManager.js';
+import EntitySystem from './entity/EntitySystem.js';
 
-class EntityManager
+class EntityManager extends SystemManager
 {
   constructor()
   {
+    super();
+
     this.nextEntityID = 1;
 
     this.components = new Map();
     this.entities = new Set();
     this.tags = new Map();
+
+    //For hybrid object-orientated entity class
+    this.addSystem("entity", new EntitySystem());
   }
 
   clear()
   {
+    super.clear();
+
     this.entities.clear();
     this.tags.clear();
 
@@ -63,6 +72,17 @@ class EntityManager
   {
     if (this.entities.has(entityID))
     {
+      //Remove from custom entities (if exists)
+      if (this.isCustomEntity(entityID))
+      {
+        const customEntity = this.getCustomEntity(entityID);
+        if (!customEntity.isDead())
+        {
+          customEntity.setDead();
+          customEntity.onDestroy();
+        }
+      }
+
       //Remove from general entity list
       this.entities.delete(entityID);
 
@@ -87,6 +107,16 @@ class EntityManager
     {
       return false;
     }
+  }
+
+  getCustomEntity(entityID)
+  {
+    return this.getSystem("entity").getEntityByID(entityID);
+  }
+
+  isCustomEntity(entityID)
+  {
+    return this.getSystem("entity").hasEntityByID(entityID);
   }
 
   addComponentToEntity(entityID, componentClass, callback=null)
