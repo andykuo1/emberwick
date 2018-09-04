@@ -49,7 +49,7 @@ class GameExample2 extends PlayableGameState
     capsuleRenderable._sceneNode.setParent(cubeRenderable._sceneNode);
     capsuleRenderable._sceneNode.mesh = "capsule.mesh";
 
-    entityManager.getSystem("entity").addEntity(new EntitySquare(this));
+    entityManager.addCustomEntity(new EntitySquare(this));
   }
 
   //Override

@@ -97,6 +97,8 @@ class GameStartState extends GameState
   //Override
   onUnload()
   {
+    this.entityManager.clear();
+    
     this.renderer.unload(this.gl);
     this.keyboard.delete();
     this.mouse.delete();

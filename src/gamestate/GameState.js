@@ -232,45 +232,21 @@ class GameState
     this.emit("unload", this);
   }
 
-  onGameUpdate(dt)
-  {
+  onGameUpdate(dt) {}
 
-  }
+  onLoad() { return Promise.resolve(this); }
 
-  onLoad()
-  {
-    return Promise.resolve(this);
-  }
+  onStart() {}
 
-  onStart()
-  {
+  onUpdate(dt) {}
 
-  }
+  onSuspend() {}
 
-  onUpdate(dt)
-  {
+  onResume() {}
 
-  }
+  onStop() {}
 
-  onSuspend()
-  {
-
-  }
-
-  onResume()
-  {
-
-  }
-
-  onStop()
-  {
-
-  }
-
-  onUnload()
-  {
-
-  }
+  onUnload() {}
 
   isValidNextGameState(gameState)
   {

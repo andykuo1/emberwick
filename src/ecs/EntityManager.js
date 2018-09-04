@@ -1,6 +1,6 @@
 import SystemManager from './SystemManager.js';
 import ComponentManager from './ComponentManager.js';
-import EntitySystem from './entity/EntitySystem.js';
+import CustomEntityManager from './entity/CustomEntityManager.js';
 
 class EntityManager extends SystemManager
 {
@@ -15,12 +15,14 @@ class EntityManager extends SystemManager
     this.tags = new Map();
 
     //For hybrid object-orientated entity class
-    this.addSystem("entity", new EntitySystem());
+    this.customEntities = new CustomEntityManager(this);
   }
 
   clear()
   {
     super.clear();
+
+    this.customEntities.clear();
 
     this.entities.clear();
     this.tags.clear();
@@ -29,6 +31,13 @@ class EntityManager extends SystemManager
     {
       componentManager.clear();
     }
+  }
+
+  update(dt)
+  {
+    super.update(dt);
+
+    this.customEntities.update(dt);
   }
 
   registerComponentClass(componentClass)
@@ -109,15 +118,29 @@ class EntityManager extends SystemManager
     }
   }
 
+  hasEntity(entityID)
+  {
+    return this.entities.has(entityID);
+  }
+
+  /** CUSTOM ENTITIES **/
+
+  addCustomEntity(entity)
+  {
+    return this.customEntities.addEntity(entity);
+  }
+
   getCustomEntity(entityID)
   {
-    return this.getSystem("entity").getEntityByID(entityID);
+    return this.customEntities.getEntityByID(entityID);
   }
 
   isCustomEntity(entityID)
   {
-    return this.getSystem("entity").hasEntityByID(entityID);
+    return this.customEntities.hasEntityByID(entityID);
   }
+
+  /** COMPONENTS **/
 
   addComponentToEntity(entityID, componentClass, callback=null)
   {
@@ -197,6 +220,8 @@ class EntityManager extends SystemManager
     return result;
   }
 
+  /** TAGS **/
+
   addTagToEntity(entityID, tag)
   {
     let taglist = this.tags.get(tag);
@@ -221,6 +246,11 @@ class EntityManager extends SystemManager
   getEntities()
   {
     return this.entities;
+  }
+
+  getCustomEntities()
+  {
+    return this.customEntities.getEntities();
   }
 
   getNextAvailableEntityID()
