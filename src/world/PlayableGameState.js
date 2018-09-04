@@ -62,10 +62,7 @@ class PlayableGameState extends GameState
     inputs.registerRange("mouse", "move", InputCodes.MOUSE_Y, new RangeInput("lookY", -1, 1));
   }
 
-  onInputUpdate(inputs)
-  {
-
-  }
+  onInputUpdate(inputs) {}
 
   onUnload()
   {
