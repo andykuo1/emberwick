@@ -61,8 +61,6 @@ class GameState
   {
     if (!this._isLoaded) throw new Error("Trying to update state that is not yet loaded");
 
-    this.onGameUpdate(dt);
-
     //Update game state if not suspended
     if (!this._suspended)
     {
@@ -73,6 +71,8 @@ class GameState
     {
       this._nextState.update(dt);
     }
+
+    this.onUpdateState(dt);
 
     //Load and switch to next game state if available
     if (this._cacheExit)
@@ -98,7 +98,7 @@ class GameState
     //Already suspended, then ignore it...
     if (this._suspended) return;
 
-    console.log("[GameState] Suspending game state \'" + this.name + "\'...");
+    console.log("[GameState] ...suspending game state \'" + this.name + "\'...");
     this._suspended = true;
     this.onSuspend();
   }
@@ -110,7 +110,7 @@ class GameState
     //Already not suspended, then ignore it...
     if (!this._suspended) return;
 
-    console.log("[GameState] Resuming game state \'" + this.name + "\'...");
+    console.log("[GameState] ...resuming game state \'" + this.name + "\'...");
     this._suspended = false;
     this.onResume();
   }
@@ -146,11 +146,13 @@ class GameState
     }
   }
 
+  //WARNING: Deprecated
   getNextGameState()
   {
     return this._nextState;
   }
 
+  //WARNING: Deprecated
   getPrevGameState()
   {
     return this._prevState;
@@ -164,8 +166,8 @@ class GameState
   _nextGameState(nextState)
   {
     return nextState.init(this, false).then((state) => {
-      this.suspend();
       this._nextState = state;
+      this.onChangeState(state, this);
 
       console.log("[GameState] Starting next game state for \'" + this.name + "\'...");
       //Call start after suspending previous state
@@ -200,7 +202,7 @@ class GameState
     if (this._prevState !== null)
     {
       this._prevState._nextState = null;
-      this._prevState.resume();
+      this._prevState.onChangeState(this._prevState, this);
     }
 
     //If trying to replace current state with next state...
@@ -232,7 +234,21 @@ class GameState
     this.emit("unload", this);
   }
 
-  onGameUpdate(dt) {}
+  onUpdateState(dt) {}
+
+  onChangeState(nextState, prevState)
+  {
+    console.log("[GameState] Changing state from \'" + prevState.name + "\' to \'" + nextState.name + "\'...");
+
+    if (nextState !== this)
+    {
+      this.suspend();
+    }
+    else
+    {
+      this.resume();
+    }
+  }
 
   onLoad() { return Promise.resolve(this); }
 
@@ -251,6 +267,11 @@ class GameState
   isValidNextGameState(gameState)
   {
     return gameState instanceof GameState;
+  }
+
+  isSuspended()
+  {
+    return this._suspended;
   }
 }
 Eventable.mixin(GameState);

@@ -3,47 +3,17 @@ export const FRAMES_PER_SECOND = 60;
 export const INSTANCE = {
   rootState: null,
   running: false,
-  canvas: null,
-  gl: null,
   dt: 0,
   prevtime: 0
 };
 
-export function setCanvas(canvas)
+export function initialize(gameState)
 {
-  INSTANCE.canvas = canvas;
-  INSTANCE.gl = canvas.getContext('webgl');
-};
+  INSTANCE.rootState = gameState;
 
-export function setRootState(gameState)
-{
-  if (INSTANCE.rootState !== null) throw new Error("App root state already exists");
-
-  if (INSTANCE.running)
+  if (gameState)
   {
-    gameState.init().then(() => {
-      console.log("[App] New GameState initialized.");
-
-      INSTANCE.rootState = gameState;
-    });
-  }
-  else
-  {
-    //Will be initailized by App later
-    INSTANCE.rootState = gameState;
-  }
-
-  return gameState;
-};
-
-export function initialize()
-{
-  if (INSTANCE.canvas === null) throw new Error("Invalid canvas target");
-  if (INSTANCE.gl === null) throw new Error("Invalid canvas context target");
-
-  if (INSTANCE.rootState)
-  {
-    return INSTANCE.rootState.init().then(() => {
+    return gameState.init().then(() => {
       console.log("[App] New GameState initialized.");
 
       INSTANCE.running = true;

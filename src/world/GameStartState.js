@@ -6,13 +6,7 @@ import * as App from 'app/App.js';
 import Mouse from 'input/Mouse.js';
 import Keyboard from 'input/Keyboard.js';
 import InputManager from 'input/InputManager.js';
-import AssetManager from 'assets/pigeon/AssetManager.js';
 import EntityManager from 'ecs/EntityManager.js';
-
-import TextLoader from 'assets/pigeon/loaders/TextLoader.js';
-import ImageLoader from 'assets/pigeon/loaders/ImageLoader.js';
-import MeshLoader from 'assets/pigeon/loaders/MeshLoader.js';
-import OBJLoader from 'assets/pigeon/loaders/OBJLoader.js';
 
 import GameRenderer from 'world/GameRenderer.js';
 
@@ -24,10 +18,10 @@ class GameStartState extends GameState
 
     this.canvas = null;
     this.gl = null;
+    this.assets = null;
 
     this.renderer = null;
 
-    this.assets = null;
     this.entityManager = null;
     this.inputManager = null;
 
@@ -38,21 +32,14 @@ class GameStartState extends GameState
   //Override
   onLoad()
   {
-    const assets = new AssetManager();
-    const assetDir = window.location + "res/";
-    assets.registerAssetLoader("vert", new TextLoader(assets, assetDir));
-    assets.registerAssetLoader("frag", new TextLoader(assets, assetDir));
-    assets.registerAssetLoader("image", new ImageLoader(assets, assetDir));
-    assets.registerAssetLoader("obj", new OBJLoader(assets, assetDir));
-    this.assets = assets;
+    const parent = this.getPrevGameState();
+    const canvas = this.canvas = parent.canvas;
+    const gl = this.gl = parent.gl;
+    const assets = this.assets = parent.assetManager;
 
     this.entityManager = new EntityManager();
     this.inputManager = new InputManager();
 
-    const canvas = this.canvas = App.INSTANCE.canvas;
-    const gl = this.gl = App.INSTANCE.gl;
-
-    assets.registerAssetLoader("mesh", new MeshLoader(assets, gl));
     this.mouse = new Mouse(canvas);
     this.keyboard = new Keyboard();
     this.inputManager.setMouse(this.mouse);
@@ -69,7 +56,7 @@ class GameStartState extends GameState
   onStart() {}
 
   //Override
-  onGameUpdate(dt)
+  onUpdateState(dt)
   {
     this.inputManager.doInputUpdate();
 
@@ -98,11 +85,10 @@ class GameStartState extends GameState
   onUnload()
   {
     this.entityManager.clear();
-    
+
     this.renderer.unload(this.gl);
     this.keyboard.delete();
     this.mouse.delete();
-    this.assets.clear();
   }
 
   //Override
