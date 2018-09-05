@@ -8,9 +8,8 @@ class GameExample extends PlayableGameState
   {
     super("GameExample");
 
-    this.renderer = null;
-
     this.entityManager = null;
+    this.renderTarget = null;
 
     this.up = false;
     this.down = false;
@@ -25,16 +24,18 @@ class GameExample extends PlayableGameState
   //Override
   onStart()
   {
+    super.onStart();
+    
     const app = this.getPrevGameState();
     const entityManager = this.entityManager = app.entityManager;
-    const renderer = this.renderer = app.renderer;
+    const renderTarget = this.renderTarget = app.getRenderTarget();
 
-    const sceneGraph = this.sceneGraph;
+    const sceneGraph = renderTarget.getSceneGraph();
     entityManager.registerComponentClass(Renderable);
 
     const cubeID = entityManager.createEntity();
     const cubeRenderable = entityManager.addComponentToEntity(cubeID, Renderable);
-    cubeRenderable._sceneNode.setParent(this.sceneGraph);
+    cubeRenderable._sceneNode.setParent(sceneGraph);
     cubeRenderable._sceneNode.mesh = "cube.mesh";
 
     const capsuleID = entityManager.createEntity();
@@ -67,14 +68,14 @@ class GameExample extends PlayableGameState
   onUpdate(dt)
   {
     const entityManager = this.entityManager;
-    const renderer = this.renderer;
+    const camera = this.renderTarget.getActiveCamera();
     const dx = this.left != this.right ? this.left ? 1 : -1 : 0;
     const dy = this.forward != this.backward ? this.forward ? 1 : -1 : 0;
     const dz = this.up != this.down ? this.up ? -1 : 1 : 0;
 
-    renderer.camera.updateMove(dx, dy, dz);
-    renderer.camera.updateLook(this.lookX, this.lookY);
-    renderer.camera.onUpdate(dt);
+    camera.updateMove(dx, dy, dz);
+    camera.updateLook(this.lookX, this.lookY);
+    camera.onUpdate(dt);
 
     this.lookX = 0;
     this.lookY = 0;

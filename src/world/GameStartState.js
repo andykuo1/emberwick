@@ -1,4 +1,5 @@
 import GameState from 'gamestate/GameState.js';
+import RenderableState from 'render/RenderableState.js';
 import PlayableGameState from './PlayableGameState.js';
 
 import * as App from 'app/App.js';
@@ -8,13 +9,13 @@ import Keyboard from 'input/Keyboard.js';
 import InputManager from 'input/InputManager.js';
 import EntityManager from 'ecs/EntityManager.js';
 
-import GameRenderer from 'world/GameRenderer.js';
+import Mesh from 'render/mogli/Mesh.js';
 
-class GameStartState extends GameState
+class GameStartState extends RenderableState
 {
-  constructor()
+  constructor(renderEngine)
   {
-    super("GameStart");
+    super(renderEngine);
 
     this.canvas = null;
     this.gl = null;
@@ -32,45 +33,60 @@ class GameStartState extends GameState
   //Override
   onLoad()
   {
-    const parent = this.getPrevGameState();
-    const canvas = this.canvas = parent.canvas;
-    const gl = this.gl = parent.gl;
-    const assets = this.assets = parent.assetManager;
+    const manifest = this.getRenderTarget().getAssetManifest();
+    manifest.addAsset("vert", "shader.vert");
+    manifest.addAsset("frag", "shader.frag");
 
-    this.entityManager = new EntityManager();
-    this.inputManager = new InputManager();
+    manifest.addAsset("vert", "phong.vert");
+    manifest.addAsset("frag", "phong.frag");
 
-    this.mouse = new Mouse(canvas);
-    this.keyboard = new Keyboard();
-    this.inputManager.setMouse(this.mouse);
-    this.inputManager.setKeyboard(this.keyboard);
+    manifest.addAsset("image", "capsule.jpg");
+    manifest.addAsset("obj", "cube.obj");
+    manifest.addAsset("obj", "capsule.obj");
+    manifest.addAsset("obj", "quad.obj");
 
-    this.renderer = new GameRenderer(assets);
+    manifest.addAsset("shader", "shader.shader", {vertexShader: "shader.vert", fragmentShader: "shader.frag"});
+    manifest.addAsset("shader", "phong.shader", {vertexShader: "phong.vert", fragmentShader: "phong.frag"});
+    manifest.addAsset("mesh", "capsule.mesh", {geometry: "capsule.obj"});
+    manifest.addAsset("mesh", "quad.mesh", {geometry: "quad.obj"});
 
-    return new Promise((resolve, reject) => {
-      this.renderer.load(gl, () => resolve(this));
+    return super.onLoad().then(() => {
+      const canvas = this.renderEngine.canvas;
+      const gl = this.renderEngine.gl;
+      const assets = this.renderEngine.assetManager;
+
+      this.entityManager = new EntityManager();
+      this.inputManager = new InputManager();
+
+      this.mouse = new Mouse(canvas);
+      this.keyboard = new Keyboard();
+      this.inputManager.setMouse(this.mouse);
+      this.inputManager.setKeyboard(this.keyboard);
+
+      //Load mesh through cache
+      assets.cacheAsset("mesh", "cube.mesh", new Mesh(gl, gl.TRIANGLES,
+        new Float32Array(defaultPositions),
+        new Float32Array(defaultTexcoords),
+        new Float32Array(defaultNormals),
+        new Uint16Array(defaultIndices)));
     });
+  }
+
+  //Override
+  onChangeState(nextState, prevState)
+  {
+    //Do not suspend on state change
   }
 
   //Override
   onStart() {}
 
   //Override
-  onUpdateState(dt)
+  onUpdate(dt)
   {
     this.inputManager.doInputUpdate();
-
     this.entityManager.update(dt);
-
-    const gameState = this.getNextGameState();
-    if (gameState)
-    {
-      this.renderer.render(this.gl, gameState);
-    }
   }
-
-  //Override
-  onUpdate(dt) {}
 
   //Override
   onSuspend() {}
@@ -99,3 +115,119 @@ class GameStartState extends GameState
 }
 
 export default GameStartState;
+
+
+const defaultPositions = [
+  // Front face
+  -1.0, -1.0,  1.0,
+   1.0, -1.0,  1.0,
+   1.0,  1.0,  1.0,
+  -1.0,  1.0,  1.0,
+
+  // Back face
+  -1.0, -1.0, -1.0,
+  -1.0,  1.0, -1.0,
+   1.0,  1.0, -1.0,
+   1.0, -1.0, -1.0,
+
+  // Top face
+  -1.0,  1.0, -1.0,
+  -1.0,  1.0,  1.0,
+   1.0,  1.0,  1.0,
+   1.0,  1.0, -1.0,
+
+  // Bottom face
+  -1.0, -1.0, -1.0,
+   1.0, -1.0, -1.0,
+   1.0, -1.0,  1.0,
+  -1.0, -1.0,  1.0,
+
+  // Right face
+   1.0, -1.0, -1.0,
+   1.0,  1.0, -1.0,
+   1.0,  1.0,  1.0,
+   1.0, -1.0,  1.0,
+
+  // Left face
+  -1.0, -1.0, -1.0,
+  -1.0, -1.0,  1.0,
+  -1.0,  1.0,  1.0,
+  -1.0,  1.0, -1.0,
+];
+const defaultTexcoords = [
+  // Front
+  0.0,  0.0,
+  1.0,  0.0,
+  1.0,  1.0,
+  0.0,  1.0,
+  // Back
+  0.0,  0.0,
+  1.0,  0.0,
+  1.0,  1.0,
+  0.0,  1.0,
+  // Top
+  0.0,  0.0,
+  1.0,  0.0,
+  1.0,  1.0,
+  0.0,  1.0,
+  // Bottom
+  0.0,  0.0,
+  1.0,  0.0,
+  1.0,  1.0,
+  0.0,  1.0,
+  // Right
+  0.0,  0.0,
+  1.0,  0.0,
+  1.0,  1.0,
+  0.0,  1.0,
+  // Left
+  0.0,  0.0,
+  1.0,  0.0,
+  1.0,  1.0,
+  0.0,  1.0,
+];
+const defaultNormals = [
+  // Front
+   0.0,  0.0,  1.0,
+   0.0,  0.0,  1.0,
+   0.0,  0.0,  1.0,
+   0.0,  0.0,  1.0,
+
+  // Back
+   0.0,  0.0, -1.0,
+   0.0,  0.0, -1.0,
+   0.0,  0.0, -1.0,
+   0.0,  0.0, -1.0,
+
+  // Top
+   0.0,  1.0,  0.0,
+   0.0,  1.0,  0.0,
+   0.0,  1.0,  0.0,
+   0.0,  1.0,  0.0,
+
+  // Bottom
+   0.0, -1.0,  0.0,
+   0.0, -1.0,  0.0,
+   0.0, -1.0,  0.0,
+   0.0, -1.0,  0.0,
+
+  // Right
+   1.0,  0.0,  0.0,
+   1.0,  0.0,  0.0,
+   1.0,  0.0,  0.0,
+   1.0,  0.0,  0.0,
+
+  // Left
+  -1.0,  0.0,  0.0,
+  -1.0,  0.0,  0.0,
+  -1.0,  0.0,  0.0,
+  -1.0,  0.0,  0.0
+];
+const defaultIndices = [
+  0,  1,  2,      0,  2,  3,    // front
+  4,  5,  6,      4,  6,  7,    // back
+  8,  9,  10,     8,  10, 11,   // top
+  12, 13, 14,     12, 14, 15,   // bottom
+  16, 17, 18,     16, 18, 19,   // right
+  20, 21, 22,     20, 22, 23,   // left
+];

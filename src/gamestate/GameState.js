@@ -36,19 +36,17 @@ class GameState
 
     //Load and start current game state
     console.log("[GameState] Loading game state \'" + this.name + "\'...");
-    const result = this.onLoad().then((state) => {
+    const result = this.onLoad().then(() => {
       this._isLoaded = true;
 
       this.emit("load", this);
-
-      return state;
     });
 
     if (startOnLoad)
     {
-      return result.then((state) => {
+      return result.then(() => {
         console.log("[GameState] Starting game state \'" + this.name + "\'...");
-        this.onStart()
+        this.onStart();
       });
     }
     else
@@ -165,9 +163,9 @@ class GameState
 
   _nextGameState(nextState)
   {
-    return nextState.init(this, false).then((state) => {
-      this._nextState = state;
-      this.onChangeState(state, this);
+    return nextState.init(this, false).then(() => {
+      this._nextState = nextState;
+      this.onChangeState(nextState, this);
 
       console.log("[GameState] Starting next game state for \'" + this.name + "\'...");
       //Call start after suspending previous state
@@ -250,7 +248,7 @@ class GameState
     }
   }
 
-  onLoad() { return Promise.resolve(this); }
+  onLoad() { return Promise.resolve(); }
 
   onStart() {}
 

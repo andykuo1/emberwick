@@ -6,7 +6,7 @@ import NextGameState from 'world/game/GameExample2.js';
 //If starting application...
 window.addEventListener('load', (event) => {
   const root = new RenderEngine(document.getElementById('glCanvas'));
-  root.nextGameState(new GameStartState()).nextGameState(new NextGameState());
+  root.nextGameState(new GameStartState(root)).nextGameState(new NextGameState());
   App.initialize(root);
 });
 

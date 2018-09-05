@@ -32,8 +32,6 @@ class PlayableGameState extends GameState
     this.inputManager.addContext(this.inputContext);
     this.inputManager.addCallback(this.onInputUpdate);
 
-    this.sceneGraph = new SceneNode();
-
     return super.onLoad();
   }
 
@@ -68,11 +66,6 @@ class PlayableGameState extends GameState
   {
     this.inputManager.removeCallback(this.onInputUpdate);
     this.inputManager.removeContext(this.inputContext);
-  }
-
-  getSceneGraph()
-  {
-    return this.sceneGraph;
   }
 }
 

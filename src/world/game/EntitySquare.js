@@ -17,7 +17,7 @@ class EntitySquare extends Entity
     super.onCreate(entityManager);
 
     const renderable = this.addComponent(Renderable);
-    renderable._sceneNode.setParent(this.world.sceneGraph);
+    renderable._sceneNode.setParent(this.world.renderTarget.getSceneGraph());
     renderable._sceneNode.mesh = "quad.mesh";
   }
 

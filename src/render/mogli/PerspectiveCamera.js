@@ -2,10 +2,9 @@ import { mat4, vec3, quat } from 'gl-matrix';
 
 class PerspectiveCamera
 {
-  constructor(gl)
+  constructor(canvas)
   {
-    this._gl = gl;
-
+    this.canvas = canvas;
     this.fieldOfView = 45 * Math.PI / 180;
     this.zNear = 0.1;
     this.zFar = 100.0;
@@ -25,8 +24,7 @@ class PerspectiveCamera
 
   getAspectRatio()
   {
-    const gl = this._gl;
-    return gl.canvas.clientWidth / gl.canvas.clientHeight;
+    return this.canvas.clientWidth / this.canvas.clientHeight;
   }
 
   getProjectionMatrix()

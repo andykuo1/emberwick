@@ -18,7 +18,7 @@ class AssetLoader
     {
       this.unload(url);
     }
-    
+
     this._loadQueue.clear();
     this._cache.clear();
     this._cacheOnly.clear();
@@ -210,7 +210,7 @@ class AssetLoader
   {
     if (this._loadQueue.has(url))
     {
-      return this._loadQueue.get(url);
+      return this._loadQueue.get(url).promise;
     }
     else if (this._cache.has(url))
     {
