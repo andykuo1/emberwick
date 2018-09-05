@@ -2,15 +2,15 @@ import GameState from './GameState.js';
 
 class EmptyGameState extends GameState
 {
-  constructor(name="EmptyState")
+  constructor(renderer)
   {
-    super(name);
+    super(renderer);
   }
 
   //Override
-  onLoad()
+  onLoad(renderer)
   {
-    return super.onLoad();
+    return super.onLoad(renderer);
   }
 
   //Override

@@ -8,7 +8,7 @@ class GameExample2 extends PlayableGameState
 {
   constructor()
   {
-    super("GameExample2");
+    super();
 
     this.entityManager = null;
     this.renderTarget = null;
@@ -32,7 +32,7 @@ class GameExample2 extends PlayableGameState
 
     const app = this.getPrevGameState();
     const entityManager = this.entityManager = app.entityManager;
-    const renderTarget = this.renderTarget = app.getRenderTarget();
+    const renderTarget = this.renderTarget = app.renderTarget;
 
     const sceneGraph = renderTarget.getSceneGraph();
     entityManager.registerComponentClass(Renderable);

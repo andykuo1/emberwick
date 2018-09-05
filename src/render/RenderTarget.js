@@ -4,13 +4,12 @@ import FreeLookCamera from 'render/camera/FreeLookCamera.js';
 
 class RenderTarget
 {
-  constructor(renderEngine)
+  constructor(renderer)
   {
-    this.renderEngine = renderEngine;
-
+    this.renderer = renderer;
     this.sceneGraph = new SceneNode();
     this.assetManifest = new AssetManifest();
-    this.camera = new FreeLookCamera(renderEngine.canvas);
+    this.camera = new FreeLookCamera(renderer.canvas);
     this.camera.position[2] = -60;
   }
 

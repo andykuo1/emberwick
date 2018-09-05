@@ -10,9 +10,9 @@ import RangeInput from 'input/context/RangeInput.js';
 
 class PlayableGameState extends GameState
 {
-  constructor(name="PlayableGameState")
+  constructor()
   {
-    super(name);
+    super();
 
     this.inputManager = null;
 

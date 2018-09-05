@@ -1,5 +1,4 @@
 import GameState from 'gamestate/GameState.js';
-import RenderableState from 'render/RenderableState.js';
 import PlayableGameState from './PlayableGameState.js';
 
 import * as App from 'app/App.js';
@@ -11,17 +10,17 @@ import EntityManager from 'ecs/EntityManager.js';
 
 import Mesh from 'render/mogli/Mesh.js';
 
-class GameStartState extends RenderableState
+class GameStartState extends GameState
 {
-  constructor(renderEngine)
+  constructor()
   {
-    super(renderEngine);
+    super();
 
     this.canvas = null;
     this.gl = null;
     this.assets = null;
 
-    this.renderer = null;
+    this.renderTarget = null;
 
     this.entityManager = null;
     this.inputManager = null;
@@ -31,11 +30,12 @@ class GameStartState extends RenderableState
   }
 
   //Override
-  onLoad()
+  onLoad(renderer)
   {
-    const manifest = this.getRenderTarget().getAssetManifest();
-    manifest.addAsset("vert", "shader.vert");
-    manifest.addAsset("frag", "shader.frag");
+    const renderTarget = renderer.createRenderTarget();
+    this.renderTarget = renderTarget;
+
+    const manifest = renderTarget.getAssetManifest();
 
     manifest.addAsset("vert", "phong.vert");
     manifest.addAsset("frag", "phong.frag");
@@ -45,15 +45,16 @@ class GameStartState extends RenderableState
     manifest.addAsset("obj", "capsule.obj");
     manifest.addAsset("obj", "quad.obj");
 
-    manifest.addAsset("shader", "shader.shader", {vertexShader: "shader.vert", fragmentShader: "shader.frag"});
     manifest.addAsset("shader", "phong.shader", {vertexShader: "phong.vert", fragmentShader: "phong.frag"});
     manifest.addAsset("mesh", "capsule.mesh", {geometry: "capsule.obj"});
     manifest.addAsset("mesh", "quad.mesh", {geometry: "quad.obj"});
 
-    return super.onLoad().then(() => {
-      const canvas = this.renderEngine.canvas;
-      const gl = this.renderEngine.gl;
-      const assets = this.renderEngine.assetManager;
+    return super.onLoad(renderer)
+    .then(() => renderer.getAssetManager().loadManifest(manifest))
+    .then(() => {
+      const assets = renderer.getAssetManager();
+      const canvas = renderer.getCanvas();
+      const gl = renderer.gl;
 
       this.entityManager = new EntityManager();
       this.inputManager = new InputManager();
@@ -98,11 +99,12 @@ class GameStartState extends RenderableState
   onStop() {}
 
   //Override
-  onUnload()
+  onUnload(renderer)
   {
     this.entityManager.clear();
 
-    this.renderer.unload(this.gl);
+    renderer.destroyRenderTarget(this.renderTarget);
+
     this.keyboard.delete();
     this.mouse.delete();
   }

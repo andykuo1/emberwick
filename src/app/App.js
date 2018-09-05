@@ -2,18 +2,22 @@ export const FRAMES_PER_SECOND = 60;
 
 export const INSTANCE = {
   rootState: null,
+  renderer: null,
   running: false,
   dt: 0,
   prevtime: 0
 };
 
-export function initialize(gameState)
+export function initialize(gameState, renderer)
 {
   INSTANCE.rootState = gameState;
+  INSTANCE.renderer = renderer;
+
+  const result = renderer.load();
 
   if (gameState)
   {
-    return gameState.init().then(() => {
+    return result.then(() => gameState.init(renderer)).then(() => {
       console.log("[App] New GameState initialized.");
 
       INSTANCE.running = true;
@@ -24,12 +28,13 @@ export function initialize(gameState)
   }
   else
   {
-    console.log("[App] No GameState found.");
-    INSTANCE.running = true;
+    return result.then(() => {
+      console.log("[App] No GameState found.");
+      INSTANCE.running = true;
 
-    //Start the application update loop
-    window.requestAnimationFrame(onWindowUpdate);
-    return Promise.resolve();
+      //Start the application update loop
+      window.requestAnimationFrame(onWindowUpdate);
+    });
   }
 };
 
@@ -46,6 +51,10 @@ export function terminate()
     INSTANCE.rootState.exit(true, true);
     INSTANCE.rootState = null;
   }
+
+  //Unload renderer
+  INSTANCE.renderer.unload();
+  INSTANCE.renderer = null;
 };
 
 function onWindowUpdate(time)
@@ -59,6 +68,7 @@ function onWindowUpdate(time)
     {
       state.update(INSTANCE.dt / FRAMES_PER_SECOND);
     }
+    INSTANCE.renderer.update();
     FPS.update(INSTANCE.dt);
 
     INSTANCE.prevtime = time;
