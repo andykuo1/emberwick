@@ -1,7 +1,7 @@
-import GameState from 'gamestate/GameState.js';
 import PlayableGameState from './PlayableGameState.js';
 
 import * as App from 'app/App.js';
+import GameState from 'app/GameState.js';
 
 import Mouse from 'input/Mouse.js';
 import Keyboard from 'input/Keyboard.js';
@@ -49,21 +49,21 @@ class GameStartState extends GameState
     manifest.addAsset("mesh", "capsule.mesh", {geometry: "capsule.obj"});
     manifest.addAsset("mesh", "quad.mesh", {geometry: "quad.obj"});
 
+    const assets = renderer.getAssetManager();
+    const canvas = renderer.getCanvas();
+    const gl = renderer.gl;
+
+    this.entityManager = new EntityManager();
+    this.inputManager = new InputManager();
+
+    this.mouse = new Mouse(canvas);
+    this.keyboard = new Keyboard();
+    this.inputManager.setMouse(this.mouse);
+    this.inputManager.setKeyboard(this.keyboard);
+
     return super.onLoad(renderer)
-    .then(() => renderer.getAssetManager().loadManifest(manifest))
+    .then(() => assets.loadManifest(manifest))
     .then(() => {
-      const assets = renderer.getAssetManager();
-      const canvas = renderer.getCanvas();
-      const gl = renderer.gl;
-
-      this.entityManager = new EntityManager();
-      this.inputManager = new InputManager();
-
-      this.mouse = new Mouse(canvas);
-      this.keyboard = new Keyboard();
-      this.inputManager.setMouse(this.mouse);
-      this.inputManager.setKeyboard(this.keyboard);
-
       //Load mesh through cache
       assets.cacheAsset("mesh", "cube.mesh", new Mesh(gl, gl.TRIANGLES,
         new Float32Array(defaultPositions),

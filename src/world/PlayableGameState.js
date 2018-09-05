@@ -1,4 +1,4 @@
-import GameState from 'gamestate/GameState.js';
+import GameState from 'app/GameState.js';
 
 import SceneNode from 'scenegraph/SceneNode.js';
 import InputContext from 'input/context/InputContext.js';
