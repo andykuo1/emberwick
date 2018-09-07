@@ -6,9 +6,6 @@ class PlaneGeometry extends Geometry
   {
     super(null, null, null, null);
 
-    widthSegments = Math.floor(widthSegments);
-    heightSegments = Math.floor(heightSegments);
-
     this.width = width;
     this.height = height;
     this.widthSegments = widthSegments;
@@ -35,7 +32,7 @@ class PlaneGeometry extends Geometry
       for(x = 0; x < widthSegmentLength; ++x)
       {
         let offsetX = x * segmentWidth - halfWidth;
-        vertices.push(x, -y, 0);
+        vertices.push(offsetX, -offsetY, 0);
         normals.push(0, 0, 1);
         uvs.push(x / widthSegments, 1 - (y / heightSegments));
       }
@@ -57,8 +54,8 @@ class PlaneGeometry extends Geometry
       }
     }
 
-    this.vertices = new Float32Array(vertices);
-    this.texcoords = new Float32Array(texcoords);
+    this.positions = new Float32Array(vertices);
+    this.texcoords = new Float32Array(uvs);
     this.normals = new Float32Array(normals);
     this.indices = new Uint16Array(indices);
   }

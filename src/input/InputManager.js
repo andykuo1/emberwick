@@ -36,9 +36,22 @@ class InputManager
     this._gamepad = null;
   }
 
+  destroy()
+  {
+    if (this._keyboard !== null)
+    {
+      this._keyboard.delete();
+    }
+
+    if (this._mouse !== null)
+    {
+      this._mouse.delete();
+    }
+  }
+
   setKeyboard(keyboard)
   {
-    if (this._keyboard != null)
+    if (this._keyboard !== null)
     {
       this._keyboard.removeEventListener("down", this._keydown);
       this._keyboard.removeEventListener("up", this._keyup);
@@ -58,9 +71,14 @@ class InputManager
     this._keyboard = keyboard;
   }
 
+  getKeyboard()
+  {
+    return this._keyboard;
+  }
+
   setMouse(mouse)
   {
-    if (this._mouse != null)
+    if (this._mouse !== null)
     {
       this._mouse.removeEventListener("down", this._mousedown);
       this._mouse.removeEventListener("up", this._mouseup);
@@ -88,6 +106,11 @@ class InputManager
     mouse.on("up", this._mouseup);
     mouse.on("move", this._mousemove);
     this._mouse = mouse;
+  }
+
+  getMouse()
+  {
+    return this._mouse;
   }
 
   setGamePad(gamePad)

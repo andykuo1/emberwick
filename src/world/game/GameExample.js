@@ -2,6 +2,10 @@ import { mat4 } from 'gl-matrix';
 import PlayableGameState from 'world/PlayableGameState.js';
 import Renderable from 'world/components/Renderable.js';
 
+import PlaneGeometry from 'render/mesh/PlaneGeometry.js';
+
+import EntityTerrain from './EntityTerrain.js';
+
 class GameExample extends PlayableGameState
 {
   constructor()
@@ -22,18 +26,34 @@ class GameExample extends PlayableGameState
   }
 
   //Override
+  onLoad(renderer)
+  {
+    const assets = renderer.getAssetManager();
+
+    const plane = new PlaneGeometry(100, 100, 10, 10);
+    assets.cacheAsset("obj", "plane.obj", plane);
+    assets.loadAsset("mesh", "plane.mesh", {geometry: "plane.obj"});
+
+    return super.onLoad(renderer);
+  }
+
+  //Override
   onStart()
   {
     super.onStart();
 
     const app = this.getPrevGameState();
+
+    const inputManager = app.inputManager;
+    inputManager.getMouse().allowCursorLock = true;
+
     const entityManager = this.entityManager = app.entityManager;
     const renderTarget = this.renderTarget = app.renderTarget;
 
     const sceneGraph = renderTarget.getSceneGraph();
     entityManager.registerComponentClass(Renderable);
 
-    const cubeID = entityManager.createEntity();
+    const cubeID = entityManager.createEntity("rotating");
     const cubeRenderable = entityManager.addComponentToEntity(cubeID, Renderable);
     cubeRenderable._sceneNode.setParent(sceneGraph);
     cubeRenderable._sceneNode.mesh = "cube.mesh";
@@ -42,6 +62,8 @@ class GameExample extends PlayableGameState
     const capsuleRenderable = entityManager.addComponentToEntity(capsuleID, Renderable);
     capsuleRenderable._sceneNode.setParent(cubeRenderable._sceneNode);
     capsuleRenderable._sceneNode.mesh = "capsule.mesh";
+
+    entityManager.addCustomEntity(new EntityTerrain(this));
   }
 
   //Override
@@ -80,11 +102,15 @@ class GameExample extends PlayableGameState
     this.lookX = 0;
     this.lookY = 0;
 
-    for(const renderable of entityManager.getComponentsByClass(Renderable))
+    for(const renderable of entityManager.getComponentsFromTag(Renderable, "rotating"))
     {
       const transform = renderable.getTransform();
       mat4.rotateY(transform, transform, 0.01);
       mat4.rotateZ(transform, transform, 0.01);
+    }
+
+    for(const renderable of entityManager.getComponentsByClass(Renderable))
+    {
       renderable._sceneNode.update(dt);
     }
   }

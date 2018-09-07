@@ -1,7 +1,7 @@
 import * as App from 'app/App.js';
 import RenderEngine from 'render/RenderEngine.js';
 import GameStartState from 'world/GameStartState.js';
-import NextGameState from 'world/game/GameExample2.js';
+import NextGameState from 'world/game/GameExample.js';
 
 //If starting application...
 window.addEventListener('load', (event) => {

@@ -88,7 +88,7 @@ class GameState
     {
       console.log("[GameState] Changing game state for \'" + this.constructor.name + "\'...");
       const nextState = this._cacheNextState;
-      const nextRenderer = this._cacheNextRenderer;
+      const nextRenderer = this._cacheNextRenderer || this._renderer;
       this._cacheNextState = null;
       this._cacheNextRenderer = null;
       this._nextGameState(nextState, nextRenderer);
@@ -142,7 +142,7 @@ class GameState
     if (this.isValidNextGameState(gameState))
     {
       this._cacheNextState = gameState;
-      this._cacheNextRenderer = customRenderer || this._renderer;
+      this._cacheNextRenderer = customRenderer;
       return gameState;
     }
     else

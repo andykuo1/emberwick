@@ -58,6 +58,8 @@ class GameExample2 extends PlayableGameState
     this.lookHelper.setCamera(camera);
     //camera.position[2] = -10;
     this.lookEntity = entityManager.addCustomEntity(new EntitySquare(this));
+
+    entityManager.addCustomEntity(new EntityTerrain(this));
   }
 
   //Override
@@ -100,8 +102,8 @@ class GameExample2 extends PlayableGameState
 
     //camera.updateMove(dx, dz, dy);
     //camera.updateLook(this.lookX, this.lookY);
-    this.lookX = 0;
-    this.lookY = 0;
+    //this.lookX = 0;
+    //this.lookY = 0;
     camera.onUpdate(dt);
 
     this.lookHelper.update();

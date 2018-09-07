@@ -4,6 +4,7 @@ class Mouse
 {
   constructor(canvas, allowCursorLock=false)
   {
+    this.canvas = canvas;
     this.allowCursorLock = allowCursorLock;
 
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -16,7 +17,6 @@ class Mouse
 
     this.onMouseClick = this.onMouseClick.bind(this);
     canvas.addEventListener("click", this.onMouseClick, false);
-    this.canvas = canvas;
 
     this.registerEvent("move");
     this.registerEvent("down");
@@ -34,7 +34,7 @@ class Mouse
     this.unregisterEvent("down");
     this.unregisterEvent("up");
 
-    canvas.removeEventListener("mousedown", this.onMouseDown);
+    this.canvas.removeEventListener("mousedown", this.onMouseDown);
     document.removeEventListener("mousemove", this.onMouseMove);
     document.removeEventListener("mouseup", this.onMouseUp);
 

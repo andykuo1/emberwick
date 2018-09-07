@@ -22,7 +22,8 @@ class PlayableGameState extends GameState
     this.onInputUpdate = this.onInputUpdate.bind(this);
   }
 
-  onLoad()
+  //Override
+  onLoad(renderer)
   {
     const parent = this.getPrevGameState();
     this.inputManager = parent.inputManager;
@@ -32,7 +33,7 @@ class PlayableGameState extends GameState
     this.inputManager.addContext(this.inputContext);
     this.inputManager.addCallback(this.onInputUpdate);
 
-    return super.onLoad();
+    return super.onLoad(renderer);
   }
 
   onInputSetup(inputs)
@@ -65,7 +66,8 @@ class PlayableGameState extends GameState
 
   onInputUpdate(inputs) {}
 
-  onUnload()
+  //Override
+  onUnload(renderer)
   {
     this.inputManager.removeCallback(this.onInputUpdate);
     this.inputManager.removeContext(this.inputContext);

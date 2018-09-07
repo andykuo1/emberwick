@@ -93,8 +93,7 @@ class GameStartState extends GameState
 
     renderer.destroyRenderTarget(this.renderTarget);
 
-    this.keyboard.delete();
-    this.mouse.delete();
+    this.inputManager.destroy();
   }
 
   //Override
