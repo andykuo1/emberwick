@@ -1,5 +1,7 @@
 import AssetLoader from '../AssetLoader.js';
 
+import Geometry from 'render/mesh/Geometry.js';
+
 class OBJLoader extends AssetLoader
 {
   constructor(assetManager, baseUrl)
@@ -25,17 +27,6 @@ class OBJLoader extends AssetLoader
 }
 
 export default OBJLoader;
-
-class Geometry
-{
-  constructor(positions, texcoords, normals, indices)
-  {
-    this.positions = positions;
-    this.texcoords = texcoords;
-    this.normals = normals;
-    this.indices = indices;
-  }
-}
 
 function parse(string)
 {
