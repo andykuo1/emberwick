@@ -56,8 +56,11 @@ class PlayableGameState extends GameState
       "key", "down", InputCodes.KEY_S, "key", "up", InputCodes.KEY_S,
       new StateInput("moveBackward"));
 
-    inputs.registerRange("mouse", "move", InputCodes.MOUSE_X, new RangeInput("lookX", -1, 1));
-    inputs.registerRange("mouse", "move", InputCodes.MOUSE_Y, new RangeInput("lookY", -1, 1));
+    inputs.registerRange("mouse", "move", InputCodes.MOUSE_X, new RangeInput("lookDX", -1, 1));
+    inputs.registerRange("mouse", "move", InputCodes.MOUSE_Y, new RangeInput("lookDY", -1, 1));
+
+    inputs.registerRange("mouse", "pos", InputCodes.MOUSE_X, new RangeInput("lookX", 0, 1));
+    inputs.registerRange("mouse", "pos", InputCodes.MOUSE_Y, new RangeInput("lookY", 0, 1));
   }
 
   onInputUpdate(inputs) {}

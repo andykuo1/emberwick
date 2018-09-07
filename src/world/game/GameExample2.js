@@ -1,8 +1,9 @@
-import { mat4 } from 'gl-matrix';
+import { vec3, mat4, quat } from 'gl-matrix';
 import PlayableGameState from 'world/PlayableGameState.js';
 import Renderable from 'world/components/Renderable.js';
 
 import EntitySquare from './EntitySquare.js';
+import LookHelper from 'world/LookHelper.js';
 
 class GameExample2 extends PlayableGameState
 {
@@ -23,6 +24,10 @@ class GameExample2 extends PlayableGameState
     this.backward = false;
     this.lookX = 0;
     this.lookY = 0;
+
+    this.lookHelper = new LookHelper();
+    this.lookTarget = vec3.create();
+    this.lookEntity = null;
   }
 
   //Override
@@ -49,7 +54,10 @@ class GameExample2 extends PlayableGameState
     capsuleRenderable._sceneNode.setParent(cubeRenderable._sceneNode);
     capsuleRenderable._sceneNode.mesh = "capsule.mesh";
 
-    entityManager.addCustomEntity(new EntitySquare(this));
+    const camera = renderTarget.getActiveCamera();
+    this.lookHelper.setCamera(camera);
+    //camera.position[2] = -10;
+    this.lookEntity = entityManager.addCustomEntity(new EntitySquare(this));
   }
 
   //Override
@@ -62,13 +70,22 @@ class GameExample2 extends PlayableGameState
     this.forward = inputs.getState("moveForward");
     this.backward = inputs.getState("moveBackward");
 
+    if (inputs.hasRange("lookDX"))
+    {
+      this.lookX += inputs.getRange("lookDX") * -1;
+    }
+    if (inputs.hasRange("lookDY"))
+    {
+      this.lookY += inputs.getRange("lookDY") * -1;
+    }
+
     if (inputs.hasRange("lookX"))
     {
-      this.lookX += inputs.getRange("lookX") * -1;
+      this.lookHelper.setX(inputs.getRange("lookX"));
     }
     if (inputs.hasRange("lookY"))
     {
-      this.lookY += inputs.getRange("lookY") * -1;
+      this.lookHelper.setY(inputs.getRange("lookY"));
     }
   }
 
@@ -81,13 +98,18 @@ class GameExample2 extends PlayableGameState
     const dy = this.forward != this.backward ? this.forward ? 1 : -1 : 0;
     const dz = this.up != this.down ? this.up ? -1 : 1 : 0;
 
-    //renderer.camera.updateMove(dx, dy, dz);
-    //renderer.camera.updateLook(this.lookX, this.lookY);
-    //this.lookX = 0;
-    //this.lookY = 0;
+    //camera.updateMove(dx, dz, dy);
+    //camera.updateLook(this.lookX, this.lookY);
+    this.lookX = 0;
+    this.lookY = 0;
     camera.onUpdate(dt);
 
-    const playerRenderable = this.entityManager.getComponentFromEntity(Renderable, this.playerID);
+    this.lookHelper.update();
+    const et = this.lookEntity.getComponent(Renderable).getTransform();
+    mat4.fromTranslation(et, this.lookHelper.getVector());
+
+
+    const playerRenderable = entityManager.getComponentFromEntity(Renderable, this.playerID);
     const playerTransform = playerRenderable.getTransform();
     mat4.translate(playerTransform, playerTransform, [dx, dy, dz]);
 

@@ -10,7 +10,6 @@ class RenderTarget
     this.sceneGraph = new SceneNode();
     this.assetManifest = new AssetManifest();
     this.camera = new FreeLookCamera(renderer.canvas);
-    this.camera.position[2] = -60;
   }
 
   getAssetManifest()

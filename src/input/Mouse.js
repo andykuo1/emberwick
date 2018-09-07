@@ -2,15 +2,17 @@ import Eventable from 'util/Eventable.js';
 
 class Mouse
 {
-  constructor(canvas)
+  constructor(canvas, allowCursorLock=false)
   {
+    this.allowCursorLock = allowCursorLock;
+
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
+    this._down = false;
 
+    canvas.addEventListener("mousedown", this.onMouseDown, false);
     document.addEventListener("mousemove", this.onMouseMove, false);
-    document.addEventListener("mousedown", this.onMouseDown, false);
-    document.addEventListener("mouseup", this.onMouseUp, false);
 
     this.onMouseClick = this.onMouseClick.bind(this);
     canvas.addEventListener("click", this.onMouseClick, false);
@@ -32,8 +34,8 @@ class Mouse
     this.unregisterEvent("down");
     this.unregisterEvent("up");
 
+    canvas.removeEventListener("mousedown", this.onMouseDown);
     document.removeEventListener("mousemove", this.onMouseMove);
-    document.removeEventListener("mousedown", this.onMouseDown);
     document.removeEventListener("mouseup", this.onMouseUp);
 
     this.canvas.removeEventListener("click", this.onMouseClick);
@@ -41,26 +43,40 @@ class Mouse
 
   onMouseClick(e)
   {
-    this.canvas.requestPointerLock();
+    if (this.allowCursorLock)
+    {
+      this.canvas.requestPointerLock();
+    }
   }
 
   onMouseMove(e)
   {
-    if (!this.hasPointerLock()) return;
+    if (this.allowCursorLock && !this.hasPointerLock()) return;
 
     this.emit("move", e);
   }
 
   onMouseDown(e)
   {
-    if (!this.hasPointerLock()) return;
+    if (this.allowCursorLock && !this.hasPointerLock()) return;
+
+    if (this._down)
+    {
+      document.removeEventListener("mouseup", this.onMouseUp);
+    }
+
+    this._down = true;
+    document.addEventListener("mouseup", this.onMouseUp, false);
 
     this.emit("down", e);
   }
 
   onMouseUp(e)
   {
-    if (!this.hasPointerLock()) return;
+    if (this.allowCursorLock && !this.hasPointerLock()) return;
+
+    document.removeEventListener("mouseup", this.onMouseUp);
+    this._down = false;
 
     this.emit("up", e);
   }

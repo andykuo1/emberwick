@@ -11,6 +11,8 @@ class InputManager
 {
   constructor(canvas)
   {
+    this._canvas = canvas;
+
     this._inputEvent = {
       id: null,
       down: false,
@@ -76,6 +78,10 @@ class InputManager
     this._mousemove = (e) => {
       this.onInput("mouse", "move", InputCodes.MOUSE_X, e.movementX);
       this.onInput("mouse", "move", InputCodes.MOUSE_Y, e.movementY);
+
+      const rect = this._canvas.getBoundingClientRect();
+      this.onInput("mouse", "pos", InputCodes.MOUSE_X, e.clientX - rect.left);
+      this.onInput("mouse", "pos", InputCodes.MOUSE_Y, e.clientY - rect.top);
     };
 
     mouse.on("down", this._mousedown);

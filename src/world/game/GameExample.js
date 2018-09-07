@@ -54,13 +54,13 @@ class GameExample extends PlayableGameState
     this.forward = inputs.getState("moveForward");
     this.backward = inputs.getState("moveBackward");
 
-    if (inputs.hasRange("lookX"))
+    if (inputs.hasRange("lookDX"))
     {
-      this.lookX += inputs.getRange("lookX") * -1;
+      this.lookX += inputs.getRange("lookDX") * -1;
     }
-    if (inputs.hasRange("lookY"))
+    if (inputs.hasRange("lookDY"))
     {
-      this.lookY += inputs.getRange("lookY") * -1;
+      this.lookY += inputs.getRange("lookDY") * -1;
     }
   }
 

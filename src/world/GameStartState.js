@@ -16,26 +16,18 @@ class GameStartState extends GameState
   {
     super();
 
-    this.canvas = null;
-    this.gl = null;
-    this.assets = null;
-
     this.renderTarget = null;
 
-    this.entityManager = null;
+    this.entityManager = new EntityManager();
     this.inputManager = null;
-
-    this.mouse = null;
-    this.keyboard = null;
   }
 
   //Override
   onLoad(renderer)
   {
     const renderTarget = renderer.createRenderTarget();
-    this.renderTarget = renderTarget;
-
     const manifest = renderTarget.getAssetManifest();
+    this.renderTarget = renderTarget;
 
     manifest.addAsset("vert", "phong.vert");
     manifest.addAsset("frag", "phong.frag");
@@ -53,13 +45,9 @@ class GameStartState extends GameState
     const canvas = renderer.getCanvas();
     const gl = renderer.gl;
 
-    this.entityManager = new EntityManager();
-    this.inputManager = new InputManager();
-
-    this.mouse = new Mouse(canvas);
-    this.keyboard = new Keyboard();
-    this.inputManager.setMouse(this.mouse);
-    this.inputManager.setKeyboard(this.keyboard);
+    this.inputManager = new InputManager(canvas);
+    this.inputManager.setMouse(new Mouse(canvas));
+    this.inputManager.setKeyboard(new Keyboard());
 
     return super.onLoad(renderer)
     .then(() => assets.loadManifest(manifest))

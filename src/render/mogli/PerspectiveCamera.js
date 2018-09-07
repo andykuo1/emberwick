@@ -22,6 +22,16 @@ class PerspectiveCamera
     this.scale = vec3.fromValues(1, 1, 1);
   }
 
+  getWidth()
+  {
+    return this.canvas.clientWidth;
+  }
+
+  getHeight()
+  {
+    return this.canvas.clientHeight;
+  }
+
   getAspectRatio()
   {
     return this.canvas.clientWidth / this.canvas.clientHeight;
@@ -29,10 +39,11 @@ class PerspectiveCamera
 
   getProjectionMatrix()
   {
-    return mat4.perspective(this._projectionMatrix,
+    mat4.perspective(this._projectionMatrix,
       this.fieldOfView,
       this.getAspectRatio(),
       this.zNear, this.zFar);
+    return this._projectionMatrix;
   }
 
   getViewMatrix()
