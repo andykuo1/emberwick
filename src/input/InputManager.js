@@ -34,6 +34,9 @@ class InputManager
     this._keydown = null;
 
     this._gamepad = null;
+
+    this.setMouse(new Mouse(canvas));
+    this.setKeyboard(new Keyboard());
   }
 
   destroy()

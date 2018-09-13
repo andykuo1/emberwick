@@ -4,7 +4,7 @@ let REFCOUNT = 0;
 
 class Mesh
 {
-  constructor(gl, elementType, positions, texcoords, normals, indices)
+  constructor(gl, positions, texcoords, normals, indices)
   {
     ++REFCOUNT;
 
@@ -20,7 +20,6 @@ class Mesh
     this.indices = new BufferObject(gl, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW);
     this.indices.setData(indices);
 
-    this.elementType = elementType;
     this.vertexCount = indices.length;
     this._gl = gl;
   }
@@ -49,9 +48,9 @@ class Mesh
     this.indices.bind();
   }
 
-  draw(gl, offset=0)
+  draw(gl, elementType=gl.TRIANGLES, offset=0)
   {
-    gl.drawElements(this.elementType, this.vertexCount, gl.UNSIGNED_SHORT, offset);
+    gl.drawElements(elementType, this.vertexCount, gl.UNSIGNED_SHORT, offset);
   }
 }
 

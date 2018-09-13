@@ -1,8 +1,6 @@
 import * as App from 'app/App.js';
 import GameState from 'app/GameState.js';
 
-import Mouse from 'input/Mouse.js';
-import Keyboard from 'input/Keyboard.js';
 import InputManager from 'input/InputManager.js';
 import EntityManager from 'ecs/EntityManager.js';
 
@@ -57,9 +55,6 @@ class GameStartState extends GameState
     const gl = renderer.gl;
 
     this.inputManager = new InputManager(canvas);
-    this.inputManager.setMouse(new Mouse(canvas));
-    this.inputManager.setKeyboard(new Keyboard());
-
     this.inputContext = new InputContext();
     this.onInputSetup(this.inputContext);
     this.inputManager.addContext(this.inputContext);
@@ -69,7 +64,7 @@ class GameStartState extends GameState
     .then(() => assets.loadManifest(manifest))
     .then(() => {
       //Load mesh through cache
-      assets.cacheAsset("mesh", "cube.mesh", new Mesh(gl, gl.TRIANGLES,
+      assets.cacheAsset("mesh", "cube.mesh", new Mesh(gl,
         new Float32Array(defaultPositions),
         new Float32Array(defaultTexcoords),
         new Float32Array(defaultNormals),

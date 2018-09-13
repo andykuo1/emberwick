@@ -21,7 +21,7 @@ class MeshLoader extends CacheLoader
 
       this.assetManager.getAsset("obj", geometry)
         .then((response) => {
-          const result = new Mesh(gl, gl.TRIANGLES,
+          const result = new Mesh(gl,
             response.positions,
             response.texcoords,
             response.normals,
