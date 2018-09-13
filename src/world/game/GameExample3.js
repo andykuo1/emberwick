@@ -1,12 +1,14 @@
-import { mat4 } from 'gl-matrix';
+import { vec3, mat4, quat } from 'gl-matrix';
 import GameState from 'app/GameState.js';
 import Renderable from 'world/components/Renderable.js';
 
-import PlaneGeometry from 'render/mesh/PlaneGeometry.js';
+import EntitySquare from './EntitySquare.js';
+import LookHelper from 'world/LookHelper.js';
 
+import PlaneGeometry from 'render/mesh/PlaneGeometry.js';
 import EntityTerrain from './EntityTerrain.js';
 
-class GameExample extends GameState
+class GameExample3 extends GameState
 {
   constructor()
   {
@@ -14,6 +16,8 @@ class GameExample extends GameState
 
     this.entityManager = null;
     this.renderTarget = null;
+
+    this.playerID = -1;
 
     this.up = false;
     this.down = false;
@@ -23,9 +27,12 @@ class GameExample extends GameState
     this.backward = false;
     this.lookX = 0;
     this.lookY = 0;
+
+    this.lookHelper = new LookHelper();
+    this.lookTarget = vec3.create();
+    this.lookEntity = null;
   }
 
-  //Override
   onLoad(renderer)
   {
     const assets = renderer.getAssetManager();
@@ -34,7 +41,7 @@ class GameExample extends GameState
     assets.cacheAsset("obj", "plane.obj", plane);
     assets.loadAsset("mesh", "plane.mesh", {geometry: "plane.obj"});
 
-    return super.onLoad(renderer);
+    return super.onLoad();
   }
 
   //Override
@@ -43,25 +50,33 @@ class GameExample extends GameState
     super.onStart();
 
     const app = this.getPrevGameState();
-
-    const inputManager = app.inputManager;
-    inputManager.getMouse().allowCursorLock = true;
-
     const entityManager = this.entityManager = app.entityManager;
     const renderTarget = this.renderTarget = app.renderTarget;
 
     const sceneGraph = renderTarget.getSceneGraph();
     entityManager.registerComponentClass(Renderable);
 
-    const cubeID = entityManager.createEntity("rotating");
+    const cubeID = entityManager.createEntity();
     const cubeRenderable = entityManager.addComponentToEntity(cubeID, Renderable);
     cubeRenderable._sceneNode.setParent(sceneGraph);
     cubeRenderable._sceneNode.mesh = "cube.mesh";
+    cubeRenderable._sceneNode.material = "rock.tex";
 
-    const capsuleID = entityManager.createEntity();
+    this.playerID = cubeID;
+
+    const capsuleID = entityManager.createEntity("rotating");
     const capsuleRenderable = entityManager.addComponentToEntity(capsuleID, Renderable);
     capsuleRenderable._sceneNode.setParent(cubeRenderable._sceneNode);
     capsuleRenderable._sceneNode.mesh = "capsule.mesh";
+    capsuleRenderable._sceneNode.material = "capsule.tex";
+
+    const camera = renderTarget.getActiveCamera();
+    this.lookHelper.setCamera(camera);
+    camera.pitch = -45;
+    //quat.rotateX(camera.rotation, camera.rotation, Math.PI / 4);
+    camera.position[1] = -10;
+    camera.position[2] = -10;
+    this.lookEntity = entityManager.addCustomEntity(new EntitySquare(this));
 
     entityManager.addCustomEntity(new EntityTerrain(this));
 
@@ -86,12 +101,12 @@ class GameExample extends GameState
   //Override
   onInputUpdate(inputs)
   {
-    this.up = inputs.getState("moveUp");
+    this.up = inputs.getState("moveForward");
     this.left = inputs.getState("strafeLeft");
-    this.down = inputs.getState("moveDown");
+    this.down = inputs.getState("moveBackward");
     this.right = inputs.getState("strafeRight");
-    this.forward = inputs.getState("moveForward");
-    this.backward = inputs.getState("moveBackward");
+    this.forward = inputs.getState("moveUp");
+    this.backward = inputs.getState("moveDown");
 
     if (inputs.hasRange("lookDX"))
     {
@@ -101,6 +116,15 @@ class GameExample extends GameState
     {
       this.lookY += inputs.getRange("lookDY") * -1;
     }
+
+    if (inputs.hasRange("lookX"))
+    {
+      this.lookHelper.setX(inputs.getRange("lookX"));
+    }
+    if (inputs.hasRange("lookY"))
+    {
+      this.lookHelper.setY(inputs.getRange("lookY"));
+    }
   }
 
   //Override
@@ -108,16 +132,27 @@ class GameExample extends GameState
   {
     const entityManager = this.entityManager;
     const camera = this.renderTarget.getActiveCamera();
-    const dx = this.left != this.right ? this.left ? 1 : -1 : 0;
+
+    const dx = this.left != this.right ? this.left ? -1 : 1 : 0;
     const dy = this.forward != this.backward ? this.forward ? 1 : -1 : 0;
     const dz = this.up != this.down ? this.up ? -1 : 1 : 0;
+    const playerRenderable = entityManager.getComponentFromEntity(Renderable, this.playerID);
+    const playerTransform = playerRenderable.getTransform();
+    mat4.translate(playerTransform, playerTransform, [dx * dt, dy * dt, dz * dt]);
 
-    camera.updateMove(dx, dy, dz);
-    camera.updateLook(this.lookX, this.lookY);
+    //camera.updateMove(dx, dz, dy);
+    //camera.updateLook(this.lookX, this.lookY);
+    //this.lookX = 0;
+    //this.lookY = 0;
     camera.onUpdate(dt);
+    const playerPosition = mat4.getTranslation(vec3.create(), playerTransform);
+    camera.position[0] = -playerPosition[0];
+    camera.position[1] = -playerPosition[1] - 10;
+    camera.position[2] = -playerPosition[2] - 10;
 
-    this.lookX = 0;
-    this.lookY = 0;
+    this.lookHelper.update();
+    const et = this.lookEntity.getComponent(Renderable).getTransform();
+    mat4.fromTranslation(et, this.lookHelper.getVector());
 
     for(const renderable of entityManager.getComponentsFromTag(Renderable, "rotating"))
     {
@@ -133,4 +168,4 @@ class GameExample extends GameState
   }
 }
 
-export default GameExample;
+export default GameExample3;

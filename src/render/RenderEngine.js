@@ -65,7 +65,9 @@ class RenderEngine extends Renderer
       assets.loadAsset("frag", "shader.frag"),
       assets.loadAsset("shader", "shader.shader", {vertexShader: "shader.vert", fragmentShader: "shader.frag"}),
       assets.loadAsset("image", "color.png"),
-      assets.loadAsset("texture", "color.tex", {image: "color.png"})
+      assets.loadAsset("texture", "color.tex", {image: "color.png"}),
+      assets.loadAsset("image", "rock.jpg"),
+      assets.loadAsset("texture", "rock.tex", {image: "rock.jpg"})
     ]));
   }
 
@@ -133,6 +135,13 @@ class RenderEngine extends Renderer
 
       const node = nextNodes.pop();
       const meshID = node.mesh;
+      const textureID = node.material;
+      if (textureID)
+      {
+        const texture = assetManager.getAssetImmediately("texture", textureID);
+        texture.bind(gl.TEXTURE0);
+      }
+
       if (meshID)
       {
         const mesh = assetManager.getAssetImmediately("mesh", meshID);

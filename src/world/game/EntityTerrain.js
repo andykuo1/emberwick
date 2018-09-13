@@ -21,6 +21,7 @@ class EntityTerrain extends Entity
     const transform = renderable.getTransform();
     mat4.rotateX(transform, transform, -Math.PI / 2);
     renderable._sceneNode.mesh = "plane.mesh";
+    renderable._sceneNode.material = "rock.tex";
   }
 }
 

@@ -21,7 +21,7 @@ class TextureLoader extends CacheLoader
 
       this.assetManager.getAsset("image", image).then((imageResult) => {
         const result = new Texture(gl);
-        result.bindData(imageResult);
+        result.setData(imageResult);
         resolve(result);
       });
     });

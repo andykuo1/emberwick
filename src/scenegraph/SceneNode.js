@@ -14,6 +14,7 @@ class SceneNode
     this.modelScale = vec3.fromValues(1, 1, 1);
 
     this.mesh = mesh;
+    this.material = "color.tex";
   }
 
   delete()

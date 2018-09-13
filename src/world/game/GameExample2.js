@@ -1,11 +1,11 @@
 import { vec3, mat4, quat } from 'gl-matrix';
-import PlayableGameState from 'world/PlayableGameState.js';
+import GameState from 'app/GameState.js';
 import Renderable from 'world/components/Renderable.js';
 
 import EntitySquare from './EntitySquare.js';
 import LookHelper from 'world/LookHelper.js';
 
-class GameExample2 extends PlayableGameState
+class GameExample2 extends GameState
 {
   constructor()
   {
@@ -58,8 +58,6 @@ class GameExample2 extends PlayableGameState
     this.lookHelper.setCamera(camera);
     //camera.position[2] = -10;
     this.lookEntity = entityManager.addCustomEntity(new EntitySquare(this));
-
-    entityManager.addCustomEntity(new EntityTerrain(this));
   }
 
   //Override

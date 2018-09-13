@@ -38,7 +38,7 @@ class BufferObject
     this._gl.bindBuffer(this.type, NULLTYPE);
   }
 
-  bindData(data)
+  setData(data)
   {
     const gl = this._gl;
     if (data instanceof Float32Array)
@@ -59,6 +59,14 @@ class BufferObject
     {
       throw new Error("Unsupported buffer data type");
     }
+    return this;
+  }
+
+  updateData(data, offset=0)
+  {
+    const gl = this._gl;
+    gl.bindBuffer(this.type, this._handle);
+    gl.bufferSubData(this.type, offset, data);
     return this;
   }
 }

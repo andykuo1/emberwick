@@ -9,16 +9,16 @@ class Mesh
     ++REFCOUNT;
 
     this.positions = new BufferObject(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW);
-    this.positions.bindData(positions);
+    this.positions.setData(positions);
 
     this.texcoords = new BufferObject(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW);
-    this.texcoords.bindData(texcoords);
+    this.texcoords.setData(texcoords);
 
     this.normals = new BufferObject(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW);
-    this.normals.bindData(normals);
+    this.normals.setData(normals);
 
     this.indices = new BufferObject(gl, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW);
-    this.indices.bindData(indices);
+    this.indices.setData(indices);
 
     this.elementType = elementType;
     this.vertexCount = indices.length;
