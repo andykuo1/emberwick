@@ -82,12 +82,19 @@ class AssetManager
       const assetOpts = assetData[2];
 
       const loader = this.getAssetLoader(assetType);
-      let promise = loader.load(assetUrl, assetOpts);
-      if (ignoreErrors)
+      if (!loader.hasAsset(assetUrl))
       {
-        promise = promise.catch((error) => console.error("Ignoring load error: " + error));
+        let promise = loader.load(assetUrl, assetOpts);
+        if (ignoreErrors)
+        {
+          promise = promise.catch((error) => console.error("Ignoring load error: " + error));
+        }
+        promises.push(promise);
       }
-      promises.push(promise);
+      else
+      {
+        promises.push(loader.getAsset(assetUrl, false));
+      }
     }
 
     //Load all resources in a bundle

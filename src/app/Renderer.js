@@ -9,7 +9,6 @@ class Renderer
   unload()
   {
     console.log("[Renderer] Unloading renderer...");
-    this.renderTargets.length = 0;
   }
 
   update() {}
