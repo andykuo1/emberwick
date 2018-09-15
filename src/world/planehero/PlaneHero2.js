@@ -1,10 +1,10 @@
+import { vec3, mat4 } from 'gl-matrix';
 import PlaneHero from './PlaneHero.js';
 
-import { vec3, mat4 } from 'gl-matrix';
-import Renderable from 'world/components/Renderable.js';
+import Renderable from 'world/planehero/Renderable.js';
+import EntityTerrain from 'world/planehero/EntityTerrain.js';
+import EntitySquare from 'world/planehero/EntitySquare.js';
 
-import EntityTerrain from 'world/game/EntityTerrain.js';
-import EntitySquare from 'world/game/EntitySquare.js';
 import LookHelper from 'world/LookHelper.js';
 
 class PlaneHero2 extends PlaneHero

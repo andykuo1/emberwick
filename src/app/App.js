@@ -20,12 +20,12 @@ export function initialize(startState)
   INSTANCE.gameLoop = gameLoop;
   INSTANCE.root = root;
 
-  gameLoop.on("update", (dt) => {
+  gameLoop.on("update", (dt, millis) => {
     if (root && root.canUpdate())
     {
       root.update(dt);
     }
-    FPS.update(dt);
+    FPS.update(millis);
   });
 
   renderEngine.initialize()

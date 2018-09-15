@@ -1,8 +1,9 @@
 import { mat4 } from 'gl-matrix';
 import Entity from 'ecs/entity/Entity.js';
-import Renderable from 'world/components/Renderable.js';
 
-class EntityTerrain extends Entity
+import Renderable from 'world/planehero/Renderable.js';
+
+class EntitySquare extends Entity
 {
   constructor(world)
   {
@@ -18,11 +19,19 @@ class EntityTerrain extends Entity
 
     const renderable = this.addComponent(Renderable);
     renderable._sceneNode.setParent(this.world.sceneGraph);
-    const transform = renderable.getTransform();
-    mat4.rotateX(transform, transform, -Math.PI / 2);
-    renderable._sceneNode.mesh = "plane.mesh";
+    renderable._sceneNode.mesh = "quad.mesh";
     renderable._sceneNode.material = "rock.tex";
+  }
+
+  //Override
+  onUpdate(dt)
+  {
+    super.onUpdate(dt);
+
+    const renderable = this.getComponent(Renderable);
+    const transform = renderable.getTransform();
+    mat4.rotateX(transform, transform, 0.1);
   }
 }
 
-export default EntityTerrain;
+export default EntitySquare;

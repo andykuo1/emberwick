@@ -39,7 +39,7 @@ class GameLoop
     {
       this.dt = time - this.prevtime;
 
-      this.emit("update", this.dt / FRAMES_PER_SECOND);
+      this.emit("update", this.dt / FRAMES_PER_SECOND, this.dt);
 
       this.prevtime = time;
 

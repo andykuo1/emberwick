@@ -1,12 +1,10 @@
+import { mat4 } from 'gl-matrix';
 import SimpleGameState from 'world/SimpleGameState.js';
 
 import SceneNode from 'scenegraph/SceneNode.js';
 
-import { mat4 } from 'gl-matrix';
-import Mesh from 'render/mogli/Mesh.js';
-
-import Renderable from 'world/components/Renderable.js';
-import EntityTerrain from 'world/game/EntityTerrain.js';
+import Renderable from 'world/planehero/Renderable.js';
+import EntityTerrain from 'world/planehero/EntityTerrain.js';
 
 class PlaneHero extends SimpleGameState
 {
@@ -32,7 +30,7 @@ class PlaneHero extends SimpleGameState
   {
     return super.onLoad(opts).then(() => {
       this.renderer = new PlaneHeroRenderer(this, opts.renderEngine);
-      this.renderer.load();
+      return this.renderer.load();
     });
   }
 
