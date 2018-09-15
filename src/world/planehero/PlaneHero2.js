@@ -1,29 +1,19 @@
-import { vec3, mat4, quat } from 'gl-matrix';
-import GameState from 'app/GameState.js';
+import PlaneHero from './PlaneHero.js';
+
+import { vec3, mat4 } from 'gl-matrix';
 import Renderable from 'world/components/Renderable.js';
 
-import EntitySquare from './EntitySquare.js';
+import EntityTerrain from 'world/game/EntityTerrain.js';
+import EntitySquare from 'world/game/EntitySquare.js';
 import LookHelper from 'world/LookHelper.js';
 
-class GameExample2 extends GameState
+class PlaneHero2 extends PlaneHero
 {
   constructor()
   {
     super();
 
-    this.entityManager = null;
-    this.renderTarget = null;
-
     this.playerID = -1;
-
-    this.up = false;
-    this.down = false;
-    this.left = false;
-    this.right = false;
-    this.forward = false;
-    this.backward = false;
-    this.lookX = 0;
-    this.lookY = 0;
 
     this.lookHelper = new LookHelper();
     this.lookTarget = vec3.create();
@@ -31,17 +21,18 @@ class GameExample2 extends GameState
   }
 
   //Override
-  onStart()
+  onStart(opts)
   {
-    super.onStart();
+    super.onStart(opts);
 
-    const app = this.getPrevGameState();
-    const entityManager = this.entityManager = app.entityManager;
-    const renderTarget = this.renderTarget = app.renderTarget;
+    this.inputManager.getMouse().allowCursorLock = false;
+  }
 
-    const sceneGraph = renderTarget.getSceneGraph();
-    entityManager.registerComponentClass(Renderable);
-
+  //Override
+  onWorldCreate()
+  {
+    const sceneGraph = this.sceneGraph;
+    const entityManager = this.entityManager;
     const cubeID = entityManager.createEntity();
     const cubeRenderable = entityManager.addComponentToEntity(cubeID, Renderable);
     cubeRenderable._sceneNode.setParent(sceneGraph);
@@ -54,49 +45,30 @@ class GameExample2 extends GameState
     capsuleRenderable._sceneNode.setParent(cubeRenderable._sceneNode);
     capsuleRenderable._sceneNode.mesh = "capsule.mesh";
 
-    const camera = renderTarget.getActiveCamera();
+    const camera = this.renderer.getActiveCamera();
     this.lookHelper.setCamera(camera);
-    //camera.position[2] = -10;
+    camera.pitch = -45;
+    //quat.rotateX(camera.rotation, camera.rotation, Math.PI / 4);
+    camera.position[1] = -10;
+    camera.position[2] = -10;
     this.lookEntity = entityManager.addCustomEntity(new EntitySquare(this));
-  }
 
-  //Override
-  onInputUpdate(inputs)
-  {
-    this.up = inputs.getState("moveUp");
-    this.left = inputs.getState("strafeLeft");
-    this.down = inputs.getState("moveDown");
-    this.right = inputs.getState("strafeRight");
-    this.forward = inputs.getState("moveForward");
-    this.backward = inputs.getState("moveBackward");
-
-    if (inputs.hasRange("lookDX"))
-    {
-      this.lookX += inputs.getRange("lookDX") * -1;
-    }
-    if (inputs.hasRange("lookDY"))
-    {
-      this.lookY += inputs.getRange("lookDY") * -1;
-    }
-
-    if (inputs.hasRange("lookX"))
-    {
-      this.lookHelper.setX(inputs.getRange("lookX"));
-    }
-    if (inputs.hasRange("lookY"))
-    {
-      this.lookHelper.setY(inputs.getRange("lookY"));
-    }
+    entityManager.addCustomEntity(new EntityTerrain(this));
   }
 
   //Override
   onUpdate(dt)
   {
+    this.inputManager.doInputUpdate();
+    this.entityManager.update(dt);
+
     const entityManager = this.entityManager;
-    const camera = this.renderTarget.getActiveCamera();
+    const camera = this.renderer.getActiveCamera();
     const dx = this.left != this.right ? this.left ? -1 : 1 : 0;
-    const dy = this.forward != this.backward ? this.forward ? 1 : -1 : 0;
-    const dz = this.up != this.down ? this.up ? -1 : 1 : 0;
+
+    //This is flipped with dz and dy
+    const dy = this.up != this.down ? this.up ? -1 : 1 : 0;
+    const dz = this.forward != this.backward ? this.forward ? -1 : 1 : 0;
 
     //camera.updateMove(dx, dz, dy);
     //camera.updateLook(this.lookX, this.lookY);
@@ -124,7 +96,9 @@ class GameExample2 extends GameState
     {
       renderable._sceneNode.update(dt);
     }
+
+    this.renderer.update();
   }
 }
 
-export default GameExample2;
+export default PlaneHero2;

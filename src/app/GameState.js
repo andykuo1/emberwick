@@ -4,13 +4,13 @@ class GameState
 {
   constructor()
   {
-    this._renderer = null;
+    this._opts = null;
 
     this._prevState = null;
     this._nextState = null;
 
     this._cacheNextState = null;
-    this._cacheNextRenderer = null;
+    this._cacheNextOpts = null;
     this._cacheExit = false;
 
     this._isLoaded = false;
@@ -20,11 +20,10 @@ class GameState
     this.registerEvent("unload");
   }
 
-  init(renderer=null, prevState=null, startOnLoad=true)
+  init(opts=null, prevState=null, startOnLoad=true)
   {
     if (this._isLoaded) throw new Error("Cannot initialize state already loaded");
     if (this._prevState !== null) throw new Error("Cannot initialize state already initialized from another state");
-    if (this._renderer !== null) throw new Error("Cannot load state already loaded from another renderer");
 
     //Link previous state so on exit will return to prevState
     //However, this does NOT set next state for prevState
@@ -39,8 +38,8 @@ class GameState
     //Load and start current game state
     console.log("[GameState] Loading game state \'" + this.constructor.name + "\'...");
 
-    const result = this.onLoad(renderer).then(() => {
-      this._renderer = renderer;
+    const result = this.onLoad(opts).then(() => {
+      this._opts = opts;
       this._isLoaded = true;
 
       this.emit("load", this);
@@ -50,7 +49,7 @@ class GameState
     {
       return result.then(() => {
         console.log("[GameState] Starting game state \'" + this.constructor.name + "\'...");
-        this.onStart();
+        this.onStart(opts);
       });
     }
     else
@@ -81,17 +80,17 @@ class GameState
     {
       console.log("[GameState] Exiting game state \'" + this.constructor.name + "\'...");
       this._cacheExit = false;
-      this._exitGameState();
+      this.exitImmediately();
     }
     //If trying to add to current state...
     else if (this._cacheNextState !== null)
     {
       console.log("[GameState] Changing game state for \'" + this.constructor.name + "\'...");
       const nextState = this._cacheNextState;
-      const nextRenderer = this._cacheNextRenderer || this._renderer;
+      const nextOpts = this._cacheNextOpts || this._opts;
       this._cacheNextState = null;
-      this._cacheNextRenderer = null;
-      this._nextGameState(nextState, nextRenderer);
+      this._cacheNextOpts = null;
+      this._nextGameState(nextState, nextOpts);
     }
   }
 
@@ -119,68 +118,15 @@ class GameState
     this.onResume();
   }
 
-  exit(shouldExitChildren=false, immediate=false)
+  exit(shouldExitChildren=false)
   {
     if (!this._isLoaded) throw new Error("Trying to exit state that is not yet loaded");
     if (!shouldExitChildren && this._nextState !== null) throw new Error("Trying to exit a dependent state");
 
-    if (immediate)
-    {
-      console.log("[GameState] Exiting game state \'" + this.constructor.name + "\'...");
-      this._exitGameState();
-    }
-    else
-    {
-      this._cacheExit = true;
-    }
+    this._cacheExit = true;
   }
 
-  nextGameState(gameState, customRenderer=null)
-  {
-    if (this._cacheNextState !== null) throw new Error("Trying to set multiple next states");
-
-    if (this.isValidNextGameState(gameState))
-    {
-      this._cacheNextState = gameState;
-      this._cacheNextRenderer = customRenderer;
-      return gameState;
-    }
-    else
-    {
-      throw new Error("Invalid next game state");
-    }
-  }
-
-  //WARNING: Deprecated
-  getNextGameState()
-  {
-    return this._nextState;
-  }
-
-  //WARNING: Deprecated
-  getPrevGameState()
-  {
-    return this._prevState;
-  }
-
-  canUpdate()
-  {
-    return this._isLoaded;
-  }
-
-  _nextGameState(nextState, renderer)
-  {
-    return nextState.init(renderer, this, false).then(() => {
-      this._nextState = nextState;
-      this.onChangeState(nextState, this);
-
-      console.log("[GameState] Starting next game state for \'" + this.constructor.name + "\'...");
-      //Call start after suspending previous state
-      nextState.onStart();
-    });
-  }
-
-  _exitGameState()
+  exitImmediately()
   {
     //Trying to exit a dependent state...
     if (this._nextState !== null)
@@ -188,7 +134,7 @@ class GameState
       console.log("[GameState] Exiting child game state for \'" + this.constructor.name + "\'...");
 
       //Exit all children (already updated) first...
-      this._nextState._exitGameState();
+      this._nextState.exitImmediately();
       this._nextState = null;
     }
 
@@ -215,10 +161,10 @@ class GameState
     {
       if (this._prevState === null) throw new Error("Cannot replace current state while exiting the root state");
       const nextState = this._cacheNextState;
-      const nextRenderer = this._cacheNextRenderer;
+      const nextOpts = this._cacheNextOpts;
       this._cacheNextState = null;
-      this._cacheNextRenderer = null;
-      this._prevState.nextGameState(nextState, nextRenderer);
+      this._cacheNextOpts = null;
+      this._prevState.nextGameState(nextState, nextOpts);
     }
 
     this._prevState = null;
@@ -227,7 +173,7 @@ class GameState
 
     try
     {
-      this.onUnload(this._renderer);
+      this.onUnload(this._opts);
     }
     catch(e)
     {
@@ -235,12 +181,57 @@ class GameState
     }
 
     this._isLoaded = false;
-    this._renderer = null;
+    this._opts = null;
 
     //Suspended is no longer applicable and should be reset (although can be reapplied later)
     this._suspended = false;
 
     this.emit("unload", this);
+  }
+
+  nextGameState(gameState, opts=null)
+  {
+    if (this._cacheNextState !== null) throw new Error("Trying to set multiple next states");
+
+    if (this.isValidNextGameState(gameState))
+    {
+      this._cacheNextState = gameState;
+      this._cacheNextOpts = opts;
+      return gameState;
+    }
+    else
+    {
+      throw new Error("Invalid next game state");
+    }
+  }
+
+  //WARNING: Deprecated
+  getNextGameState()
+  {
+    return this._nextState;
+  }
+
+  //WARNING: Deprecated
+  getPrevGameState()
+  {
+    return this._prevState;
+  }
+
+  canUpdate()
+  {
+    return this._isLoaded;
+  }
+
+  _nextGameState(nextState, opts)
+  {
+    return nextState.init(opts, this, false).then(() => {
+      this._nextState = nextState;
+      this.onChangeState(nextState, this);
+
+      console.log("[GameState] Starting next game state for \'" + this.constructor.name + "\'...");
+      //Call start after suspending previous state
+      nextState.onStart(opts);
+    });
   }
 
   onUpdateState(dt) {}
@@ -259,9 +250,9 @@ class GameState
     }
   }
 
-  onLoad(renderer) { return Promise.resolve(); }
+  onLoad(opts) { return Promise.resolve(); }
 
-  onStart() {}
+  onStart(opts) {}
 
   onUpdate(dt) {}
 
@@ -269,9 +260,9 @@ class GameState
 
   onResume() {}
 
-  onStop() {}
+  onStop(opts) {}
 
-  onUnload(renderer) {}
+  onUnload(opts) {}
 
   isValidNextGameState(gameState)
   {

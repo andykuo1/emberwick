@@ -17,7 +17,7 @@ class EntityTerrain extends Entity
     super.onCreate(entityManager);
 
     const renderable = this.addComponent(Renderable);
-    renderable._sceneNode.setParent(this.world.renderTarget.getSceneGraph());
+    renderable._sceneNode.setParent(this.world.sceneGraph);
     const transform = renderable.getTransform();
     mat4.rotateX(transform, transform, -Math.PI / 2);
     renderable._sceneNode.mesh = "plane.mesh";
