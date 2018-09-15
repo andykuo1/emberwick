@@ -1,15 +1,6 @@
-import GameState from 'app/GameState.js';
-
-import InputManager from 'input/InputManager.js';
-import EntityManager from 'ecs/EntityManager.js';
+import SimpleGameState from 'world/SimpleGameState.js';
 
 import SceneNode from 'scenegraph/SceneNode.js';
-import InputContext from 'input/context/InputContext.js';
-
-import * as InputCodes from 'input/InputCodes.js';
-import ActionInput from 'input/context/ActionInput.js';
-import StateInput from 'input/context/StateInput.js';
-import RangeInput from 'input/context/RangeInput.js';
 
 import { mat4 } from 'gl-matrix';
 import Mesh from 'render/mogli/Mesh.js';
@@ -17,7 +8,7 @@ import Mesh from 'render/mogli/Mesh.js';
 import Renderable from 'world/components/Renderable.js';
 import EntityTerrain from 'world/game/EntityTerrain.js';
 
-class PlaneHero extends GameState
+class PlaneHero extends SimpleGameState
 {
   constructor()
   {
@@ -25,12 +16,6 @@ class PlaneHero extends GameState
 
     this.renderer = null;
     this.sceneGraph = new SceneNode();
-
-    this.entityManager = new EntityManager();
-    this.inputManager = null;
-    this.inputContext = null;
-
-    this.onInputUpdate = this.onInputUpdate.bind(this);
 
     this.up = false;
     this.down = false;
@@ -45,17 +30,10 @@ class PlaneHero extends GameState
   //Override
   onLoad(opts)
   {
-    if (!opts.canvas) throw new Error("Missing canvas from state opts");
-    if (!opts.renderEngine) throw new Error("Missing renderEngine from state opts");
-
-    this.inputManager = new InputManager(opts.canvas);
-    this.inputContext = new InputContext();
-    this.onInputSetup(this.inputContext);
-    this.inputManager.addContext(this.inputContext);
-    this.inputManager.addCallback(this.onInputUpdate);
-
-    this.renderer = new PlaneHeroRenderer(this, opts.renderEngine);
-    return super.onLoad(opts).then(() => this.renderer.load());
+    return super.onLoad(opts).then(() => {
+      this.renderer = new PlaneHeroRenderer(this, opts.renderEngine);
+      this.renderer.load();
+    });
   }
 
   //Override
@@ -89,37 +67,11 @@ class PlaneHero extends GameState
     entityManager.addCustomEntity(new EntityTerrain(this));
   }
 
-  onInputSetup(input)
-  {
-    input.registerState(
-      "key", "down", InputCodes.KEY_SPACE, "key", "up", InputCodes.KEY_SPACE,
-      new StateInput("moveUp"));
-    input.registerState(
-      "key", "down", InputCodes.KEY_E, "key", "up", InputCodes.KEY_E,
-      new StateInput("moveDown"));
-    input.registerState(
-      "key", "down", InputCodes.KEY_A, "key", "up", InputCodes.KEY_A,
-      new StateInput("strafeLeft"));
-    input.registerState(
-      "key", "down", InputCodes.KEY_D, "key", "up", InputCodes.KEY_D,
-      new StateInput("strafeRight"));
-    input.registerState(
-      "key", "down", InputCodes.KEY_W, "key", "up", InputCodes.KEY_W,
-      new StateInput("moveForward"));
-    input.registerState(
-      "key", "down", InputCodes.KEY_S, "key", "up", InputCodes.KEY_S,
-      new StateInput("moveBackward"));
-
-    input.registerRange("mouse", "move", InputCodes.MOUSE_X, new RangeInput("lookDX", -1, 1));
-    input.registerRange("mouse", "move", InputCodes.MOUSE_Y, new RangeInput("lookDY", -1, 1));
-
-    input.registerRange("mouse", "pos", InputCodes.MOUSE_X, new RangeInput("lookX", 0, 1));
-    input.registerRange("mouse", "pos", InputCodes.MOUSE_Y, new RangeInput("lookY", 0, 1));
-  }
-
   //Override
   onInputUpdate(inputs)
   {
+    super.onInputUpdate(inputs);
+
     this.up = inputs.getState("moveUp");
     this.left = inputs.getState("strafeLeft");
     this.down = inputs.getState("moveDown");
@@ -149,8 +101,7 @@ class PlaneHero extends GameState
   //Override
   onUpdate(dt)
   {
-    this.inputManager.doInputUpdate();
-    this.entityManager.update(dt);
+    super.onUpdate(dt);
 
     const entityManager = this.entityManager;
     const camera = this.renderer.getActiveCamera();
@@ -181,19 +132,10 @@ class PlaneHero extends GameState
   }
 
   //Override
-  onStop(opts)
-  {
-    this.inputManager.removeCallback(this.onInputUpdate);
-    this.inputManager.removeContext(this.inputContext);
-
-    this.entityManager.clear();
-
-    this.inputManager.destroy();
-  }
-
-  //Override
   onUnload(opts)
   {
+    super.onUnload(opts);
+
     this.renderer.unload();
   }
 }
