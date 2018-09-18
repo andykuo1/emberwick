@@ -1,20 +1,25 @@
+import Component from 'entity/Component.js';
 import SceneNode from 'scenegraph/SceneNode.js';
 
-const componentClass = {
-  initialize: function() {
-    this._sceneNode = new SceneNode();
-    this.getTransform = function() {
-      return this._sceneNode.transform;
-    }.bind(this);
-  },
-  terminate: function() {
-    if (this._sceneNode)
+class Renderable extends Component
+{
+  //Override
+  onComponentCreate(component, entityID)
+  {
+    component._sceneNode = new SceneNode();
+    component.getTransform = function()
     {
-      this._sceneNode.delete();
-    }
-    this._sceneNode = undefined;
-    this.getTransform = undefined;
+      return this._sceneNode.transform;
+    }.bind(component);
   }
-};
 
-export default componentClass;
+  //Override
+  onComponentDestroy(component, entityID)
+  {
+    component._sceneNode.delete();
+    component._sceneNode = undefined;
+    component.getTransform = undefined;
+  }
+}
+const INSTANCE = new Renderable();
+export default INSTANCE;

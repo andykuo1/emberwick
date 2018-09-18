@@ -1,6 +1,6 @@
 import SystemManager from './SystemManager.js';
 import ComponentManager from './ComponentManager.js';
-import CustomEntityManager from './entity/CustomEntityManager.js';
+import CustomEntityManager from './CustomEntityManager.js';
 
 class EntityManager extends SystemManager
 {

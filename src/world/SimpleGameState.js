@@ -1,6 +1,6 @@
 import GameState from 'app/GameState.js';
 
-import EntityManager from 'ecs/EntityManager.js';
+import EntityManager from 'entity/EntityManager.js';
 
 import InputManager from 'input/InputManager.js';
 import InputContext from 'input/context/InputContext.js';
