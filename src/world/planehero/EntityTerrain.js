@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix';
-import Entity from 'ecs/entity/Entity.js';
+import Entity from 'entity/Entity.js';
 
 import Renderable from 'world/planehero/Renderable.js';
 
