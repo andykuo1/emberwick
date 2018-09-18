@@ -162,4 +162,22 @@ class Attribute
   }
 }
 
+//TODO: Not used currently
+function getByteSizeForAttribType(gl, type)
+{
+  switch(type)
+  {
+    case gl.BYTE:
+    case gl.UNSIGNED_BYTE:
+      return 1;
+    case gl.SHORT:
+    case gl.UNSIGNED_SHORT:
+      return 2;
+    case gl.FLOAT:
+      return 4;
+    default:
+      throw new Error("Unknown attrib type \'" + type + "\'");
+  }
+}
+
 export default Mesh;

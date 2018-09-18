@@ -24,9 +24,6 @@ class ShaderLoader extends CacheLoader
       this.assetManager.getAsset("vert", vertexShader).then((vertexResult) => {
         this.assetManager.getAsset("frag", fragmentShader).then((fragmentResult) => {
           const result = new Shader(gl, vertexResult, fragmentResult);
-          result.setLayout("a_position", 3, gl.FLOAT, false);
-          result.setLayout("a_texcoord", 2, gl.FLOAT, false);
-          result.setLayout("a_normal", 3, gl.FLOAT, false);
           resolve(result);
         });
       });

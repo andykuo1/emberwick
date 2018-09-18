@@ -51,15 +51,14 @@ class ShaderProgram
 
     console.log("...finding attributes...");
     this.attributes = getEnumeratedAttributes(gl, handle);
-
-    console.log("...finding uniforms...");
-    this.uniforms = getEnumeratedUniforms(gl, handle);
-    this._layouts = {};
     this._names = {};
     for(const name in this.attributes)
     {
       this._names[this.attributes[name]] = name;
     }
+
+    console.log("...finding uniforms...");
+    this.uniforms = getEnumeratedUniforms(gl, handle);
 
     this._handle = handle;
     this._vertexShader = vertexShader;
@@ -80,11 +79,6 @@ class ShaderProgram
     const uniforms = this.uniforms;
     Object.keys(uniforms).forEach(function(key){
       delete uniforms[key];
-    });
-
-    const layouts = this._layouts;
-    Object.keys(layouts).forEach(function(key){
-      delete layouts[key];
     });
 
     const vertexShader = this._vertexShader;
@@ -133,47 +127,6 @@ class ShaderProgram
     {
       gl.disableVertexAttribArray(this.attributes[attributeName]);
     }
-  }
-
-  setLayout(attributeName, vecSize, dataType, normalized=false)
-  {
-    const layout = this._layouts[attributeName] || (this._layouts[attributeName] = {});
-    layout.vecSize = vecSize;
-    layout.dataType = dataType;
-    const typeSize = getByteSizeForAttribType(this._gl, dataType);
-    layout.typeSize = typeSize;
-    layout.normalized = normalized;
-    layout.bytes = typeSize * vecSize;
-    return layout;
-  }
-
-  getLayout(attributeName)
-  {
-    return this._layouts[attributeName];
-  }
-
-  removeLayout(attributeName)
-  {
-    delete this._layouts[attributeName];
-  }
-
-  attachVertexBuffer(attribute, bufferObject, stride=0, offset=0, enable=true)
-  {
-    if (typeof attribute != "number") throw new Error("Missing or unused attribute in shader");
-
-    const name = this._names[attribute];
-    const layout = this._layouts[name];
-    if (!layout) throw new Error("Unable to find layout for attribute \'" + name + "\'");
-    if (layout.dataType !== bufferObject.dataType) throw new Error("Mismatched data type for attribute \'" + name + "\'");
-
-    const gl = this._gl;
-
-    gl.bindBuffer(bufferObject.type, bufferObject.handle);
-    gl.vertexAttribPointer(attribute,
-      layout.vecSize, layout.dataType, layout.normalized,
-      stride, offset);
-
-    if (enable) gl.enableVertexAttribArray(attribute);
   }
 
   get handle() { return this._handle; }
@@ -230,23 +183,6 @@ function getEnumeratedUniforms(gl, program)
     console.log("......found unifrom \'" + infoName + "\'...");
   }
   return result;
-}
-
-function getByteSizeForAttribType(gl, type)
-{
-  switch(type)
-  {
-    case gl.BYTE:
-    case gl.UNSIGNED_BYTE:
-      return 1;
-    case gl.SHORT:
-    case gl.UNSIGNED_SHORT:
-      return 2;
-    case gl.FLOAT:
-      return 4;
-    default:
-      throw new Error("Unknown attrib type \'" + type + "\'");
-  }
 }
 
 export default ShaderProgram;
