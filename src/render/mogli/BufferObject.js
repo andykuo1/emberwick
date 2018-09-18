@@ -2,7 +2,7 @@ const NULLTYPE = 0;
 
 class BufferObject
 {
-  constructor(gl, type, mode)
+  constructor(gl, type, usage)
   {
     const handle = gl.createBuffer();
 
@@ -10,7 +10,7 @@ class BufferObject
     this._handle = handle;
 
     this.type = type;
-    this.drawMode = mode;
+    this.usage = usage;
 
     this.dataType = gl.BYTE;
   }
@@ -46,14 +46,14 @@ class BufferObject
       this.dataType = gl.FLOAT;
 
       gl.bindBuffer(this.type, this._handle);
-      gl.bufferData(this.type, data, this.drawMode);
+      gl.bufferData(this.type, data, this.usage);
     }
     else if (data instanceof Uint16Array)
     {
       this.dataType = gl.UNSIGNED_SHORT;
 
       gl.bindBuffer(this.type, this._handle);
-      gl.bufferData(this.type, data, this.drawMode);
+      gl.bufferData(this.type, data, this.usage);
     }
     else
     {

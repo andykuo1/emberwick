@@ -144,7 +144,7 @@ import PlaneGeometry from 'render/mesh/PlaneGeometry.js';
 import UnitCubeGeometry from 'render/mesh/UnitCubeGeometry.js';
 
 import FreeLookCamera from 'render/camera/FreeLookCamera.js';
-import SceneGraphRenderer from 'render/SceneGraphRenderer.js';
+import SceneGraphRenderer from './SceneGraphRenderer.js';
 import AssetManifest from 'assets/pigeon/AssetManifest.js';
 
 class PlaneHeroRenderer extends Renderer
@@ -206,7 +206,7 @@ class PlaneHeroRenderer extends Renderer
             texData[i++] = y % 2 === 0 ? 0 : 1;
           }
         }
-        mesh.texcoords.setData(texData);
+        mesh.getAttribute("a_texcoord").setBufferData(texData);
       });
 
     return super.load().then(() => assetManager.loadManifest(manifest));

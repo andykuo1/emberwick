@@ -21,12 +21,11 @@ class MeshLoader extends CacheLoader
 
       this.assetManager.getAsset("obj", geometry)
         .then((response) => {
-          const result = new Mesh(gl,
-            response.positions,
-            response.texcoords,
-            response.normals,
-            response.indices
-          );
+          const result = new Mesh(gl);
+          result.addAttribute("a_position", response.positions, 3);
+          result.addAttribute("a_texcoord", response.texcoords, 2);
+          result.addAttribute("a_normal", response.normals, 3);
+          result.setElementAttribute(response.indices);
           resolve(result);
         })
         .catch((error) => {

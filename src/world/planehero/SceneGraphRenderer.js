@@ -23,7 +23,7 @@ class SceneGraphRenderer
     const shader = assetManager.getAssetImmediately("shader", shaderAsset) || assetManager.getAssetImmediately("shader", "shader.shader");
     const texture = assetManager.getAssetImmediately("texture", "color.tex");
 
-    gl.useProgram(shader.handle);
+    shader.bind();
     gl.uniformMatrix4fv(
         shader.uniforms.u_projection,
         false,
@@ -82,7 +82,7 @@ class SceneGraphRenderer
           );
 
           mesh.bind(shader);
-          mesh.draw(gl);
+          mesh.draw();
         }
       }
 
@@ -95,8 +95,9 @@ class SceneGraphRenderer
         }
       }
     }
-  }
 
+    shader.unbind();
+  }
 }
 
 export default SceneGraphRenderer;

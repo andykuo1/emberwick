@@ -116,6 +116,25 @@ class ShaderProgram
     return true;
   }
 
+  bind()
+  {
+    const gl = this._gl;
+    gl.useProgram(this._handle);
+    for(let attributeName in this.attributes)
+    {
+      gl.enableVertexAttribArray(this.attributes[attributeName]);
+    }
+  }
+
+  unbind()
+  {
+    const gl = this._gl;
+    for(let attributeName in this.attributes)
+    {
+      gl.disableVertexAttribArray(this.attributes[attributeName]);
+    }
+  }
+
   setLayout(attributeName, vecSize, dataType, normalized=false)
   {
     const layout = this._layouts[attributeName] || (this._layouts[attributeName] = {});
