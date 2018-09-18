@@ -99,6 +99,16 @@ class SimpleGameState extends GameState
     this.entityManager.clear();
     this.inputManager.destroy();
   }
+
+  getEntityManager()
+  {
+    return this.entityManager;
+  }
+
+  getInputManager()
+  {
+    return this.inputManager;
+  }
 }
 
 export default SimpleGameState;

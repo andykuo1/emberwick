@@ -1,10 +1,10 @@
 import * as App from 'app/App.js';
 
-import PlaneHero from 'world/planehero/PlaneHero2.js';
+import Game from 'world/snekgamo/SnekGamo.js';
 
 //If starting application...
 window.addEventListener('load', (event) => {
-  App.initialize(new PlaneHero());
+  App.initialize(new Game());
 });
 
 //If stopping application...
