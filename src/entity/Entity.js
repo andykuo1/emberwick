@@ -17,7 +17,11 @@ class Entity
     this.entityManager = entityManager;
   }
 
+  onEarlyUpdate(dt) {}
+
   onUpdate(dt) {}
+
+  onLateUpdate(dt) {}
 
   onDestroy() {}
 

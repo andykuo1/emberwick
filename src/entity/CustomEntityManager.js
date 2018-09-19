@@ -43,6 +43,11 @@ class CustomEntityManager
 
   update(dt)
   {
+    for(const entity of this.entities.values())
+    {
+      if (!entity.isDead()) entity.onEarlyUpdate(dt);
+    }
+
     this._useCache = true;
     let flag = this.createQueue.length > 0;
     let steps = MAX_CREATE_EVENTS;
@@ -104,6 +109,11 @@ class CustomEntityManager
       this.entities.delete(entityID);
     }
     this.destroyCache.length = 0;
+
+    for(const entity of this.entities.values())
+    {
+      if (!entity.isDead()) entity.onLateUpdate(dt);
+    }
   }
 
   addEntity(entity)

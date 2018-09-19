@@ -11,8 +11,6 @@ class FreeLookCamera extends PerspectiveCamera
     this.forwardVector = vec3.fromValues(0, 0, 1);
     this.strafeVector = vec3.fromValues(1, 0, 0);
 
-    this.eulerRotation = quat.create();
-
     this.moveSpeed = 0.3;
     this.sensitivity = 0.1;
 

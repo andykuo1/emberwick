@@ -1,4 +1,16 @@
+import { vec3 } from 'gl-matrix';
+
 export const EPSILON = 1e-8;
+export const XAXIS = vec3.create(1, 0, 0);
+export const YAXIS = vec3.create(0, 1, 0);
+export const ZAXIS = vec3.create(0, 0, 1);
+
+export function distSqu(x1, y1, x2, y2)
+{
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  return dx * dx + dy * dy;
+};
 
 export function abs(value)
 {
