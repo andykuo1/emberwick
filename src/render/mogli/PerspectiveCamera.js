@@ -7,7 +7,7 @@ class PerspectiveCamera
     this.canvas = canvas;
     this.fieldOfView = 45 * Math.PI / 180;
     this.zNear = 0.1;
-    this.zFar = 100.0;
+    this.zFar = 1000.0;
 
     this._projectionMatrix = mat4.create();
     this._viewMatrix = mat4.create();

@@ -1,5 +1,7 @@
 import Entity from 'entity/Entity.js';
 
+import Drawable from './Drawable.js';
+
 class EntitySnek extends Entity
 {
   constructor(world)
@@ -11,7 +13,8 @@ class EntitySnek extends Entity
   {
     super.onCreate(entityManager);
 
-    this.addComponent()
+    const drawable = this.addComponent(Drawable);
+    drawable.material = "rock.tex";
   }
 
   onUpdate(dt)

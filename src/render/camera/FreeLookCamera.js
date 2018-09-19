@@ -19,6 +19,30 @@ class FreeLookCamera extends PerspectiveCamera
     this.pitch = 0;
     this.yaw = 0;
     this.roll = 0;
+
+    this.ignoreInputUpdate = false;
+  }
+
+  updateInput(input)
+  {
+    if (this.ignoreInputUpdate) return;
+
+    const up = input.getState("moveUp");
+    const down = input.getState("moveDown");
+    const left = input.getState("strafeLeft");
+    const right = input.getState("strafeRight");
+    const forward = input.getState("moveForward");
+    const backward = input.getState("moveBackward");
+
+    const lookX = input.hasRange("lookDX") ? input.getRange("lookDX") * -1 : 0;
+    const lookY = input.hasRange("lookDY") ? input.getRange("lookDY") * -1 : 0;
+
+    const dx = left != right ? left ? 1 : -1 : 0;
+    const dy = forward != backward ? forward ? 1 : -1 : 0;
+    const dz = up != down ? up ? -1 : 1 : 0;
+
+    this.updateMove(dx, dy, dz);
+    this.updateLook(lookX, lookY);
   }
 
   onUpdate(dt)

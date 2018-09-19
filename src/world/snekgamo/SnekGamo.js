@@ -11,15 +11,6 @@ class SnekGamo extends SimpleGameState
     super();
 
     this.renderer = null;
-
-    this.up = false;
-    this.down = false;
-    this.left = false;
-    this.right = false;
-    this.forward = false;
-    this.backward = false;
-    this.lookX = 0;
-    this.lookY = 0;
   }
 
   onLoad(opts)
@@ -50,25 +41,12 @@ class SnekGamo extends SimpleGameState
   }
 
   //Override
-  onInputUpdate(inputs)
+  onInputUpdate(input)
   {
-    super.onInputUpdate(inputs);
+    super.onInputUpdate(input);
 
-    this.up = inputs.getState("moveUp");
-    this.left = inputs.getState("strafeLeft");
-    this.down = inputs.getState("moveDown");
-    this.right = inputs.getState("strafeRight");
-    this.forward = inputs.getState("moveForward");
-    this.backward = inputs.getState("moveBackward");
-
-    if (inputs.hasRange("lookDX"))
-    {
-      this.lookX += inputs.getRange("lookDX") * -1;
-    }
-    if (inputs.hasRange("lookDY"))
-    {
-      this.lookY += inputs.getRange("lookDY") * -1;
-    }
+    const camera = this.renderer.getActiveCamera();
+    camera.updateInput(input);
   }
 
   onUpdate(dt)
@@ -76,16 +54,7 @@ class SnekGamo extends SimpleGameState
     super.onUpdate(dt);
 
     const camera = this.renderer.getActiveCamera();
-    const dx = this.left != this.right ? this.left ? 1 : -1 : 0;
-    const dy = this.forward != this.backward ? this.forward ? 1 : -1 : 0;
-    const dz = this.up != this.down ? this.up ? -1 : 1 : 0;
-
-    camera.updateMove(dx, dy, dz);
-    camera.updateLook(this.lookX, this.lookY);
     camera.onUpdate(dt);
-
-    this.lookX = 0;
-    this.lookY = 0;
 
     this.renderer.update();
   }
