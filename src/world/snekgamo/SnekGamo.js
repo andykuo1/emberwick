@@ -1,8 +1,11 @@
 import SimpleGameState from '../SimpleGameState.js';
 
 import Drawable from './Drawable.js';
+import Transform from './Transform.js';
+import Motion from './Motion.js';
 
 import EntityBox from './EntityBox.js';
+import EntitySnek from './EntitySnek.js';
 
 class SnekGamo extends SimpleGameState
 {
@@ -25,11 +28,10 @@ class SnekGamo extends SimpleGameState
   {
     super.onStart(opts);
 
-    const inputManager = this.inputManager;
-    inputManager.getMouse().allowCursorLock = true;
-
     const entityManager = this.entityManager;
     entityManager.registerComponentClass(Drawable);
+    entityManager.registerComponentClass(Transform);
+    entityManager.registerComponentClass(Motion);
 
     this.onWorldCreate();
   }
@@ -37,18 +39,17 @@ class SnekGamo extends SimpleGameState
   onWorldCreate()
   {
     const entityManager = this.entityManager;
-    entityManager.addCustomEntity(new EntityBox());
+    entityManager.addCustomEntity(new EntityBox(this));
+    entityManager.addCustomEntity(new EntitySnek(this));
   }
 
   //Override
   onInputUpdate(input)
   {
     super.onInputUpdate(input);
-
-    const camera = this.renderer.getActiveCamera();
-    camera.updateInput(input);
   }
 
+  //Override
   onUpdate(dt)
   {
     super.onUpdate(dt);
@@ -59,11 +60,13 @@ class SnekGamo extends SimpleGameState
     this.renderer.update();
   }
 
+  //Override
   onStop(opts)
   {
     super.onStop(opts);
   }
 
+  //Override
   onUnload(opts)
   {
     super.onUnload(opts);
@@ -91,6 +94,7 @@ class SnekGamoRenderer extends Renderer
     this.renderEngine = renderEngine;
 
     this.camera = new FreeLookCamera(this.renderEngine.getCanvas());
+    this.camera.position[2] = -50;
     this.drawableRenderer = new DrawableRenderer(this.renderEngine.getAssetManager());
   }
 
@@ -115,14 +119,12 @@ class SnekGamoRenderer extends Renderer
     manifest.addAsset("image", "rock.jpg");
     manifest.addAsset("texture", "rock.tex", {image: "rock.jpg"});
 
-    //manifest.addAsset("obj", "cube.obj");
+    manifest.addAsset("obj", "cube.obj");
+    manifest.addAsset("mesh", "cube.mesh", {geometry: "cube.obj"});
     manifest.addAsset("obj", "capsule.obj");
     manifest.addAsset("mesh", "capsule.mesh", {geometry: "capsule.obj"});
     manifest.addAsset("obj", "quad.obj");
     manifest.addAsset("mesh", "quad.mesh", {geometry: "quad.obj"});
-
-    assetManager.cacheAsset("obj", "cube.obj", new UnitCubeGeometry());
-    assetManager.loadAsset("mesh", "cube.mesh", {geometry: "cube.obj"});
 
     const planeObj = new PlaneGeometry(10, 10, 10, 10);
     assetManager.cacheAsset("obj", "plane.obj", planeObj);

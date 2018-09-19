@@ -1,14 +1,12 @@
-import Entity from 'entity/Entity.js';
+import EntityLiving from './EntityLiving.js';
 
 import Drawable from './Drawable.js';
 
-class EntityBox extends Entity
+class EntityBox extends EntityLiving
 {
   constructor(world)
   {
-    super();
-
-    this.world = world;
+    super(world);
   }
 
   //Override
@@ -16,7 +14,7 @@ class EntityBox extends Entity
   {
     super.onCreate(entityManager);
 
-    const drawable = this.addComponent(Drawable);
+    const drawable = this.getComponent(Drawable);
     drawable.mesh = "cube.mesh";
   }
 }

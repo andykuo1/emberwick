@@ -40,6 +40,8 @@ class DrawableRenderer
 
       for(let drawable of drawables)
       {
+        if (!drawable.visible) continue;
+        
         const meshID = drawable.mesh;
         const textureID = drawable.material;
         const transform = drawable.transform;
@@ -67,7 +69,8 @@ class DrawableRenderer
           gl.uniformMatrix4fv(shader.uniforms.u_normal,
             false, normalMatrix);
 
-          mesh.draw();
+          const elementType = drawable.drawMode === "wireframe" ? gl.LINE_LOOP : gl.TRIANGLES;
+          mesh.draw(elementType);
         }
       }
     }

@@ -11,6 +11,7 @@ class Drawable extends Component
     component.visible = true;
     component.mesh = "quad.mesh";
     component.material = "rock.tex";
+    component.drawMode = "model";
   }
 
   //Override
@@ -20,6 +21,7 @@ class Drawable extends Component
     component.visible = undefined;
     component.mesh = undefined;
     component.material = undefined;
+    component.drawMode = undefined;
   }
 }
 
