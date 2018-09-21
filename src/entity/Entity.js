@@ -7,15 +7,13 @@ class Entity
     this._dead = false;
   }
 
-  setEntityID(entityID)
+  setEntityID(entityID, entityManager=null)
   {
     this.entityID = entityID;
-  }
-
-  onCreate(entityManager)
-  {
     this.entityManager = entityManager;
   }
+
+  onCreate(entityManager) {}
 
   onEarlyUpdate(dt) {}
 
@@ -43,6 +41,11 @@ class Entity
   getEntityID()
   {
     return this.entityID;
+  }
+
+  getEntityManager()
+  {
+    return this.entityManager;
   }
 
   setDead()

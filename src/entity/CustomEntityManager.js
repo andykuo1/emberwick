@@ -56,10 +56,9 @@ class CustomEntityManager
       while(this.createQueue.length > 0 && flag)
       {
         const entity = this.createQueue.shift();
-        if (entity.getEntityID() !== -1) throw new Error("Entity is already created by another manager");
+        const entityID = entity.getEntityID();
+        if (entityID === -1) throw new Error("Invalid entity id");
 
-        const entityID = this.entityManager.createEntity("entity");
-        entity.setEntityID(entityID);
         entity.onCreate(this.entityManager);
         this.entities.set(entityID, entity);
 
@@ -105,7 +104,7 @@ class CustomEntityManager
         if (!entity.isDead()) throw new Error("Entity must be dead after onDestroy");
         this.entityManager.destroyEntity(entityID);
       }
-      entity.setEntityID(-1);
+      entity.setEntityID(-1, null);
       this.entities.delete(entityID);
     }
     this.destroyCache.length = 0;
@@ -118,6 +117,8 @@ class CustomEntityManager
 
   addEntity(entity)
   {
+    if (entity.getEntityID() !== -1) throw new Error("Entity is already created by another manager");
+
     if (this._useCache)
     {
       this.createCache.unshift(entity);
@@ -126,6 +127,9 @@ class CustomEntityManager
     {
       this.createQueue.unshift(entity);
     }
+
+    const entityID = this.entityManager.createEntity("entity");
+    entity.setEntityID(entityID, this.entityManager);
     return entity;
   }
 
