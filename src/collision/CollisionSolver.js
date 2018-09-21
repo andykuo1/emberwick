@@ -25,9 +25,9 @@ class CollisionData
 
 class AABB
 {
-  constructor(position, halfWidth, halfHeight)
+  constructor(x, y, halfWidth, halfHeight)
   {
-    this.position = position;
+    this.position = vec2.fromValues(x, y);
     this.halfWidth = halfWidth;
     this.halfHeight = halfHeight;
   }
