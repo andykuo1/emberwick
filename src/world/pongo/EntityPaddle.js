@@ -19,11 +19,13 @@ class EntityPaddle extends Entity
   {
     super.onCreate(entityManager);
 
-    const drawable = this.addComponent(Drawable)
+    const drawable = this.addComponent(Drawable);
     drawable.mesh = "cube.mesh";
     const transform = this.addComponent(Transform);
     transform.position[0] = this.offsetX;
-    this.addComponent(Motion);
+    transform.scale[1] = 4;
+    const motion = this.addComponent(Motion);
+    motion.moveSpeed = 1;
   }
 }
 
