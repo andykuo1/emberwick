@@ -51,6 +51,11 @@ class ComponentManager
     return this.componentInstances.values();
   }
 
+  getEntities()
+  {
+    return this.componentInstances.keys();
+  }
+
   allocateComponent()
   {
     if (this.cached.length <= 0)

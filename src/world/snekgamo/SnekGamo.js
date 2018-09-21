@@ -52,7 +52,12 @@ class SnekGamo extends SimpleGameState
   //Override
   onUpdate(dt)
   {
+    //this.earlyUpdate(dt);
+
     super.onUpdate(dt);
+    //this.update(dt);
+
+    //this.lateUpdate(dt);
 
     const camera = this.renderer.getActiveCamera();
     camera.onUpdate(dt);

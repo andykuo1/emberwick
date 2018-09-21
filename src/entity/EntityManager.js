@@ -198,6 +198,12 @@ class EntityManager extends SystemManager
     return result;
   }
 
+  getComponents(componentClass)
+  {
+    return this.getComponentsByClass(componentClass);
+  }
+
+  //TODO: Deprecated!
   getComponentsByClass(componentClass)
   {
     const componentManager = this.components.get(componentClass);
@@ -236,6 +242,11 @@ class EntityManager extends SystemManager
     {
       taglist.delete(entityID);
     }
+  }
+
+  getEntitiesByComponent(componentClass)
+  {
+    return this.components.get(componentClass).getEntities();
   }
 
   getEntitiesByTag(tag)
