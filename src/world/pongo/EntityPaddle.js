@@ -3,6 +3,7 @@ import Entity from 'entity/Entity.js';
 import Drawable from './Drawable.js';
 import Transform from './Transform.js';
 import Motion from './Motion.js';
+import Collider from './Collider.js';
 
 class EntityPaddle extends Entity
 {
@@ -25,7 +26,11 @@ class EntityPaddle extends Entity
     transform.position[0] = this.offsetX;
     transform.scale[1] = 4;
     const motion = this.addComponent(Motion);
-    motion.moveSpeed = 1;
+    const collider = this.addComponent(Collider);
+    collider.shape.position[0] = transform.position[0];
+    collider.shape.position[1] = transform.position[1];
+    collider.shape.halfWidth = transform.scale[0] / 2;
+    collider.shape.halfHeight = transform.scale[1] / 2;
   }
 }
 

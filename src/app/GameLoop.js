@@ -9,7 +9,7 @@ class GameLoop
     this._running = false;
 
     this.dt = 0;
-    this.prevtime = 0;
+    this.prevtime = -1;
 
     this.registerEvent("update");
 
@@ -22,6 +22,7 @@ class GameLoop
 
     //Start the application update loop
     this._running = true;
+
     window.requestAnimationFrame(this.onWindowUpdate);
   }
 
@@ -29,12 +30,16 @@ class GameLoop
   {
     if (!this._running) return;
 
+    this.prevtime = -1;
+
     //Stop any future updates
     this._running = false;
   }
 
   onWindowUpdate(time)
   {
+    if (this.prevtime < 0) this.prevtime = time - FRAMES_PER_SECOND;
+    
     if (this._running)
     {
       this.dt = time - this.prevtime;

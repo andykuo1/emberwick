@@ -22,6 +22,11 @@ class PlayerSystem
     {
       const dy = (input.getState("moveForward") ? 1 : 0) + (input.getState("moveBackward") ? -1 : 0);
       motion.moveVector[1] = dy;
+
+      if (dy !== 0)
+      {
+        motion.moveSpeed = 1;
+      }
     }
   }
 }

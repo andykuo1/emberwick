@@ -3,13 +3,17 @@ import SimpleGameState from '../SimpleGameState.js';
 import Drawable from './Drawable.js';
 import Transform from './Transform.js';
 import Motion from './Motion.js';
+import Collider from './Collider.js';
 
 import DrawableSystem from './DrawableSystem.js';
 import MotionSystem from './MotionSystem.js';
 import PlayerSystem from './PlayerSystem.js';
+import CollisionSystem from './CollisionSystem.js';
 
 import EntityBall from './EntityBall.js';
 import EntityPaddle from './EntityPaddle.js';
+
+import EntityWall from './EntityWall.js';
 
 class Pongo extends SimpleGameState
 {
@@ -18,8 +22,11 @@ class Pongo extends SimpleGameState
     super();
 
     this.renderer = null;
+
     this.drawableSystem = null;
     this.motionSystem = null;
+    this.playerSystem = null;
+    this.collisionSystem = null;
   }
 
   //Override
@@ -40,10 +47,12 @@ class Pongo extends SimpleGameState
     entityManager.registerComponentClass(Drawable);
     entityManager.registerComponentClass(Transform);
     entityManager.registerComponentClass(Motion);
+    entityManager.registerComponentClass(Collider);
 
     this.drawableSystem = new DrawableSystem(entityManager);
     this.motionSystem = new MotionSystem(entityManager);
     this.playerSystem = new PlayerSystem(entityManager);
+    this.collisionSystem = new CollisionSystem(entityManager);
 
     this.onWorldCreate();
   }
@@ -54,6 +63,11 @@ class Pongo extends SimpleGameState
     const player = entityManager.addCustomEntity(new EntityPaddle(this, 10));
     const other = entityManager.addCustomEntity(new EntityPaddle(this, -10));
     const ball = entityManager.addCustomEntity(new EntityBall(this));
+
+    EntityWall.create(entityManager, 0, 10, 40, 1, "wall");
+    EntityWall.create(entityManager, 0, -10, 40, 1, "wall");
+    EntityWall.create(entityManager, 15, 0, 1, 25, "wall");
+    EntityWall.create(entityManager, -15, 0, 1, 25, "wall");
 
     this.playerSystem.setPlayer(player.getEntityID());
   }
@@ -70,6 +84,9 @@ class Pongo extends SimpleGameState
   onUpdate(dt)
   {
     super.onUpdate(dt);
+    this.motionSystem.onUpdate(dt);
+    this.collisionSystem.onUpdate(dt);
+
     this.motionSystem.onLateUpdate(dt);
     this.drawableSystem.onLateUpdate(dt);
 
@@ -94,10 +111,12 @@ class Pongo extends SimpleGameState
 }
 
 import Renderer from 'app/Renderer.js';
+import AssetManifest from 'assets/pigeon/AssetManifest.js';
 
 import FreeLookCamera from 'render/camera/FreeLookCamera.js';
+
 import DrawableRenderer from './DrawableRenderer.js';
-import AssetManifest from 'assets/pigeon/AssetManifest.js';
+import ColliderRenderer from './ColliderRenderer.js';
 
 class PongoRenderer extends Renderer
 {
@@ -111,6 +130,7 @@ class PongoRenderer extends Renderer
     this.camera = new FreeLookCamera(this.renderEngine.getCanvas());
     this.camera.position[2] = -50;
     this.drawableRenderer = new DrawableRenderer(this.renderEngine.getAssetManager());
+    this.colliderRenderer = new ColliderRenderer(this.renderEngine.getAssetManager());
   }
 
   load()
@@ -148,7 +168,9 @@ class PongoRenderer extends Renderer
 
   update()
   {
-    this.drawableRenderer.render(this.renderEngine.getGLContext(), this.target, this.camera);
+    const gl = this.renderEngine.getGLContext();
+    this.drawableRenderer.render(gl, this.target, this.camera);
+    this.colliderRenderer.render(gl, this.target, this.camera);
   }
 
   getActiveCamera()

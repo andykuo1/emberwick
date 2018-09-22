@@ -1,4 +1,4 @@
-import { vec3 } from 'gl-matrix';
+import { vec2, vec3 } from 'gl-matrix';
 
 export const EPSILON = 1e-8;
 export const XAXIS = vec3.create(1, 0, 0);
@@ -11,6 +11,18 @@ export function distSqu(x1, y1, x2, y2)
   const dy = y2 - y1;
   return dx * dx + dy * dy;
 };
+
+export function reflect2(vec, normal, dst=vec2.create())
+{
+  const dot = vec[0] * normal[0] + vec[1] * normal[1];
+  const ux = normal[0] * dot;
+  const uy = normal[1] * dot;
+  const wx = vec[0] - ux;
+  const wy = vec[1] - uy;
+  dst[0] = wx - ux;
+  dst[1] = wy - uy;
+  return dst;
+}
 
 export function abs(value)
 {
