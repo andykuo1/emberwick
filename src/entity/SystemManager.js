@@ -9,7 +9,7 @@ class SystemManager
   {
     for(const system of this.systems.values())
     {
-      system.terminate();
+      system.terminate(this);
     }
     this.systems.clear();
   }
@@ -25,14 +25,14 @@ class SystemManager
   addSystem(name, system)
   {
     system.setEntityManager(this);
-    system.initialize();
+    system.initialize(this);
 
     this.systems.set(name, system);
   }
 
   removeSystem(name, system)
   {
-    system.terminate();
+    system.terminate(this);
     system.setEntityManager(null);
 
     this.systems.delete(name);

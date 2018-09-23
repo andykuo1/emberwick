@@ -205,7 +205,7 @@ class InputManager
     for(const pair of this._contexts)
     {
       context = pair[0];
-      inputList = context.getMappedInputs(src, eventType, keycode);
+      inputList = context.getInputMapping().getMappedInputs(src, eventType, keycode);
       if (inputList && inputList.length > 0)
       {
         for(const input of inputList)

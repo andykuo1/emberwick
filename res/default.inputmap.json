@@ -1,0 +1,12 @@
+{
+  "moveUp": {"type": "state", "args": ["key", "down", "KEY_SPACE", "key", "up", "KEY_SPACE"]},
+  "moveDown": {"type": "state", "args": ["key", "down", "KEY_E", "key", "up", "KEY_E"]},
+  "strafeLeft": {"type": "state", "args": ["key", "down", "KEY_A", "key", "up", "KEY_A"]},
+  "strafeRight": {"type": "state", "args": ["key", "down", "KEY_D", "key", "up", "KEY_D"]},
+  "moveForward": {"type": "state", "args": ["key", "down", "KEY_W", "key", "up", "KEY_W"]},
+  "moveBackward": {"type": "state", "args": ["key", "down", "KEY_S", "key", "up", "KEY_S"]},
+  "lookDX": {"type": "range", "args": ["mouse", "move", "MOUSE_X"], "opts":[-1, 1]},
+  "lookDY": {"type": "range", "args": ["mouse", "move", "MOUSE_Y"], "opts": [-1, 1]},
+  "lookX": {"type": "range", "args": ["mouse", "pos", "MOUSE_X"], "opts": [0, 1]},
+  "lookY": {"type": "range", "args": ["mouse", "pos", "MOUSE_Y"], "opts": [0, 1]}
+}

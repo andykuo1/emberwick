@@ -10,12 +10,12 @@ class System
     this.entityManager = entityManager;
   }
 
-  initialize()
+  initialize(systemManager)
   {
 
   }
 
-  terminate()
+  terminate(systemManager)
   {
 
   }

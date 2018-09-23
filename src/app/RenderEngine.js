@@ -6,6 +6,7 @@ import OBJLoader from 'assets/pigeon/loaders/OBJLoader.js';
 import MeshLoader from 'assets/pigeon/loaders/MeshLoader.js';
 import ShaderLoader from 'assets/pigeon/loaders/ShaderLoader.js';
 import TextureLoader from 'assets/pigeon/loaders/TextureLoader.js';
+import InputMappingLoader from 'assets/pigeon/loaders/InputMappingLoader.js';
 
 class RenderEngine
 {
@@ -28,6 +29,7 @@ class RenderEngine
     assets.registerAssetLoader("frag", new TextLoader(assets, assetDir));
     assets.registerAssetLoader("image", new ImageLoader(assets, assetDir));
     assets.registerAssetLoader("obj", new OBJLoader(assets, assetDir));
+    assets.registerAssetLoader("inputmap", new InputMappingLoader(assets, assetDir));
 
     assets.registerAssetLoader("mesh", new MeshLoader(assets, gl));
     assets.registerAssetLoader("shader", new ShaderLoader(assets, gl));
