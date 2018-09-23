@@ -29,11 +29,12 @@ class RenderEngine
     assets.registerAssetLoader("frag", new TextLoader(assets, assetDir));
     assets.registerAssetLoader("image", new ImageLoader(assets, assetDir));
     assets.registerAssetLoader("obj", new OBJLoader(assets, assetDir));
-    assets.registerAssetLoader("inputmap", new InputMappingLoader(assets, assetDir));
 
     assets.registerAssetLoader("mesh", new MeshLoader(assets, gl));
     assets.registerAssetLoader("shader", new ShaderLoader(assets, gl));
     assets.registerAssetLoader("texture", new TextureLoader(assets, gl));
+
+    assets.registerAssetLoader("inputmap", new InputMappingLoader(assets, assetDir));
 
     gl.clearColor(0,0,0,1);
     gl.clear(gl.COLOR_BUFFER_BIT);

@@ -1,6 +1,8 @@
-import { mat4, vec3, quat, vec4 } from 'gl-matrix';
+import { mat4 } from 'gl-matrix';
 
-class PerspectiveCamera
+import Camera from './Camera.js';
+
+class PerspectiveCamera extends Camera
 {
   constructor(canvas)
   {

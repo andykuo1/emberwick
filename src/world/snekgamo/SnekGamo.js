@@ -81,13 +81,11 @@ class SnekGamo extends SimpleGameState
 }
 
 import Renderer from 'app/Renderer.js';
-
-import PlaneGeometry from 'render/mesh/PlaneGeometry.js';
-import UnitCubeGeometry from 'render/mesh/UnitCubeGeometry.js';
+import AssetManifest from 'assets/pigeon/AssetManifest.js';
 
 import FreeLookCamera from 'render/camera/FreeLookCamera.js';
+
 import DrawableRenderer from './DrawableRenderer.js';
-import AssetManifest from 'assets/pigeon/AssetManifest.js';
 
 class SnekGamoRenderer extends Renderer
 {
@@ -130,25 +128,6 @@ class SnekGamoRenderer extends Renderer
     manifest.addAsset("mesh", "capsule.mesh", {geometry: "capsule.obj"});
     manifest.addAsset("obj", "quad.obj");
     manifest.addAsset("mesh", "quad.mesh", {geometry: "quad.obj"});
-
-    const planeObj = new PlaneGeometry(10, 10, 10, 10);
-    assetManager.cacheAsset("obj", "plane.obj", planeObj);
-    assetManager.loadAsset("mesh", "plane.mesh", {geometry: "plane.obj"})
-      .then((mesh) => {
-        const texData = new Float32Array(planeObj.texcoords);
-        const height = 10;
-        const width = 10;
-        let i = 0;
-        for(let y = 0; y < height + 1; ++y)
-        {
-          for(let x = 0; x < width + 1; ++x)
-          {
-            texData[i++] = x % 2 === 0 ? 0 : 1;
-            texData[i++] = y % 2 === 0 ? 0 : 1;
-          }
-        }
-        mesh.getAttribute("a_texcoord").setBufferData(texData);
-      });
 
     return super.load().then(() => assetManager.loadManifest(manifest));
   }
