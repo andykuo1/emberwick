@@ -37,6 +37,8 @@ class InputContext
 
   setInputMapping(inputMapping)
   {
+    if (!inputMapping) throw new Error("Input mapping cannot be null");
+    
     this._mapping = inputMapping;
     this._activeStates.length = 0;
   }

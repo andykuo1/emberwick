@@ -28,7 +28,7 @@ class SimpleGameState extends GameState
     this.inputManager = new InputManager(opts.canvas);
 
     const assetManager = opts.renderEngine.getAssetManager();
-    assetManager.loadAsset("inputmap", "default.inputmap.json").then((inputMapping) => {
+    assetManager.loadAsset("inputmap", "inputmap/default.json").then((inputMapping) => {
       this.inputContext.setInputMapping(inputMapping);
     });
 
