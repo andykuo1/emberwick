@@ -3,6 +3,8 @@ import { reflect2 } from 'util/MathHelper.js';
 
 import { quat, mat4, vec3, vec2 } from 'gl-matrix';
 
+import EntityParticle from './EntityParticle.js';
+
 import Drawable from './Drawable.js';
 
 class EntityBall extends Entity
@@ -14,6 +16,7 @@ class EntityBall extends Entity
 
     this.x = 0;
     this.y = 0;
+    this.rotation = quat.create();
     this.radius = 8;
     this.bufferRadius = 0.5;
 
@@ -64,7 +67,7 @@ class EntityBall extends Entity
     }
 
     const drawable = this.getComponent(Drawable);
-    mat4.fromRotationTranslationScale(drawable.transform, quat.create(), vec3.fromValues(this.x, this.y, 0), vec3.fromValues(this.radius * 2, this.radius * 2, 1));
+    mat4.fromRotationTranslationScale(drawable.transform, this.rotation, vec3.fromValues(this.x, this.y, 0), vec3.fromValues(this.radius * 2, this.radius * 2, 1));
   }
 
   onHit()
@@ -75,6 +78,15 @@ class EntityBall extends Entity
     this.motion[0] = (Math.random() * 2) - 1;
     this.motion[1] = (Math.random() * 2) - 1;
     vec2.normalize(this.motion, this.motion);
+
+    let dx = 0;
+    let dy = 0;
+    for(let i = 0; i < this.radius * 10 || i <= 0; ++i)
+    {
+      dx = (Math.random() - 0.5) * this.radius;
+      dy = (Math.random() - 0.5) * this.radius;
+      this.entityManager.addCustomEntity(new EntityParticle(this.world, this.x + dx, this.y + dy));
+    }
   }
 }
 

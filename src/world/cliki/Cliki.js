@@ -59,8 +59,6 @@ class Cliki extends SimpleGameState
 
       const player = this.player;
 
-      this.getEntityManager().addCustomEntity(new EntityParticle(this, vec[0], vec[1]));
-
       //Check collision with ball
       const dx = player.x - vec[0];
       const dy = player.y - vec[1];
