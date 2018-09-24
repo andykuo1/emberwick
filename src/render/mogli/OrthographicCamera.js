@@ -20,9 +20,8 @@ class OrthographicCamera extends Camera
   //Override
   getProjectionMatrix()
   {
-    const aspectRatio = this.viewport.getAspectRatio();
     mat4.ortho(this._projectionMatrix,
-      this.left * aspectRatio, this.right * aspectRatio,
+      this.left, this.right,
       this.bottom, this.top,
       this.zNear, this.zFar);
     return this._projectionMatrix;
