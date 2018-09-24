@@ -156,7 +156,7 @@ class PlaneHeroRenderer extends Renderer
     this.target = target;
     this.renderEngine = renderEngine;
 
-    this.camera = new FreeLookCamera(this.renderEngine.getCanvas());
+    this.camera = new FreeLookCamera(this.renderEngine.getViewPort());
     this.sceneGraphRenderer = new SceneGraphRenderer(this.renderEngine.getAssetManager());
   }
 

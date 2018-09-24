@@ -1,3 +1,5 @@
+import ViewPort from 'render/mogli/ViewPort.js';
+
 import AssetManager from 'assets/pigeon/AssetManager.js';
 
 import TextLoader from 'assets/pigeon/loaders/TextLoader.js';
@@ -14,6 +16,8 @@ class RenderEngine
   {
     this.canvas = canvas;
     this.gl = null;
+
+    this.viewport = new ViewPort(canvas);
 
     this.assetManager = new AssetManager();
   }
@@ -47,6 +51,17 @@ class RenderEngine
   {
     this.assetManager.clear();
     this.gl = null;
+  }
+
+  update()
+  {
+    const gl = this.gl;
+    this.viewport.update(gl);
+  }
+
+  getViewPort()
+  {
+    return this.viewport;
   }
 
   getAssetManager()

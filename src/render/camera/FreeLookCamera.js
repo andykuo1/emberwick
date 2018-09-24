@@ -3,9 +3,9 @@ import PerspectiveCamera from 'render/mogli/PerspectiveCamera.js';
 
 class FreeLookCamera extends PerspectiveCamera
 {
-  constructor(canvas)
+  constructor(viewport)
   {
-    super(canvas);
+    super(viewport);
 
     this.upVector = vec3.fromValues(0, 1, 0);
     this.forwardVector = vec3.fromValues(0, 0, 1);

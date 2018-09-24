@@ -107,7 +107,7 @@ class ClikiRenderer extends Renderer
     this.target = target;
     this.renderEngine = renderEngine;
 
-    this.camera = new OrthographicCamera(this.renderEngine.getCanvas());
+    this.camera = new OrthographicCamera(this.renderEngine.getViewPort());
     this.camera.position[2] = -50;
     this.drawableRenderer = new DrawableRenderer(this.renderEngine.getAssetManager());
   }

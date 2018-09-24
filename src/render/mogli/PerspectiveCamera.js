@@ -5,9 +5,9 @@ import Raycast3 from './Raycast3.js';
 
 class PerspectiveCamera extends Camera
 {
-  constructor(canvas)
+  constructor(viewport)
   {
-    super(canvas);
+    super(viewport);
 
     this.fieldOfView = 45 * Math.PI / 180;
   }
@@ -17,7 +17,7 @@ class PerspectiveCamera extends Camera
   {
     mat4.perspective(this._projectionMatrix,
       this.fieldOfView,
-      this.getAspectRatio(),
+      this.viewport.getAspectRatio(),
       this.zNear, this.zFar);
     return this._projectionMatrix;
   }
@@ -27,8 +27,8 @@ class PerspectiveCamera extends Camera
   {
     if (!dst) dst = new Raycast3();
 
-    const width = this.getWidth();
-    const height = this.getHeight();
+    const width = this.viewport.getWidth();
+    const height = this.viewport.getHeight();
     const vec = this._unprojectVector;
 
     //Get inverted matrices

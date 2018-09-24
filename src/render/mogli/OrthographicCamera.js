@@ -5,9 +5,9 @@ import Raycast3 from './Raycast3.js';
 
 class OrthographicCamera extends Camera
 {
-  constructor(canvas)
+  constructor(viewport)
   {
-    super(canvas);
+    super(viewport);
 
     this._unprojectVector = vec4.create();
 
@@ -20,7 +20,7 @@ class OrthographicCamera extends Camera
   //Override
   getProjectionMatrix()
   {
-    const aspectRatio = this.getAspectRatio();
+    const aspectRatio = this.viewport.getAspectRatio();
     mat4.ortho(this._projectionMatrix,
       this.left * aspectRatio, this.right * aspectRatio,
       this.bottom, this.top,
@@ -33,8 +33,8 @@ class OrthographicCamera extends Camera
   {
     if (!dst) dst = new Raycast3();
 
-    const width = this.getWidth();
-    const height = this.getHeight();
+    const width = this.viewport.getWidth();
+    const height = this.viewport.getHeight();
     const vec = this._unprojectVector;
 
     //Get inverted matrices

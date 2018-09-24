@@ -21,6 +21,7 @@ export function initialize(startState)
   INSTANCE.root = root;
 
   gameLoop.on("update", (dt, millis) => {
+    renderEngine.update();
     if (root && root.canUpdate())
     {
       root.update(dt);

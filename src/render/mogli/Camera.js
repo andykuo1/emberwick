@@ -2,9 +2,10 @@ import { mat4, vec3, quat, vec4 } from 'gl-matrix';
 
 class Camera
 {
-  constructor(canvas)
+  constructor(viewport)
   {
-    this.canvas = canvas;
+    this.viewport = viewport;
+
     this.zNear = 0.1;
     this.zFar = 1000.0;
 
@@ -24,19 +25,9 @@ class Camera
     this.scale = vec3.fromValues(1, 1, 1);
   }
 
-  getWidth()
+  getViewPort()
   {
-    return this.canvas.clientWidth;
-  }
-
-  getHeight()
-  {
-    return this.canvas.clientHeight;
-  }
-
-  getAspectRatio()
-  {
-    return this.canvas.clientWidth / this.canvas.clientHeight;
+    return this.viewport;
   }
 
   getProjectionMatrix()

@@ -127,7 +127,7 @@ class PongoRenderer extends Renderer
     this.target = target;
     this.renderEngine = renderEngine;
 
-    this.camera = new FreeLookCamera(this.renderEngine.getCanvas());
+    this.camera = new FreeLookCamera(this.renderEngine.getViewPort());
     this.camera.position[2] = -50;
     this.drawableRenderer = new DrawableRenderer(this.renderEngine.getAssetManager());
     this.colliderRenderer = new ColliderRenderer(this.renderEngine.getAssetManager());
