@@ -5,6 +5,8 @@
   "strafeRight": {"type": "state", "args": ["key", "down", "KEY_D", "key", "up", "KEY_D"]},
   "moveForward": {"type": "state", "args": ["key", "down", "KEY_W", "key", "up", "KEY_W"]},
   "moveBackward": {"type": "state", "args": ["key", "down", "KEY_S", "key", "up", "KEY_S"]},
+  "cursorPrimary": {"type": "action", "args": ["mouse", "down", "MOUSE_LEFT"]},
+  "cursorSecondary": {"type": "action", "args": ["mouse", "down", "MOUSE_RIGHT"]},
   "lookDX": {"type": "range", "args": ["mouse", "move", "MOUSE_X"], "opts":[-1, 1]},
   "lookDY": {"type": "range", "args": ["mouse", "move", "MOUSE_Y"], "opts": [-1, 1]},
   "lookX": {"type": "range", "args": ["mouse", "pos", "MOUSE_X"], "opts": [0, 1]},
