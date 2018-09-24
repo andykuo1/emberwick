@@ -17,11 +17,18 @@ class OrthographicCamera extends Camera
   //Override
   getProjectionMatrix()
   {
+    const aspectRatio = this.getAspectRatio();
     mat4.ortho(this._projectionMatrix,
-      this.left, this.right,
-      this.bottom, this.top
+      this.left * aspectRatio, this.right * aspectRatio,
+      this.bottom, this.top,
       this.zNear, this.zFar);
     return this._projectionMatrix;
+  }
+
+  //Override
+  unproject(screenX, screenY, dst)
+  {
+    throw new Error("Unsupported operation");
   }
 }
 

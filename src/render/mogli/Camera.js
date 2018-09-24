@@ -92,7 +92,7 @@ class Camera
     dst[1] = vec[1];
     dst[2] = vec[2];
     vec3.normalize(dst, dst);
-    vec3.sub(dst, dst, this.position);
+    //vec3.sub(dst, dst, this.position);
 
     return dst;
   }
