@@ -5,7 +5,7 @@ import Renderable from 'world/planehero/Renderable.js';
 import EntityTerrain from 'world/planehero/EntityTerrain.js';
 import EntitySquare from 'world/planehero/EntitySquare.js';
 
-import LookHelper from 'world/LookHelper.js';
+import LookHelper from './LookHelper.js';
 
 class PlaneHero2 extends PlaneHero
 {
