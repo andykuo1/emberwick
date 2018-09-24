@@ -29,11 +29,6 @@ class ViewPort
   {
     return this.getWidth() / this.getHeight();
   }
-
-  getCanvas()
-  {
-    return this._canvas;
-  }
 }
 
 export default ViewPort;
