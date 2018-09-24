@@ -16,6 +16,9 @@ class Texture
     gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
       width, height, border, srcFormat, srcType, pixel);
 
+    this._width = width;
+    this._height = height;
+
     this._gl = gl;
     this._handle = handle;
   }
@@ -46,6 +49,9 @@ class Texture
       gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
         /*width, height, border,*/ srcFormat, srcType, imageData);
 
+      this._width = width;
+      this._height = height;
+
       if (isPowerOf2(width) && isPowerOf2(height))
       {
         gl.generateMipmap(gl.TEXTURE_2D);
@@ -69,6 +75,16 @@ class Texture
     const handle = this._handle;
     gl.activeTexture(textureUnit);
     gl.bindTexture(gl.TEXTURE_2D, handle);
+  }
+
+  getWidth()
+  {
+    return this._width;
+  }
+
+  getHeight()
+  {
+    return this._height;
   }
 }
 
