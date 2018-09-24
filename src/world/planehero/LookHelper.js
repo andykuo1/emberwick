@@ -6,6 +6,7 @@ class LookHelper
   {
     this.camera = null;
     this.vector = vec3.create();
+    this.raycast = null;
 
     this.x = 0;
     this.y = 0;
@@ -40,8 +41,9 @@ class LookHelper
   {
     if (!this.camera) return;
 
-    this.camera.unproject(this.x, this.y, this.vector);
-    vec3.sub(this.vector, this.vector, this.camera.position);
+    this.raycast = this.camera.screenToWorld(this.x, this.y, this.raycast);
+    vec3.copy(this.vector, this.raycast.position);
+    vec3.add(this.vector, this.vector, this.raycast.direction);
   }
 }
 

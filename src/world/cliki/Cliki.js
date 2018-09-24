@@ -5,6 +5,7 @@ import SimpleGameState from '../SimpleGameState.js';
 import Drawable from './Drawable.js';
 
 import EntityBall from './EntityBall.js';
+import EntityParticle from './EntityParticle.js';
 
 class Cliki extends SimpleGameState
 {
@@ -52,15 +53,17 @@ class Cliki extends SimpleGameState
       const lookX = input.getRange("lookX", false);
       const lookY = input.getRange("lookY", false);
       const camera = this.renderer.getActiveCamera();
-      const lookVec = camera.unproject(lookX, lookY, vec3.create());
-      vec3.scale(lookVec, lookVec, 50);
-      vec3.sub(lookVec, lookVec, camera.position);
+      const raycast = camera.screenToWorld(lookX, lookY);
+      const vec = raycast.position;
+      vec[2] = 0;
 
       const player = this.player;
 
+      this.getEntityManager().addCustomEntity(new EntityParticle(this, vec[0], vec[1]));
+
       //Check collision with ball
-      const dx = player.x - lookVec[0];
-      const dy = player.y - lookVec[1];
+      const dx = player.x - vec[0];
+      const dy = player.y - vec[1];
       const dist = dx * dx + dy * dy;
       const rad = player.radius + player.bufferRadius;
 
@@ -93,6 +96,7 @@ import Renderer from 'app/Renderer.js';
 import AssetManifest from 'assets/pigeon/AssetManifest.js';
 
 import PerspectiveCamera from 'render/mogli/PerspectiveCamera.js';
+import OrthographicCamera from 'render/mogli/OrthographicCamera.js';
 import DrawableRenderer from './DrawableRenderer.js';
 
 class ClikiRenderer extends Renderer
@@ -103,7 +107,7 @@ class ClikiRenderer extends Renderer
     this.target = target;
     this.renderEngine = renderEngine;
 
-    this.camera = new PerspectiveCamera(this.renderEngine.getCanvas());
+    this.camera = new OrthographicCamera(this.renderEngine.getCanvas());
     this.camera.position[2] = -50;
     this.drawableRenderer = new DrawableRenderer(this.renderEngine.getAssetManager());
   }
