@@ -33,6 +33,7 @@ class EntityParticle extends Entity
     drawable.material = "color.tex";
   }
 
+  //Override
   onUpdate(dt)
   {
     super.onUpdate(dt);
