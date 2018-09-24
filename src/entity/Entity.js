@@ -13,7 +13,7 @@ class Entity
     this.entityManager = entityManager;
   }
 
-  onCreate(entityManager) {}
+  onCreate() {}
 
   onEarlyUpdate(dt) {}
 

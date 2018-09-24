@@ -18,9 +18,9 @@ class EntitySnekBody extends EntityLiving
   }
 
   //Override
-  onCreate(entityManager)
+  onCreate()
   {
-    super.onCreate(entityManager);
+    super.onCreate();
 
     const drawable = this.getComponent(Drawable);
     drawable.mesh = "quad.mesh";

@@ -16,9 +16,9 @@ class EntityPaddle extends Entity
   }
 
   //Override
-  onCreate(entityManager)
+  onCreate()
   {
-    super.onCreate(entityManager);
+    super.onCreate();
 
     const drawable = this.addComponent(Drawable);
     drawable.mesh = "cube.mesh";

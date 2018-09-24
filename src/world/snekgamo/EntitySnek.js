@@ -14,7 +14,7 @@ class EntitySnek extends EntityLiving
   constructor(world)
   {
     super(world);
-
+    
     this.wiggleCounter = 0;
     this.wiggleAngle = 0;
 
@@ -22,9 +22,9 @@ class EntitySnek extends EntityLiving
   }
 
   //Override
-  onCreate(entityManager)
+  onCreate()
   {
-    super.onCreate(entityManager);
+    super.onCreate();
 
     const drawable = this.getComponent(Drawable);
     drawable.mesh = "quad.mesh";

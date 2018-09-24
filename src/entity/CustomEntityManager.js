@@ -59,7 +59,7 @@ class CustomEntityManager
         const entityID = entity.getEntityID();
         if (entityID === -1) throw new Error("Invalid entity id");
 
-        entity.onCreate(this.entityManager);
+        entity.onCreate();
         this.entities.set(entityID, entity);
 
         if (--steps < 0)

@@ -13,9 +13,9 @@ class EntityTerrain extends Entity
   }
 
   //Override
-  onCreate(entityManager)
+  onCreate()
   {
-    super.onCreate(entityManager);
+    super.onCreate();
 
     const renderable = this.addComponent(Renderable);
     renderable._sceneNode.setParent(this.world.sceneGraph);

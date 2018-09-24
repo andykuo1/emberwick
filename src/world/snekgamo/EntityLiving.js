@@ -15,9 +15,9 @@ class EntityLiving extends Entity
   }
 
   //Override
-  onCreate(entityManager)
+  onCreate()
   {
-    super.onCreate(entityManager);
+    super.onCreate();
 
     this.addComponent(Drawable);
     this.addComponent(Transform);
