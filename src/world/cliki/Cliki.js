@@ -3,9 +3,12 @@ import {vec3} from 'gl-matrix';
 import SimpleGameState from '../SimpleGameState.js';
 
 import Drawable from './Drawable.js';
+import Sprite from './Sprite.js';
 
 import EntityBall from './EntityBall.js';
 import EntityParticle from './EntityParticle.js';
+
+import SpriteSystem from './SpriteSystem.js';
 
 class Cliki extends SimpleGameState
 {
@@ -14,6 +17,8 @@ class Cliki extends SimpleGameState
     super();
 
     this.renderer = null;
+
+    this.spriteSystem = null;
 
     this.player = null;
     this.score = 0;
@@ -35,6 +40,9 @@ class Cliki extends SimpleGameState
 
     const entityManager = this.entityManager;
     entityManager.registerComponentClass(Drawable);
+    entityManager.registerComponentClass(Sprite);
+
+    this.spriteSystem = new SpriteSystem(entityManager);
 
     this.onWorldCreate(entityManager);
   }
@@ -78,6 +86,8 @@ class Cliki extends SimpleGameState
   onUpdate(dt)
   {
     super.onUpdate(dt);
+
+    this.spriteSystem.update(dt);
 
     this.renderer.update();
   }

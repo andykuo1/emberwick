@@ -6,6 +6,9 @@ import { quat, mat4, vec3, vec2 } from 'gl-matrix';
 import EntityParticle from './EntityParticle.js';
 
 import Drawable from './Drawable.js';
+import Sprite from './Sprite.js';
+
+import SpriteSheet from './SpriteSheet.js';
 
 class EntityBall extends Entity
 {
@@ -33,9 +36,13 @@ class EntityBall extends Entity
 
     const drawable = this.addComponent(Drawable);
     drawable.mesh = "quad.mesh";
-    drawable.material = "rock.tex";
-    drawable.textureOffset[0] = 0.5;
-    drawable.textureScale[0] = 2;
+    drawable.material = "font.tex";
+
+    const sprite = this.addComponent(Sprite);
+    sprite.spriteSheet = new SpriteSheet(drawable.material, 256, 256, 16, 16);
+    sprite.spriteSpeed = 0.1;
+    sprite.spriteIndex = 48;
+    sprite.spriteLength = 16;
   }
 
   //Override
@@ -69,7 +76,10 @@ class EntityBall extends Entity
     }
 
     const drawable = this.getComponent(Drawable);
-    mat4.fromRotationTranslationScale(drawable.transform, this.rotation, vec3.fromValues(this.x, this.y, 0), vec3.fromValues(this.radius * 2, this.radius * 2, 1));
+    mat4.fromRotationTranslationScale(drawable.transform,
+      this.rotation,
+      vec3.fromValues(this.x, this.y, 0),
+      vec3.fromValues(this.radius * 2, this.radius * 2, 1));
   }
 
   onHit()

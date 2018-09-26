@@ -15,11 +15,15 @@ class ComponentManager
     if (result)
     {
       this.componentClass.onComponentDestroy(result, entityID);
+
+      result.entityID = entityID;
       this.componentClass.onComponentCreate(result, entityID);
     }
     else
     {
       result = this.allocateComponent();
+      
+      result.entityID = entityID;
       this.componentClass.onComponentCreate(result, entityID);
       this.componentInstances.set(entityID, result);
     }
@@ -63,7 +67,7 @@ class ComponentManager
       //Allocate more components
       for(let i = ALLOCATION_CACHE_SIZE; i >= 0; --i)
       {
-        this.cached.push({});
+        this.cached.push({ entityID: -1 });
       }
     }
 
@@ -72,6 +76,8 @@ class ComponentManager
 
   deallocateComponent(component)
   {
+    component.entityID = -1;
+
     //Add the object back into cache
     this.cached.push(component);
   }
