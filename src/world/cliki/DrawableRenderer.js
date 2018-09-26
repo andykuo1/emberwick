@@ -45,11 +45,16 @@ class DrawableRenderer
         const meshID = drawable.mesh;
         const textureID = drawable.material;
         const transform = drawable.transform;
+        const textureOffset = drawable.textureOffset;
+        const textureScale = drawable.textureScale;
 
         if (textureID)
         {
           const texture = assetManager.getAssetImmediately("texture", textureID);
           texture.bind(gl.TEXTURE0);
+
+          gl.uniform2f(shader.uniforms.u_texoffset, textureOffset[0], textureOffset[1]);
+          gl.uniform2f(shader.uniforms.u_texscale, textureScale[0], textureScale[1]);
         }
 
         if (meshID)

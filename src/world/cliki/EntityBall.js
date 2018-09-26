@@ -34,6 +34,8 @@ class EntityBall extends Entity
     const drawable = this.addComponent(Drawable);
     drawable.mesh = "quad.mesh";
     drawable.material = "rock.tex";
+    drawable.textureOffset[0] = 0.5;
+    drawable.textureScale[0] = 2;
   }
 
   //Override

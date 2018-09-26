@@ -1,6 +1,6 @@
 import Component from 'entity/Component.js';
 
-import { mat4 } from 'gl-matrix';
+import { vec2, mat4 } from 'gl-matrix';
 
 class Drawable extends Component
 {
@@ -12,6 +12,8 @@ class Drawable extends Component
     component.mesh = "quad.mesh";
     component.material = "rock.tex";
     component.drawMode = "model";
+    component.textureOffset = vec2.create();
+    component.textureScale = vec2.fromValues(1, 1);
   }
 
   //Override
@@ -22,6 +24,8 @@ class Drawable extends Component
     component.mesh = undefined;
     component.material = undefined;
     component.drawMode = undefined;
+    component.textureOffset = undefined;
+    component.textureScale = undefined;
   }
 }
 
