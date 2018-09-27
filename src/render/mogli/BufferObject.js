@@ -1,5 +1,3 @@
-const NULLTYPE = 0;
-
 class BufferObject
 {
   constructor(gl, type, usage)
@@ -22,7 +20,7 @@ class BufferObject
 
     //Deleted buffers are automatically unbound
     gl.deleteBuffer(handle);
-    this._handle = 0;
+    this._handle = null;
   }
 
   get handle() { return this._handle; }
@@ -35,7 +33,7 @@ class BufferObject
   //Only required if the next possible action WILL change the active buffer type
   unbind()
   {
-    this._gl.bindBuffer(this.type, NULLTYPE);
+    this._gl.bindBuffer(this.type, null);
   }
 
   setData(data)

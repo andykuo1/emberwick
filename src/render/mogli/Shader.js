@@ -84,15 +84,15 @@ class ShaderProgram
     const vertexShader = this._vertexShader;
     gl.detachShader(handle, vertexShader);
     gl.deleteShader(vertexShader);
-    this._vertexShader = 0;
+    this._vertexShader = null;
 
     const fragmentShader = this._fragmentShader;
     gl.detachShader(handle, fragmentShader);
     gl.deleteShader(fragmentShader);
-    this._fragmentShader = 0;
+    this._fragmentShader = null;
 
     gl.deleteProgram(handle);
-    this._handle = 0;
+    this._handle = null;
   }
 
   validate()

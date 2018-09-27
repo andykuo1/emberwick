@@ -31,7 +31,7 @@ class Texture
     const gl = this._gl;
     const handle = this._handle;
     gl.deleteTexture(handle);
-    this._handle = 0;
+    this._handle = null;
   }
 
   setData(imageData)
