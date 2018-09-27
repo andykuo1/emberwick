@@ -1,6 +1,6 @@
 class Texture
 {
-  constructor(gl)
+  constructor(gl, wrapMode=gl.CLAMP_TO_EDGE, minMagFilter=gl.NEAREST)
   {
     const handle = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, handle);
@@ -21,6 +21,9 @@ class Texture
 
     this._gl = gl;
     this._handle = handle;
+
+    this._wrapMode = wrapMode;
+    this._minMagFilter = minMagFilter;
   }
 
   delete()
@@ -57,10 +60,10 @@ class Texture
         gl.generateMipmap(gl.TEXTURE_2D);
       }
 
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);//gl.LINEAR
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);//gl.LINEAR
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, this._wrapMode);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, this._wrapMode);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this._minMagFilter);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this._minMagFilter);
     }
     else
     {

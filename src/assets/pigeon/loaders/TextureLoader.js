@@ -18,9 +18,11 @@ class TextureLoader extends CacheLoader
 
       const gl = this.gl;
       const image = opts.image;
+      const wrapMode = opts.wrapMode;
+      const minMagFilter = opts.minMagFilter;
 
       this.assetManager.getAsset("image", image).then((imageResult) => {
-        const result = new Texture(gl);
+        const result = new Texture(gl, wrapMode, minMagFilter);
         result.setData(imageResult);
         resolve(result);
       });
