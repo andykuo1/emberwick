@@ -41,7 +41,7 @@ class DrawableRenderer
       for(let drawable of drawables)
       {
         if (!drawable.visible) continue;
-        
+
         const meshID = drawable.mesh;
         const textureID = drawable.material;
         const transform = drawable.transform;

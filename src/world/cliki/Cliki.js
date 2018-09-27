@@ -103,11 +103,12 @@ class Cliki extends SimpleGameState
 export default Cliki;
 
 import Renderer from 'app/Renderer.js';
-import AssetManifest from 'assets/pigeon/AssetManifest.js';
 
 import PerspectiveCamera from 'render/mogli/PerspectiveCamera.js';
 import OrthographicCamera from 'render/mogli/OrthographicCamera.js';
 import DrawableRenderer from './DrawableRenderer.js';
+
+import SimpleAssets from '../SimpleAssets.js';
 
 class ClikiRenderer extends Renderer
 {
@@ -128,24 +129,7 @@ class ClikiRenderer extends Renderer
     const assetManager = this.renderEngine.getAssetManager();
     const gl = this.renderEngine.getGLContext();
 
-    const manifest = new AssetManifest();
-    manifest.addAsset("vert", "shader.vert");
-    manifest.addAsset("frag", "shader.frag");
-    manifest.addAsset("shader", "shader.shader", {vertexShader: "shader.vert", fragmentShader: "shader.frag"});
-
-    manifest.addAsset("image", "color.png");
-    manifest.addAsset("texture", "color.tex", {image: "color.png"});
-    manifest.addAsset("image", "rock.jpg");
-    manifest.addAsset("texture", "rock.tex", {image: "rock.jpg"});
-    manifest.addAsset("image", "font.png");
-    manifest.addAsset("texture", "font.tex", {image: "font.png"});
-    manifest.addAsset("image", "wooden_crate.jpg");
-    manifest.addAsset("texture", "wooden_crate.tex", {image: "wooden_crate.jpg"});
-
-    manifest.addAsset("obj", "quad.obj");
-    manifest.addAsset("mesh", "quad.mesh", {geometry: "quad.obj"});
-
-    return super.load().then(() => assetManager.loadManifest(manifest));
+    return super.load().then(() => assetManager.loadManifest(SimpleAssets));
   }
 
   //Override

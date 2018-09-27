@@ -38,6 +38,8 @@ class ColliderRenderer
 
       texture.bind(gl.TEXTURE0);
       gl.uniform1i(shader.uniforms.u_sampler, 0);
+      gl.uniform2f(shader.uniforms.u_texoffset, 0, 0);
+      gl.uniform2f(shader.uniforms.u_texscale, 1, 1);
 
       mesh.bind(shader);
 

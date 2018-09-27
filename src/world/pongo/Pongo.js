@@ -111,7 +111,9 @@ class Pongo extends SimpleGameState
 }
 
 import Renderer from 'app/Renderer.js';
-import AssetManifest from 'assets/pigeon/AssetManifest.js';
+//import AssetManifest from 'assets/pigeon/AssetManifest.js';
+
+import SimpleAssets from '../SimpleAssets.js';
 
 import FreeLookCamera from 'render/camera/FreeLookCamera.js';
 
@@ -138,7 +140,7 @@ class PongoRenderer extends Renderer
     const assetManager = this.renderEngine.getAssetManager();
     const gl = this.renderEngine.getGLContext();
 
-    const manifest = new AssetManifest();
+    const manifest = SimpleAssets;/*new AssetManifest();
     manifest.addAsset("vert", "shader.vert");
     manifest.addAsset("frag", "shader.frag");
     manifest.addAsset("shader", "shader.shader", {vertexShader: "shader.vert", fragmentShader: "shader.frag"});
@@ -161,7 +163,7 @@ class PongoRenderer extends Renderer
     manifest.addAsset("mesh", "quad.mesh", {geometry: "quad.obj"});
 
     manifest.addAsset("obj", "ball.obj");
-    manifest.addAsset("mesh", "ball.mesh", {geometry: "ball.obj"});
+    manifest.addAsset("mesh", "ball.mesh", {geometry: "ball.obj"});*/
 
     return super.load().then(() => assetManager.loadManifest(manifest));
   }
