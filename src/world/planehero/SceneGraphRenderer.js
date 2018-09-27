@@ -9,7 +9,7 @@ class SceneGraphRenderer
 
   render(gl, sceneGraph, camera)
   {
-    this.renderScene(gl, sceneGraph, camera, "shader.shader");
+    this.renderScene(gl, sceneGraph, camera, "phong.shader");
   }
 
   renderScene(gl, sceneGraph, camera, shaderAsset)
