@@ -19,15 +19,22 @@ class SpriteSheet
   {
     const spriteX = index % this.spriteRowLength;
     const spriteY = Math.floor(index / this.spriteRowLength);
+
     dst[0] = spriteX / this.spriteRowLength;
-    dst[1] = spriteY / this.spriteColLength;
+
+    //Adjusted for OpenGL bottom-left origin...
+    dst[1] = 1 - spriteY / this.spriteColLength;
+
     return dst;
   }
 
   getSpriteSize(index, dst=vec2.create())
   {
     dst[0] = this.spriteWidth;
-    dst[1] = this.spriteHeight;
+
+    //Adjusted for OpenGL bottom-left origin...
+    dst[1] = -this.spriteHeight;
+
     return dst;
   }
 

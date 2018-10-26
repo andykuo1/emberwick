@@ -39,7 +39,8 @@ class Texture
     const gl = this._gl;
     const handle = this._handle;
 
-    if (imageData instanceof Image)
+    //Does not flip the texture to align with OpenGL rendering methods
+    if (imageData instanceof Image || imageData instanceof ImageBitmap)
     {
       const level = 0;
       const internalFormat = gl.RGBA;

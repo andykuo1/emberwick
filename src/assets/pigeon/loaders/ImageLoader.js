@@ -15,7 +15,11 @@ class ImageLoader extends AssetLoader
       const image = new Image();
       image.onload = () => {
         URL.revokeObjectURL(imageURL);
-        resolve(image);
+        
+        //Flip image vertically to match OpenGL
+        const result = createImageBitmap(image, 0, 0, image.width, image.height, {imageOrientation: "flipY"});
+
+        resolve(result);
       };
       image.onerror = () => {
         URL.revokeObjectURL(imageURL);
